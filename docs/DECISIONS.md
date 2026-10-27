@@ -14,9 +14,115 @@ Kaynak: [başlangıç sözleşmesi](../RepoVitrin-Codex-Proje-Sozlesmesi.md). Ta
 ## Açık kararlar ve uygulama ayrıntıları
 
 - Global marka/alan adı ve gerçek Instagram URL'si kullanıcıdan bekliyor; uydurulmayacak.
-- Desteklenen Node LTS ve uyumlu stabil paketlerin tam sürümleri kurulum aşamasında resmi belgelerle doğrulanıp kilitlenecek. Şu an sürüm kararı yok.
+- A0 sürümleri aşağıdaki D008 kaydında kilitlendi. Gelecekte major sürüm değişikliği gelişigüzel yapılmayacak.
 - TR/EN alias listeleri, demo işaretleme kuralları, görev önceliği/eşitlikleri, not_applicable aritmetiği ve “Gizli Cevher” profil sunumu koşulunun check eşlemesi SCORING.md'de açık tutuldu. Yeni ağırlık veya sessiz yorum eklenmedi.
-- Token paletinin kalan kesin değerleri ve uygun lisanslı yerel fontlar A1/A5'te belirlenecek; sabit renkler ve erişilebilirlik koşulları değişmeyecek.
+- A0 temel tokenları DESIGN.md içinde kayıtlıdır. Mint ve kart fontları A1/A5 kapsamında açık; sabit renkler ve erişilebilirlik koşulları değişmeyecek.
 - Başlangıç limitleri sözleşmedeki örnek/config değerleridir; hosting timeout'u, Vercel/Atlas maliyetleri, plan limitleri ve deployment bölgesi ilgili aşamada doğrulanacak. Ücretsiz/sınırsız varsayımı yok.
 
 Bu konular belge teslimini engellemiyor; ilgili uygulama davranışı kesinleştirilmeden tamamlandı sayılamaz. Yeni büyük kararlar Enes'in açık kararıyla tarihli kayda dönüştürülür.
+
+## A0 kurulum kararları — 27 Ekim 2026
+
+### D007 — Yetki ve kod standartları
+
+Kullanıcı 5ca7d9d belge commit'ini gönderdiğini belirtti; yerel HEAD ve origin adresi doğrulandı, başlangıç çalışma alanı temizdi. Yeni talimat D004'ün yalnız belge sınırını kalan A0 kurulumu için genişletti; A1 yetkisi vermedi. Kullanıcının 11 kalıcı kod standardı AGENTS.md'ye aktarıldı. Stage/commit/push yasağı devam eder.
+
+Etkilenen dosyalar: AGENTS.md, TASKS.md, STATUS.md.
+
+### D008 — Uyumlu ve tekrarlanabilir kurulum
+
+Mevcut Node 22.13.0 / npm 10.9.2 kullanıldı; sistem kurulumu değiştirilmedi. Node 22 LTS hattı Next.js >=20.9 gereksinimini karşılar; `.nvmrc` aynı sürümü CI için seçer. Next.js/React/Tailwind stabil npm etiketleri ve engine/peer gereksinimleri kontrol edildi. TypeScript 5.9.3, lint parser'ının desteklediği aralıkta kalmak için seçildi (typescript-eslint >=4.8.4 <6.1.0); registry'deki TypeScript 7 bu aralık dışında.
+
+`next typegen && tsc --noEmit`, build öncesinde ve temiz kurulumda tip kontrolünü mümkün kılar. ESLint CLI ayrı çalışır. Tam sürümler package.json ve tek package-lock.json ile kilitlenir. Yalnız A0 bağımlılıkları kurulur.
+
+ESLint 10.13.0 denemesinde lint/typecheck geçti ancak npm ls, Next'in import/react/jsx-a11y eklentilerinin ESLint 10 peer uyumsuzluğunu bildirdi. Force/legacy-peer-deps/override ile gizlenmedi; uyumlu 9.39.5 seçildi. **ESLint 9 bakım desteği sona ermiştir** ve npm deprecation uyarısı verir; A0'ın bilinen araç sınırlamasıdır. Uyumlu desteklenen lint zinciri değerlendirmesi TASKS.md'ye kaydedildi. [Resmi destek kaydı](https://eslint.org/version-support/).
+
+Etkilenen dosyalar: package.json, package-lock.json, .npmrc, .nvmrc, tsconfig.json, eslint.config.mjs, postcss.config.mjs, .github/workflows/ci.yml, .gitignore, README.md, ARCHITECTURE.md.
+
+28 Ekim 2026 ayrıntılı yeniden inceleme: D011 aşağıda; mevcut Next yapılandırmasındaki runtime davranışı ile transitif peer desteği ayrı değerlendirilmiştir.
+
+### D009 — Minimal başlangıç ve env sınırı
+
+Sayfa yalnız geliştirme durumunu bildirir. Marka src/config/site.ts, temel tokenlar src/app/globals.css içinde merkezidir. Kırık beyaz #F5F5F0 ve sistem fontu kullanılır; kart fontu veya mint seçimi yapılmaz. Başlangıç sayfası A1 tasarımı sayılmaz. Dış font/veri isteği yok; GitHub/MongoDB secret'ı olmadan build yapılabilir. İmzalama sırrı için SIGNING_SECRET adı ayrılır; env örneğindeki tüm değerler boştur, A0 bunları tüketmez.
+
+Etkilenen dosyalar: src/app/layout.tsx, src/app/page.tsx, src/app/globals.css, src/config/site.ts, .env.example, DESIGN.md, README.md.
+
+### Kilitlenen doğrudan paketler
+
+| Paket | Sürüm |
+| --- | --- |
+| next | 16.4.3 |
+| react | 19.3.1 |
+| react-dom | 19.3.1 |
+| @tailwindcss/postcss | 4.3.3 |
+| @types/node | 22.20.5 |
+| @types/react | 19.3.0 |
+| @types/react-dom | 19.3.0 |
+| eslint | 9.39.5 |
+| eslint-config-next | 16.4.3 |
+| postcss | 8.5.32 |
+| tailwindcss | 4.3.3 |
+| typescript | 5.9.3 |
+
+### D010 — AGENTS.md otomatik değişiklik koruması
+
+Next.js 16.4.3 geliştirme sunucusu ilk açılışta AGENTS.md'ye yönetilen bir talimat bloğu ekledi. Proje protokolünün kontrolünü korumak için `next.config.ts` içinde resmi `agentRules: false` seçildi; sonraki dev açılışı yalnız üretilmiş bloğu kaldırdı, proje kuralları korundu. Bu ayar stack veya ürün kapsamını değiştirmez. Kaynak: kurulu Next.js paketindeki `dist/docs/01-app/03-api-reference/05-config/01-next-config-js/agentRules.md`.
+
+Etkilenen dosyalar: next.config.ts, AGENTS.md, ARCHITECTURE.md.
+
+### D011 — ESLint 9 seçiminin commit öncesi doğrulanması — 28 Ekim 2026
+
+Karar: ESLint 9.39.5 korunur. Projenin package.json, package-lock.json, eslint.config.mjs, Node sürümü ve uygulama kodunda bu incelemede değişiklik yapılmadı. Yalnız karar, görev ve durum kayıtları güncellendi. Bakım desteği bitmiş bir sürüm kullanılması geçici araç sınırlamasıdır; desteklenen güncel çözüm bulunduğu iddia edilmez.
+
+#### Kurulu tam sürümler ve ESLint peer aralıkları
+
+Aşağıdaki sürümler lockfile ile diskte kurulu package.json dosyalarından birlikte doğrulandı. import/react/jsx-a11y ve TypeScript resolver, eslint-config-next/node_modules altında çözülüyor.
+
+| Paket | Kurulu sürüm | ESLint peer aralığı |
+| --- | --- | --- |
+| next | 16.4.3 | ESLint peer tanımı yok |
+| eslint-config-next | 16.4.3 | >=9.0.0 |
+| eslint | 9.39.5 | Kendisi |
+| @next/eslint-plugin-next | 16.4.3 | Tanımlı değil |
+| eslint-plugin-import | 2.32.0 | ^2 ∥ ^3 ∥ ^4 ∥ ^5 ∥ ^6 ∥ ^7.2.0 ∥ ^8 ∥ ^9 |
+| eslint-plugin-react | 7.37.5 | ^3 ∥ ^4 ∥ ^5 ∥ ^6 ∥ ^7 ∥ ^8 ∥ ^9.7 |
+| eslint-plugin-jsx-a11y | 6.10.2 | ^3 ∥ ^4 ∥ ^5 ∥ ^6 ∥ ^7 ∥ ^8 ∥ ^9 |
+| eslint-plugin-react-hooks | 7.1.1 | ^3.0.0 ∥ ^4.0.0 ∥ ^5.0.0 ∥ ^6.0.0 ∥ ^7.0.0 ∥ ^8.0.0-0 ∥ ^9.0.0 ∥ ^10.0.0 |
+| typescript-eslint | 8.72.1 | ^8.57.0 ∥ ^9.0.0 ∥ ^10.0.0 |
+| @typescript-eslint/eslint-plugin | 8.72.1 | ^8.57.0 ∥ ^9.0.0 ∥ ^10.0.0 |
+| @typescript-eslint/parser | 8.72.1 | ^8.57.0 ∥ ^9.0.0 ∥ ^10.0.0 |
+| @typescript-eslint/utils | 8.72.1 | ^8.57.0 ∥ ^9.0.0 ∥ ^10.0.0 |
+| eslint-import-resolver-typescript | 3.10.1 | * |
+| eslint-import-resolver-node | 0.3.10 | Tanımlı değil |
+
+Tablodaki ∥, package.json içindeki `||` (veya) ifadesidir. TypeScript 5.9.3, typescript-eslint'in >=4.8.4 <6.1.0 aralığı içindedir. Yerel Node 22.13.0 ve npm 10.9.2 değişmedi.
+
+#### Somut bağımlılık engeli
+
+eslint-config-next@16.4.3 → eslint-plugin-import@2.32.0 / eslint-plugin-react@7.37.5 / eslint-plugin-jsx-a11y@6.10.2. Üçünün de ESLint peer aralığı 10.x'i dışlar. Üst paket eslint-config-next'in >=9.0.0 aralığı ESLint 10'u kabul etse de transitif gereksinimleri ortadan kaldırmaz. Hooks ve TypeScript eklentileri ESLint 10'u kabul eder; engel onlar değildir.
+
+Resmi npm registry latest metadatası 28 Ekim 2026 tarihinde kontrol edildi: Next/config/plugin-next 16.4.3; ESLint 10.13.0; import 2.32.0; react 7.37.5; jsx-a11y 6.10.2; hooks 7.1.1; typescript-eslint 8.72.1. Mevcut eklentiler zaten son stabil sürümleridir; küçük bir stabil yükseltmeyle üç peer engelini kaldıran kombinasyon bulunmadı. ESLint'in maintenance etiketi 9.39.5 olsa da resmi destek tablosu bu hattı EOL olarak gösterir; etiket destek garantisi değildir.
+
+ESLint 10.13.0 Node koşulu `^20.19.0 || ^22.13.0 || >=24`; yerel Node uygundur. Node yükseltmek üç peer kısıtını çözmez. Sistem Node değişikliği gerekmiyor ve yapılmadı.
+
+#### Runtime sonucu peer desteğinden ayrıdır
+
+Projenin bağımlılıklarına dokunmadan, /tmp altında yalnız ESLint 10.13.0 normal npm install ile kuruldu. Projedeki aynı config ve kaynaklar, ESLint 10 API'si üzerinden lint edildi: 0 hata / 0 uyarı. Bu deney proje bağımlılıklarının ESLint 10'a geçirildiği veya npm ağacının peer uyumlu olduğu anlamına gelmez.
+
+Next 16.4.3 `rule-context` uygulaması React ve import eklentilerinin kurallarını yerinde uyarlayarak ESLint 10'da kaldırılan context üyelerini sağlar. Bu yüzden mevcut config üzerinde genel bir runtime çökmesi iddia edilemez. Ayrı, config yüklenmeyen süreçte ham `react/forward-ref-uses-ref` kuralı ESLint 10 ile çalıştırıldığında `context.getSourceCode is not a function` hatası yeniden üretildi. Bu kural mevcut Next önerilen kural kümesinde etkin değildir; deney yalnız ham eklenti API uyumsuzluğunu gösterir. Proje lint kuralları eklenmedi/kapatılmadı. Mevcut kaynakların geçmesi tüm eklenti kuralları için uyumluluk kanıtı değildir.
+
+#### Seçenekler ve takip
+
+1. Şimdilik peer aralıkları uyumlu 9.39.5'i bakım desteği sınırlaması görünür kalacak şekilde koru; önerilen mevcut karar budur.
+2. Upstream eklentiler ve Next config desteklenen stabil bir zincir sunduğunda yeniden değerlendir. Sadece ESLint sürümünü değiştirmek yeterli değildir.
+3. Lint preset/eklenti ailesini değiştirmek veya özel uyumluluk katmanı eklemek daha geniş araç ve kural eşdeğerliği incelemesi gerektirir. Bu tur uygulanmadı; kuralları kaldırarak “çözüm” üretilmedi. Node güncellemesi bu engelin çözümü değildir.
+
+Force, legacy-peer-deps, override, canary veya kural kapatma kullanılmadı. Son doğrulama sonuçları STATUS.md'de. Etkilenen dosyalar: docs/DECISIONS.md, docs/STATUS.md, docs/TASKS.md.
+
+#### İncelenen resmi kaynaklar
+
+- [ESLint destek takvimi](https://eslint.org/version-support/)
+- [ESLint 10 Node ve kaldırılan API koşulları](https://eslint.org/docs/latest/use/migrate-to-10.0.0)
+- [Next ESLint yapılandırması](https://nextjs.org/docs/app/api-reference/config/eslint)
+- [Next 16.4.3 rule-context kaynak kodu](https://github.com/vercel/next.js/blob/v16.4.3/packages/eslint-config-next/src/rule-context.ts)
+- npm registry metadata endpointleri: `https://registry.npmjs.org/<paket-adı>`; yerel kurulu package.json ile karşılaştırıldı. Özellikle eslint-config-next, eslint, eslint-plugin-import, eslint-plugin-react ve eslint-plugin-jsx-a11y latest/peer/engine alanları kontrol edildi. Web sayfası aracı registry URL'lerini açamadı; veriler Node fetch ile doğrudan resmi registry'den alındı.

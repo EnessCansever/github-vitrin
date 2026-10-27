@@ -15,7 +15,7 @@ AGENTS çalışma davranışını, PRODUCT kapsamı, ARCHITECTURE teknik yapıy�
 ## İş yapma ve doğrulama
 
 - Tek seferde küçük, doğrulanabilir bir dikey iş dilimi uygula. Kullanıcı mesajı olmadan sonraki aşamaya geçme.
-- Bu tur yalnız **A0 belgelendirme** yetkilidir. Uygulama kurma, paket yükleme, arayüz kodu yazma veya Git deposu başlatma. A0'ın tamamını bitmiş sayma. Kaynak sözleşmenin §12 A0+A1 isteği bu tur için geçerli çalışma yetkisi değildir.
+- 27 Ekim 2026 kullanıcı talimatı yalnız **A0 kalan proje kurulumu** için yetki verir. Minimal geliştirme sayfası dışında ürün arayüzü yazma; A1’e geçme. Önceki yalnız belgelendirme sınırı bu açık yetkiyle güncellenmiştir. Kaynak sözleşmenin §12 A0+A1 isteği otomatik çalışma yetkisi değildir.
 - Stack, kapsam, puanlama ve tasarım kararlarını kendiliğinden değiştirme. Büyük kapsam/stack/puanlama/marka değişiklikleri Enes'in açık kararını gerektirir; rutin uygulama ayrıntıları için sürekli onay isteme. Geçmiş onayı yeniden sorma; yeni büyük kararı onaylanmış sayma.
 - Kullanıcının mevcut dosyalarını/değişikliklerini koru. İlgisiz refactor, silme, dependency ekleme veya tasarım değişikliği yapma.
 - Her tamamlanan işte **STATUS.md ve TASKS.md** güncelle; her anlamlı değişiklikte ilgili gereksinim belgelerini de güncelle. Kararları tarih, karar, gerekçe ve etkilenen dosyalarla DECISIONS.md'ye yaz.
@@ -32,3 +32,17 @@ AGENTS çalışma davranışını, PRODUCT kapsamı, ARCHITECTURE teknik yapıy�
 - Kontroller başarısızsa düzelt veya engeli açıkça yaz. Hazırlık ile gerçekten commit edilmiş olmayı birbirine karıştırma.
 - Kullanıcı **“commit attım, devam”** demeden sonraki aşamaya geçme. Kaynak sözleşmedeki devam promptu otomatik ilerleme izni değildir.
 - Push ve yayın yetkisini varsayma. Bu tur hiçbir Git mutasyonu yapılmaz.
+
+## Kalıcı kod standartları
+
+1. Kod sade, okunabilir ve proje ölçeğine uygun olmalı. Gereksiz katman, wrapper, factory, generic yardımcı, soyutlama veya gelecekte lazım olabilir diye altyapı oluşturma.
+2. Değişken, fonksiyon, bileşen ve dosya adları İngilizce, anlamlı ve gerektiği kadar kısa olmalı. Tekrarlayan uzun isimlerden kaçın; kısaltma uğruna anlaşılabilirliği bozma. Yerleşik framework adlandırmalarına uy.
+3. Yorum yalnız koddan anlaşılmayan gerekçeyi, önemli kısıtı veya şaşırtıcı davranışı açıklamalı. Kodun yaptığını tekrar etme; her fonksiyona açıklama/JSDoc ekleme. Tip bilgisini TypeScript ile ifade et.
+4. Kaynak kodda sohbet kalıntısı, kullanıcıya hitap, “burada şunu yapıyoruz”, “istediğiniz gibi”, “AI tarafından oluşturuldu”, dekoratif yorum başlıkları veya numaralı anlatımlar bulunmamalı. Zorunlu lisans, telif ve araç bildirimlerini koru; sahte yazarlık/geçmiş iddiası ekleme.
+5. TODO/FIXME yalnız somut ertelenmiş iş için kullanılmalı; iş TASKS veya BACKLOG içinde kayıtlı olmalı. Belirsiz placeholder yorum bırakma.
+6. TypeScript strict kullan. Hata susturmak için gerekçesiz any, ts-ignore, lint disable veya aşırı type assertion kullanma. Hataları sessiz catch ile gizleme.
+7. Tek kullanımlık basit işlemleri gereksiz yardımcılara bölme; tekrar eden iş kuralını kopyalama. Soyutlama somut ihtiyaçtan doğmalı.
+8. Yalnız yetkili aşamanın kodunu yaz. Kullanılmayan import, bağımlılık, bileşen, örnek dosya veya ölü kod bırakma. Gerçek servis yerine sahte başarı üretme.
+9. Testler anlamlı davranışı doğrulamalı; implementasyonu tekrar eden veya test sayısını artırmak için yazılan testler ekleme.
+10. Her aşama sonunda yalnız değişen kodu gereksiz yorum, karmaşık isim, tekrar, kullanılmayan kod ve gereksiz soyutlama açısından incele. İlgisiz dosyaları yeniden yazma.
+11. Önemli teknik kararları ilgili docs dosyasına kaydet; kaynak kodu açıklama metniyle doldurma. Sonuç raporunda yeni kavramları ve kararları kısa, anlaşılır biçimde açıkla.

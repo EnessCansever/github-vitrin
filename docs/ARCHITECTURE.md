@@ -73,6 +73,30 @@ Veri süresi, public kapsam ve puan sınırları kısa gizlilik/metodoloji sayfa
 
 Bağlam kaybının sıfır olacağı garanti edilemez. Bu dosyalar, küçük iş dilimleri ve testler; yeni oturumun durumu yeniden kurmasını ve sapmaların erken fark edilmesini sağlar.
 
-## Bu turdaki sınır
+## A0 kurulum yapısı — 27 Ekim 2026
 
-Bu belge mimari sözleşmeyi kaydeder. Paket sürümleri seçilmedi veya doğrulanmadı; uygulama, env dosyası, veritabanı ve CI kurulmadı. Resmi referanslar sözleşmeden aktarılmıştır; bu turda teknik içerikleri veya güncel sürümler araştırılmadı. Kurulum aşamasında resmi kaynaklardan doğrulama yapılacak. Snapshot ve karşılaştırma koşulları PRODUCT.md içinde ayrıca tanımlıdır.
+Tek uygulama mevcut proje kökünde elle yapılandırıldı; oluşturucu çalıştırılıp mevcut belgelerin üzerine yazılmadı. `src/app` App Router girişidir. Node runtime varsayılanı korunur; Edge veya ayrı backend eklenmedi.
+
+- Marka ve geliştirici bilgileri: `src/config/site.ts`.
+- Temel CSS tokenları: `src/app/globals.css`; Tailwind v4 PostCSS eklentisi ile derlenir.
+- TypeScript strict; `@/*` alias'ı `src/*` konumuna gider.
+- Lint: ESLint flat config, Next core-web-vitals ve TypeScript kuralları. Build'den bağımsız kontrol edilir.
+- Typecheck: `next typegen && tsc --noEmit`; üretilen `next-env.d.ts` ve `.next` Git'e alınmaz. Önceden build/dev çalıştırma gerektirmez.
+- `.nvmrc`: Node 22.13.0; npm 10.9.2. Yerelde mevcut sürümler kullanılır; sistem kurulumu değiştirilmedi. Node 22 desteklenen LTS hattıdır ve Next.js >=20.9 gereksinimini karşılar. Bu kayıt en güncel Node yaması olduğu iddiası değildir.
+- `package.json` doğrudan bağımlılıkları tam sürümlerle, `package-lock.json` tüm çözümlemeyi kilitler. `.npmrc` yeni eklemeler için save-exact kullanır.
+- `next.config.ts` içindeki `agentRules: false`, dev sunucusunun AGENTS.md dosyasına otomatik talimat eklemesini engeller.
+- CI: GitHub Actions checkout/setup-node v7, `.nvmrc`, `npm ci`, lint, typecheck, build; yalnız contents: read. Uygulama secret'ı istenmez. Çalışma sonucu push sonrasında ayrıca doğrulanır.
+- `.env.example`: `GITHUB_TOKEN`, `MONGODB_URI`, `SIGNING_SECRET` boş değerlerdir. Sözleşmedeki adı belirlenmemiş imzalama sırrı için SIGNING_SECRET adı ayrıldı. A0 kodu bu değişkenleri okumaz; gerçek anahtar eklenmedi.
+
+MongoDB, Zod, GitHub adapter, next-intl, Markdown parser, UI bileşen kütüphaneleri ve test araçları ilgili aşamalarda gerektiğinde kurulacak. Bu turda boş domain katmanları, sahte servis veya gerçek ürün ekranı eklenmedi. Snapshot/karşılaştırma koşulları PRODUCT.md'de değişmeden durur.
+
+### Kurulumda doğrulanan resmi kaynaklar
+
+- [Next.js kurulum ve Node gereksinimi](https://nextjs.org/docs/app/getting-started/installation)
+- [Node LTS sürüm durumu](https://nodejs.org/en/about/previous-releases)
+- [Next.js typegen](https://nextjs.org/docs/app/api-reference/cli/next)
+- [Next.js ESLint](https://nextjs.org/docs/app/api-reference/config/eslint)
+- [Tailwind Next.js kurulumu](https://tailwindcss.com/docs/installation/framework-guides/nextjs)
+- [GitHub setup-node](https://github.com/actions/setup-node) ve [checkout](https://github.com/actions/checkout)
+
+Stabil sürüm etiketleri ve peer/engine gereksinimleri npm kayıt defterinden de kontrol edildi. Kurulan tam sürümler DECISIONS.md'de; gerçek kontrol sonuçları STATUS.md'de tutulur.

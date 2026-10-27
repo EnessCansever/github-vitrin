@@ -36,4 +36,8 @@ Bu inceleme uygulanmış arayüzün onayı, kontrast testi veya responsive doğr
 - Görseldeki “5 dakika” etiketi doğrulanmış süre garantisi değildir; sözleşmede görev süresi garantisi yoktur.
 - 62, 54, 81 ve örnek repo bulguları fixture değerleridir. Gerçek analiz veya doğrulanmış iyileştirme olarak kullanılamaz.
 
-Görselin işlevsel eksiklerinde ana sözleşme otoritedir. Kırık beyaz ve mintin kesin token değerleri, font ailesi ve lisansı henüz seçilmedi; mevcut palet ve erişilebilirlik sınırları korunarak ilgili aşamada kaydedilecek.
+Görselin işlevsel eksiklerinde ana sözleşme otoritedir. A0 başlangıcında kırık beyaz #F5F5F0 ve sistem fontu Arial/Helvetica/sans-serif kullanıldı. Mint ve kart fontunun kesin seçimi ilgili tasarım aşamasında kaydedilecek; mevcut palet ve erişilebilirlik sınırları korunacak.
+
+## A0 altyapı sınırı
+
+`src/app/globals.css` merkezi ink (#0B1020), brand (#4169FF), paper (#F5F5F0) ve sistem fontu tokenlarını içerir. Başlangıç sayfası yalnız geliştirme durumunu bildirir; sonuç ekranı veya onaylı A1 tasarımı değildir. Harici font isteği yoktur. Mint A0 ekranında gerekmediği için eklenmedi. Tarayıcı, kontrast ve responsive incelemeleri A1 kapsamında açık kalır.
