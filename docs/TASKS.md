@@ -43,11 +43,11 @@ Kaynak: [başlangıç sözleşmesi](../RepoVitrin-Codex-Proje-Sozlesmesi.md). `[
 - [ ] Next lint eklentileriyle uyumlu desteklenen ESLint zinciri çıktığında değerlendir; 9.39.5 bakım desteği sonlanma uyarısını force/override ile gizleme (D008, D011). 28 Ekim incelemesi yapıldı; üç eklentinin ESLint 10 peer engeli sürüyor.
 - [x] Kullanıcı A0 commit/push bilgisini ve yalnız A1 ilk bölüm için açık çalışma yetkisini verdi.
 
-## A1 — ana sayfa ve demo kullanıcı tarafından görsel olarak kabul edildi; kalan kapsam açık
+## A1 — tasarım kabul kriterleri karşılandı
 
-A1’in tüm kabul kriterleri henüz sağlanmadı. Her anlamlı işten sonra STATUS/TASKS güncellenir ve commit geçiş kapısı uygulanır. A2–A7 başlamadı.
+Ana sözleşme §11’deki A1 kabul kriterleri, önceki doğrulama kayıtları ve son kullanıcı bildirimi birlikte değerlendirilerek karşılandı. Kullanıcı repo seçimi, analiz durumları ve demo gezinmesine görsel kabul verdi; native durum menüsünde klavyeyle seçenek değişimini kontrol edip çalıştığını bildirdi (28 Ekim 2026). Bunlar kullanıcı incelemesi/bildirimidir; bu tur yeni Codex tarayıcı testi yapılmadı. Commit/geçiş kapısı açık; A2–A7 başlamadı.
 
-### A1.1 — ana sayfa + örnek sonuç (bu turun kapsamı)
+### A1.1 — ana sayfa + örnek sonuç (kullanıcı kabulü verildi)
 
 - [x] Referansı gerçekten incele; mevcut Git durumunu ve kullanıcı değişikliklerini kontrol et.
 - [x] Ortak marka, TR/EN seçimi, ana başlık, etiketli giriş, sabit demo eylemi ve Keşfet → Düzelt → Paylaş anlatımı.
@@ -58,12 +58,12 @@ A1’in tüm kabul kriterleri henüz sağlanmadı. Her anlamlı işten sonra STA
 - [x] Merkezi tokenlar, native details, focus/label/skip-link, uzun metin için sarma kuralları.
 - [x] Lint, typecheck ve production build; dört TR/EN sayfa yanıtı; dört dil değişimi form POST'u.
 - [x] Mesaj anahtarı eşleşmesi, hesaplanan renk kontrastları, değişen kod ve Git diff incelemesi.
-- [ ] Tam A1 için 360/390/768/1440 ekran görüntüsü kriterinin kalanını doğrula; mevcut ana sayfa/demo için kullanıcı masaüstü ve mobil görsel kabulü verildi, bu onay belirtilmeyen viewport kontrollerini yapılmış saymaz.
+- [x] Önceki ana sayfa/demo için kalan 360/768 görüntü ve taşma kontrolleri A1.2 sırasında tamamlandı; kullanıcı A1.1 masaüstü/mobil kabulü korunuyor.
 - [x] Son revizyonda temiz Chrome ile 320px ve uzun ad taşması kontrol edildi.
 - [x] Son revizyonda temiz Chrome ile Tab/Shift+Tab, Enter/Space, focus ve TR/EN metinler kontrol edildi.
-- [ ] Kullanıcı görünümü inceleyip “commit attım, devam” demeden A1’in kalanına geçme.
+- [x] Kullanıcı A1.1 bölümünü a78abde ile gönderdi, CI başarısını bildirdi ve yalnız A1 repo seçimi/durumları için devam yetkisi verdi.
 
-**A1.1 ana sayfa ve demo için kullanıcı masaüstü ve mobil ekranları kendisi inceleyerek görsel kabul verdi (28 Ekim 2026). A1’in bütünü tamamlanmadı.**
+**A1.1 ana sayfa ve demo için kullanıcı masaüstü ve mobil ekranları kendisi inceleyerek görsel kabul verdi (28 Ekim 2026).**
 
 ### A1.1 görsel revizyon — kullanıcı görsel kabulü verildi
 
@@ -79,13 +79,46 @@ A1’in tüm kabul kriterleri henüz sağlanmadı. Her anlamlı işten sonra STA
 - [x] Son lint/typecheck/build, dosya koruma ve diff kontrolü; fixture/puan/bağımlılık değişmedi.
 - [x] Kullanıcı masaüstü ve mobil ekranları kendisi inceleyerek yalnız ana sayfa ve demo görünümünü kabul etti (28 Ekim 2026).
 
-Bu kabul kullanıcı incelemesidir; bu tur yeni otomatik/tarayıcı testi yapılmadı. A1'in bütünü ve sonraki aşamalar açık; “commit attım, devam” mesajı bekleniyor.
+Bu A1.1 kabulü kullanıcı incelemesidir. a78abde commit/push ve CI başarısı kullanıcı tarafından bildirildi; sonraki yetki yalnız aşağıdaki A1.2 kapsamınadır.
+
+### A1.2 — repo seçimi ve analiz durumları (bu turun kapsamı)
+
+- [x] AGENTS ve proje belgelerini oku; temiz çalışma alanı ve HEAD a78abde doğrula; önceki kabul/CI bilgisini kaydet.
+- [x] /demo/select: kurmaca profil ve dört uygun örnek repo, gerçek checkbox, seçili kimlik dizisi ve 1–3 sınırı.
+- [x] Üçte seçilmemişler pasif, seçililer kaldırılabilir; sıfırda devam pasif ve gerekçeli.
+- [x] Repo adı/açıklama/dil/pinned göstergesi ve uzun metin sarma; yeni puan üretmeyen doğru adlandırılmış devam.
+- [x] Dil değişiminde sıfır, iki farklı kimlik ve üç seçimin korunduğunu gerçek tarayıcıda doğrula.
+- [x] /demo/states: loading, kullanıcı yok, uygun repo yok, ağ/servis, rate-limit ve partial örnekleri; elle seçim, TR/EN ve durum bildirimi.
+- [x] Loading otomatik geçişsiz; sahte yüzde/reset süresi/retry yok; partial toplam/tip üretmiyor ve bilinen bulguyu koruyor.
+- [x] Sabit /demo kopyalanmadı; /demo'ya yalnız seçim bağlantısı eklendi. Gerçek GitHub/MongoDB/AI/API/PNG ve yeni paket eklenmedi.
+- [x] Lint/typecheck/build, 320/360/390/768/1440 taşma, uzun ad, gerçek checkbox Space/Tab/Shift+Tab ve focus kontrolleri.
+- [x] Yeni ekranların TR/EN mobil/masaüstü görüntülerini alıp incele; mevcut ana sayfa/demo için 360/768 regresyon kontrollerini tamamla.
+- [x] Native durum select menüsünde klavyeyle seçenek değişimi çalışıyor: kullanıcı kendisi kontrol ettiğini bildirdi. Önceki headless CDP doğrulama açığı kullanıcı bildirimiyle kapatıldı; yeni otomatik test sonucu değildir.
+- [x] Kullanıcı repo seçimi ve analiz durumlarına görsel kabul verdi. İşlev kontrolleri önceki kayıtlarda; native menü klavye doğrulaması kullanıcı bildirimidir.
+- [ ] Kullanıcı “commit attım, devam” demeden A2'ye veya başka işe geçme.
+
+A1.2 uygulaması, önceki yerel kontroller ve kullanıcı görsel kabulü tamam. Native menü klavye kontrolü kullanıcı bildirimiyle doğrulandı; A2 geçişi için kullanıcı mesajı bekleniyor.
+
+### A1.2 bağlantı hiyerarşisi revizyonu — kullanıcı görsel kabulü verildi
+
+- [x] Üç demo sayfasının üstüne ortak kompakt gezinme; yalnız demo sayfalarında, aktif aria-current + renk dışı işaretler.
+- [x] Ana/ikincil/yardımcı link hiyerarşisi; mevcut dolu mavi korunur, ortak mavi ikincil stil ve sakin geri linkleri.
+- [x] /demo altındaki seçim geçişini ikincil eylem yap; üstten aynı ekrana erişim sağla.
+- [x] Semantik link, hover, mavi focus ve aktif durum; mint gezinmede yok, disabled paylaşım değişmedi.
+- [x] TR/EN üç sayfa arası 12 yönlü geçiş, üç geri dönüş, aynı sayfada dil ve seçim korunumu.
+- [x] TR/EN 390px/1440px ekranlarını alıp incele; 320px taşma kontrolü.
+- [x] Son lint, typecheck, production build ve dosya koruma/diff kontrolleri.
+- [x] Kullanıcı demo gezinmesine görsel kabul verdi; kaynak kullanıcının son bildirimidir (28 Ekim 2026).
+
+Bu revizyon yalnız gezinme/sunum içindir; fixture, puan ve analiz davranışı korunur. Görsel kabul ve native menü klavye kontrolüne ilişkin kullanıcı bildirimleri kaydedildi.
 
 ### A1 Tasarım — toplam kabul kriterleri:
 
 
-- [ ] /demo içinde açık örnek verilerle ana sayfa, repo seçimi, mobil sonuç, kanıt/accordion, tüm durumlar, TR/EN.
-- [ ] 360/390/768/1440 screenshot incelemesi; klavye, kontrast, uzun metin.
+- [x] /demo altında açık örnek verilerle ana sayfa, repo seçimi, mobil sonuç, kanıt/accordion, tüm durumlar, TR/EN arayüzleri uygulandı; gerçek entegrasyon yok.
+- [x] 360/390/768/1440 screenshot/taşma, checkbox/focus, kontrast ve uzun metin kontrolleri önceki kayıtlarda doğrulandı. Yeni ekranlar ve gezinme kullanıcı tarafından görsel olarak kabul edildi; native menü klavye kontrolü kullanıcı bildirimiyle kapatıldı.
+
+A1 kabul incelemesi: iki ana kriter de karşılandı; tamamlanmamış A1 tasarım kabul maddesi kalmadı. Henüz commit edilmemiş değişikliklerin commit/push işlemi, bunlara ait uzak CI doğrulaması ve A2 için açık kullanıcı geçiş mesajı tamamlanmış sayılmaz. Yukarıdaki geçiş kapısı açık bırakıldı. ESLint 9 takip işi de A0 araç sınırlaması olarak açık kalır; A1 tasarım kriteri değildir.
 
 ### A2 GitHub:
 

@@ -61,7 +61,8 @@
     "countRule": "More repositories do not earn a bonus.",
     "demoDetails": "Repository metadata and README are inspected for a demo signal. External links are not checked for availability.",
     "installDetails": "An “Installation” heading alone is not enough; the section needs at least one command or code block.",
-    "typeReasonLabel": "Why Hidden Gem?"
+    "typeReasonLabel": "Why Hidden Gem?",
+    "selectExample": "Explore sample repository selection"
   },
   "Checks": {
     "bio": {
@@ -145,5 +146,88 @@
     "usage": "README.md → run / usage section",
     "technology": "README.md → technologies section",
     "features": "README.md → features section"
+  },
+  "Select": {
+    "back": "Back to the fixed sample report",
+    "badge": "Sample repository selection",
+    "title": "Choose 1–3 projects to review.",
+    "intro": "This fictional list is a selection prototype. Your choices do not create a new analysis or score.",
+    "projects": "Sample projects",
+    "legend": "Sample projects to review",
+    "count": "{count}/3 projects selected",
+    "limit": "You can select up to 3 projects.",
+    "limitReached": "You have selected 3 projects. Remove one before choosing another.",
+    "selected": "Selected",
+    "pinned": "Pinned",
+    "empty": "Select at least one project to continue.",
+    "nextHint": "The next page shows examples of analysis states. It does not start a real analysis.",
+    "continue": "Explore analysis screen examples",
+    "descriptions": {
+      "lantern": "A simple, accessible product showcase for small businesses.",
+      "orbit": "A personal planner that breaks daily tasks into small steps.",
+      "weather": "A mobile-first interface for checking the weather at a glance.",
+      "journal": "An accessible journal interface for reading notes and progress, designed to handle longer descriptions and a range of screen sizes."
+    }
+  },
+  "States": {
+    "back": "Back to sample repository selection",
+    "badge": "Sample analysis states",
+    "title": "What might you see during an analysis?",
+    "intro": "Choose a state to inspect its appearance. This page sends no real requests.",
+    "label": "Sample state to inspect",
+    "pickerHint": "This selector is a demo review tool. It does not start an analysis.",
+    "knownTitle": "Known finding from available data",
+    "knownDescription": "The project has a short description.",
+    "partialScore": "Missing data does not count as zero. This sample displays no total score or profile type.",
+    "reportHint": "You can also inspect a completed view. The report below is a fixed sample, independent of your selections.",
+    "reportLink": "Open the fixed sample report",
+    "loading": {
+      "name": "Loading profile and repositories",
+      "title": "Loading the profile and projects",
+      "description": "This view is shown while profile information and selected projects are being prepared.",
+      "guidance": "This example stays in the loading state. It will not automatically advance to a report.",
+      "action": "Back to sample repository selection"
+    },
+    "notFound": {
+      "name": "User not found",
+      "title": "This user could not be found",
+      "description": "The username may be incorrect, or the profile may no longer exist.",
+      "guidance": "When real analysis is available, you can check the username and try again.",
+      "action": "Back to the username field"
+    },
+    "empty": {
+      "name": "No eligible public repositories",
+      "title": "No public projects to review",
+      "description": "No score is given when there are no public, owned, non-archived repositories in scope.",
+      "guidance": "This is not a judgement of ability. In a real analysis, you could try another profile.",
+      "action": "Back to the username field"
+    },
+    "network": {
+      "name": "Network or service error",
+      "title": "The data is unavailable right now",
+      "description": "This view is shown when a connection or service problem prevents the analysis from completing.",
+      "guidance": "Real analysis will offer a retry. This example sends no retry requests.",
+      "action": "Back to the selection example"
+    },
+    "rateLimit": {
+      "name": "Request limit reached",
+      "title": "The request limit has been reached",
+      "description": "Analysis needs to pause when too many requests arrive in a short period.",
+      "guidance": "There is no real reset information in this example, so no wait time or countdown is shown.",
+      "action": "Back to the selection example"
+    },
+    "partial": {
+      "name": "Incomplete analysis",
+      "title": "Some data could not be retrieved",
+      "description": "Findings from available data are preserved. Unavailable data is not scored as a missing feature.",
+      "guidance": "Real analysis will offer a retry for missing data. This example sends no requests.",
+      "action": "Back to the selection example"
+    }
+  },
+  "DemoNav": {
+    "label": "Explore the demo",
+    "report": "Sample report",
+    "select": "Project selection",
+    "states": "Analysis states"
   }
 }

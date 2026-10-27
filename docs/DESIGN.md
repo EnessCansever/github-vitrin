@@ -59,3 +59,27 @@ Kullanıcının yedi masaüstü ekranı referans panoyla karşılaştırıldı: 
 Header minimum 76px, masaüstü hero üst boşluğu 40px olarak düzenlendi. Sabit içerik yüksekliği/kırpma yok. Başlıkta profilin/profile, var olan #4169FF ile vurgulanır; büyük metin kontrast eşiğine tabidir. Sonuç kartı `ResultSummary` ile hem önizleme hem demo için ortak sunulur; küçük elmas, kullanıcı, tip ve skor aynı kimliği korur. Önizleme üç kategori ve tek repo bulgusu gösterir. Teknik gerekçeler ve kaynaklar native açılımlarda kalır; ana anlatım kısadır. Yeni tema, dekorasyon veya animasyon eklenmedi; eski CSS kuralları düzenlendi, kullanılmayan pazarlama stilleri kaldırıldı.
 
 Önceki turdaki tarayıcı doğrulama eksikliği bu revizyonda **kurulu Chrome + ayrı temiz profil + CDP** ile kısmen kapatıldı: iki sayfa/iki dil 390×844 ve 1440×900 ekranları görüntülendi; 320px/uzun ad/açık accordion taşması, dil tıklamaları ve klavye odakları kontrol edildi. Masaüstünde ana CTA altı y=622px, önizleme altı TR y=585px/EN y=563px; 900px ilk ekran koşulu geçti. Bu sonuçlar tüm A1 genişlikleri/ekranları veya kullanıcı görsel kabulü anlamına gelmez. Tam ölçümler ve hydration araştırması STATUS'tadır.
+
+## A1 repo seçimi ve durum örnekleri — 28 Ekim 2026
+
+Kullanıcı a78abde commit'indeki ana sayfa ve demo görünümüne masaüstü/mobil kabul verdi. Bu tur kabul edilmiş stiller düzenlenmedi; globals.css sonuna yalnız yeni ekranlara ait seçiciler eklendi. `/demo` altına tek sade seçim bağlantısı eklendi, ana sayfanın demo bağlantısı korundu.
+
+Seçim ekranı mevcut marka header'ı, kurmaca profil, açık örnek etiketi ve kısa 1–3 yönlendirmesini kullanır. İki sütunlu repo kartları mobilde tek sütundur. Gerçek checkbox, açık renk sınır, checked işareti ve “Seçili” metni birlikte kullanılır; seçilme yalnız renkle anlatılmaz. Sınır mesajı görünür, seçili kutular kaldırılabilir, sıfır seçimde pasif devamın gerekçesi yanındadır. Repo adları ve açıklamalar kırpılmaz, sarılır.
+
+Durum ekranı etiketli native select ile altı görünümü aynı yüzeyde inceler. Metin alanı polite/atomic status bildirimi taşır. Loading ikonu hareketsizdir; yüzde, süre ve otomatik geçiş yok. Eksik analizde puan/tip yerine alınabilen bulgu vardır; sabit başarılı örneğe ayrı açıklamalı bağlantı verilir. Gerçekmiş gibi çalışan retry butonu yoktur.
+
+Yeni ekranlar temiz Chrome'da TR/EN, mobil ve masaüstünde incelendi; 320/360/390/768/1440 taşma kontrolleri ve uzun ad kontrolleri yapıldı. Checkbox Space/Tab/Shift+Tab ve focus kontrolü geçti. Native select'in headless ortamda klavyeyle değer değiştirmesi otomasyonla doğrulanamadı; gerçek tarayıcı menüsü kullanıcı kontrolünde açık tutuldu. Bu yeni ekranlar için kullanıcı görsel kabulü henüz verilmedi. Tam sonuçlar STATUS/TASKS içinde tutulur.
+
+## A1 demo gezinmesi ve bağlantı hiyerarşisi — 28 Ekim 2026
+
+Kullanıcı mevcut demo bağlantılarının fark edilmediğini bildirdi. `/demo`, `/demo/select` ve `/demo/states` üstünde tek DemoNav sunum bileşeniyle “Demoyu keşfet” gezinmesi kullanılır: örnek rapor, proje seçimi, analiz durumları. Genel site header'ı değişmez; bu araçlar ana site navigasyonuna taşınmaz. Aktif link aria-current=page, onay işareti, alt çizgi, belirgin çerçeve ve zeminle anlatılır; yalnız renk kullanılmaz. Mobilde üç esnek sütundaki metinler gerektiğinde satır kırar.
+
+Bağlantı hiyerarşisi:
+
+- Ana eylem: mevcut button-primary dolu mavi stil.
+- Önemli ikincil geçiş: ortak button-secondary; secondary #172642 zemin, secondary-border #5875AA çerçeve, okunaklı açık metin ve yön oku. Hover/aktif tonu secondary-hover #203763.
+- Yardımcı/geri: ortak text-link/back-link; sakin alt çizgili metin ve uygun yön oku. Hover daha belirgin, link/gezinti odağı 3px mavi.
+
+Bu üç renk mevcut mavi palette merkezi token olarak tanımlıdır; linklere ayrı renk verilmez. Mint gezinme veya dil seçimi focus'unda kullanılmaz. Paylaşım/yeniden analiz disabled kalır. Sayfa değiştiren tüm eylemler gerçek anchor/Next Link olarak korunur. `/demo` altındaki seçim geçişi belirgin ikincil eylemdir; üst gezinme aynı geçişi sayfa sonuna inmeden sunar. Gereksiz eski min-height tekrarları ilgili link kurallarından kaldırıldı; yeni bağımlılık/client state eklenmedi.
+
+Temiz Chrome'da TR/EN 390px ve masaüstü ekranları alınıp incelendi; 320px'de üç link ve sayfa taşması yok. Geçişler, geri dönüş, dil, klavye/hover/focus doğrulandı. İkincil açık metin kontrastı normal zeminde 13,79:1, hover'da 10,74:1; çerçeve/zemin 3,26:1. **Bu revizyon için kullanıcı görsel kabulü henüz verilmedi.**

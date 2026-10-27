@@ -1,3 +1,4 @@
+import { DemoNav } from "@/components/demo-nav";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, ChevronDown, FileText, FolderGit2, LockKeyhole, Minus, UserRound, Zap } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -14,6 +15,7 @@ export default async function Demo() {
 
   return (
     <main id="main" className="shell demo-main">
+      <DemoNav current="report" />
       <div className="demo-topbar">
         <Link href="/" className="back-link"><ArrowLeft size={16} aria-hidden="true" />{common("back")}</Link>
       </div>
@@ -104,6 +106,9 @@ export default async function Demo() {
       </div>
       <p className="method-note">{common("notQuality")}</p>
       <Link href="/" className="text-link result-back">{common("back")}<ArrowRight size={16} aria-hidden="true" /></Link>
+      <div className="demo-selection-link">
+        <Link href="/demo/select" className="button button-secondary">{t("selectExample")}<ArrowRight size={16} aria-hidden="true" /></Link>
+      </div>
     </main>
   );
 }

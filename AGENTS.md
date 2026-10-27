@@ -15,7 +15,7 @@ AGENTS çalışma davranışını, PRODUCT kapsamı, ARCHITECTURE teknik yapıy�
 ## İş yapma ve doğrulama
 
 - Tek seferde küçük, doğrulanabilir bir dikey iş dilimi uygula. Kullanıcı mesajı olmadan sonraki aşamaya geçme.
-- Güncel kullanıcı yetkisi yalnız **A1 ilk bölüm: ana sayfa + örnek verili mobil öncelikli sonuç ekranı ve TR/EN** kapsamındadır. A0 fcd3718 commit’iyle gönderildi; CI başarısı kullanıcı tarafından bildirildi. Repo seçimi, tüm durum ekranları ve sonraki aşamalar bu turun dışında kalır. Kullanıcının “commit attım, devam” mesajı olmadan A1’in kalanına geçme. Kaynak sözleşmenin §12 A0+A1 isteği otomatik çalışma yetkisi değildir.
+- Güncel kullanıcı yetkisi **A1 kalan repo seçimi ve analiz durumları örnek arayüzleri** ile sınırlıdır. A1.1 ana sayfa/demo a78abde commit’iyle gönderildi; görsel kabul ve uzak CI başarısı kullanıcı tarafından bildirildi. Kabul edilmiş görünümü koru. Gerçek GitHub entegrasyonu/A2 ve sonraki aşamalara geçme; kullanıcı incelemesi ve “commit attım, devam” mesajını bekle. Kaynak sözleşmenin §12 isteği otomatik çalışma yetkisi değildir.
 - Stack, kapsam, puanlama ve tasarım kararlarını kendiliğinden değiştirme. Büyük kapsam/stack/puanlama/marka değişiklikleri Enes'in açık kararını gerektirir; rutin uygulama ayrıntıları için sürekli onay isteme. Geçmiş onayı yeniden sorma; yeni büyük kararı onaylanmış sayma.
 - Kullanıcının mevcut dosyalarını/değişikliklerini koru. İlgisiz refactor, silme, dependency ekleme veya tasarım değişikliği yapma.
 - Her tamamlanan işte **STATUS.md ve TASKS.md** güncelle; her anlamlı değişiklikte ilgili gereksinim belgelerini de güncelle. Kararları tarih, karar, gerekçe ve etkilenen dosyalarla DECISIONS.md'ye yaz.

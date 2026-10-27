@@ -158,3 +158,13 @@ Kullanıcı ilk görünümü kabul etmedi. Boşluklar küçültüldü; pazarlama
 Özel browser aracı sunulmasa da mevcut Chrome ile ayrı eklentisiz profilde yerel doğrulama yapılabildi. Hydration farkı, uygulama dışı data-yd nitelikleriyle kontrollü olarak yeniden üretildi; temiz profilde yok. Belirli eklenti adı tespit edilmedi; uyarı gizlenmedi. Görsel kabul kullanıcıdan bekleniyor.
 
 Etkilenen dosyalar: src/app/page.tsx, src/app/demo/page.tsx, src/app/globals.css, src/components/result-summary.tsx, src/messages/tr.json, src/messages/en.json, docs/DESIGN.md, docs/TASKS.md, docs/STATUS.md.
+
+### D017 — A1 kalan arayüz yetkisi ve sınırlı istemci state'i — 28 Ekim 2026
+
+Kullanıcı a78abde commit'ini gönderdiğini, uzak CI başarısını ve önceki ana sayfa/demo görsel kabulünü bildirdi. Yerel HEAD/temiz çalışma alanı doğrulandı. Yeni yetki yalnız `/demo/select` ve `/demo/states` prototipleridir; A2 yetkisi yok.
+
+Seçimler sayıyla değil kimlik dizisiyle React state'te tutulur. Sayfa kapsamlı next-intl provider yalnız gerekli mesajları sağlar; dil değişimi aynı bileşen state'ini korur. Bu ihtiyaç iki küçük Client Component gerektirir; global store, workflow motoru, kalıcılık veya bağımlılık eklenmez. Devam, gerçek işlevini anlatan bir adla yalnız durum örneklerine gider; sabit 77,5 rapor seçim sonucu yapılmaz.
+
+Altı durum elle seçilir. Gerçek retry/başarı, sahte süre/yüzde ve reset sayacı yoktur. Eksik veri 0 puana çevrilmez; toplam ve profil tipi gösterilmez. Yeni ekranlarda kullanıcı görsel kabulü ve native select menüsünün gerçek klavye incelemesi beklenir; A1 tamamlandı sayılmaz.
+
+Etkilenen dosyalar: AGENTS.md, src/app/demo/select/page.tsx, src/app/demo/states/page.tsx, src/app/demo/page.tsx, src/features/analysis/{repo-picker,analysis-states,selection-demo,state-demo}, src/messages/*, src/app/globals.css ve ilgili proje belgeleri.

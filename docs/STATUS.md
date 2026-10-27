@@ -4,7 +4,124 @@ Son güncelleme: 28 Ekim 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A1 ilk bölüm arayüzü kullanıcı geri bildirimine göre düzeltildi; yerel ve temiz Chrome kontrolleri geçti. Ana sayfa ve demo için kullanıcı masaüstü ve mobil incelemesiyle görsel kabul verdi. A1’in bütünü tamamlanmadı.** Ana sayfa ve /demo TR/EN olarak uygulanmıştır. Repo seçimi, tüm durum ekranları ve sonraki aşamalar yapılmadı. Kullanıcı “commit attım, devam” demeden ilerlenmez.
+**A1 tasarım kabul kriterleri karşılandı.** Ana sayfa/demo için önceki kullanıcı kabulüne ek olarak repo seçimi, analiz durumları ve demo gezinmesi görsel kabulü alındı; native durum menüsünün klavye kontrolü kullanıcı bildirimiyle doğrulandı. A2 başlamadı; commit/push ve “commit attım, devam” mesajı bekleniyor.
+
+## A1 son kullanıcı kabulü ve kriter incelemesi — 28 Ekim 2026
+
+Kullanıcı **repo seçimi, analiz durumları ve demo gezinmesine görsel kabul verdi**. Native durum menüsünü klavyeyle kendisinin kontrol ettiğini ve seçenek değişiminin çalıştığını bildirdi. Bu iki kayıt **kullanıcı incelemesi/bildirimi** olarak tutulur; Codex'in bu tur yaptığı bir tarayıcı testi olarak sunulmaz. Önceki headless native menü doğrulama açığı bu bildirimle kapandı.
+
+Ana sözleşme §11 A1 maddeleri, TASKS ve DESIGN'daki önceki uygulama/doğrulama kayıtlarıyla karşılaştırıldı:
+
+| A1 kabul kriteri | Kanıt ve sonuç |
+| --- | --- |
+| Açık örnek verilerle ana sayfa, repo seçimi, mobil sonuç, kanıt/accordion, tüm durumlar, TR/EN | Önceki A1.1/A1.2 uygulama ve kontrol kayıtları; ana sayfa/demo için önceki kullanıcı kabulü, repo seçimi/durumlar/gezinme için son kullanıcı kabulü. Karşılandı. |
+| 360/390/768/1440 screenshot incelemesi; klavye, kontrast, uzun metin | Önceki temiz Chrome ekran/taşma/klavye/focus kayıtları ve kontrast hesapları; eksik native menü klavye doğrulaması son kullanıcı bildirimiyle kapatıldı. Karşılandı. |
+
+**Tamamlanmamış A1 tasarım kabul maddesi kalmadı.** A1 kabulü ürünün veya gerçek entegrasyonların tamamlanması anlamına gelmez. A2–A7 başlamadı. DESIGN ve aşağıdaki geçmiş kayıtlardaki “kabul bekliyor / native menü kontrolü açık” ifadeleri önceki durumu anlatır; en güncel kabul kaydı bu bölüm ve TASKS'tır. Kullanıcı talimatı gereği diğer belgeler bu tur değiştirilmedi.
+
+Açık kalan süreç/takip işleri:
+
+- Henüz commit edilmemiş A1.2/gezinme değişikliklerinin commit/push işlemi kullanıcıya ait; yapılmış sayılmadı.
+- Bu yeni değişikliklerin uzak CI sonucu henüz yok. a78abde için daha önce bildirilen başarı yeni değişikliklerin CI sonucu olarak kullanılmaz.
+- Kullanıcının “commit attım, devam” mesajı olmadan A2'ye geçilmez; TASKS geçiş kapısı açık bırakıldı.
+- ESLint 9 bakım desteği takip işi açık kalır; A1 tasarım kabul kriteri değildir.
+
+Bu tur yalnız STATUS.md ve TASKS.md güncellendi. Uygulama kodu/fixture/bağımlılık değiştirilmedi. Uygulama testleri veya tarayıcı kontrolleri yeniden çalıştırılmadı; yalnız belge tutarlılığı, git diff biçimi ve diğer dosyaların korunması kontrol edildi. Stage, commit veya push yapılmadı.
+
+A1 değişiklikleri kayıtlı kontroller ve kullanıcı kabulüyle commit'e hazır. Önceki öneri: `feat: add demo repository selection and analysis states`. Bu son belge turunun kapsamı yalnız docs/STATUS.md ve docs/TASKS.md'dir; önceki bekleyen uygulama dosyaları ayrıca korunur. A2 öncesinde dur.
+
+## Önceki kayıt — A1.2 gezinme revizyonu — 28 Ekim 2026
+
+
+Kullanıcı henüz commit atmadı; kapsam yalnız bağlantı hiyerarşisi ve demo sayfaları arası gezinmedir. Başlangıçta önceki A1.2 dosyaları çalışma alanındaydı; HEAD a78abde, index boş. Bu dosyalar korunarak çalışıldı.
+
+### Değişenler
+
+- Ortak server DemoNav, /demo, /demo/select ve /demo/states üstünde örnek rapor / proje seçimi / analiz durumları linklerini gösterir. current prop'u yalnız aktif sayfayı belirtir; yeni client state/route katmanı eklenmedi.
+- Aktif link aria-current=page, onay simgesi, alt çizgi ve çerçeve/zeminle belirgin. Mobil üç sütun metin sarmasıyla çalışır. Genel site header'ı ve ana site navigasyonu değişmedi.
+- Ana eylem mevcut dolu mavi kalır. Önemli ikincil linkler ortak açık mavi yüzey/çerçeve/ok stilini kullanır. /demo alt seçim bağlantısı ve durum sayfasındaki önemli geri/örnek rapor geçişleri bu stildedir. Yardımcı text-link/back-link alt çizgili ve sakindir.
+- Link ve dil gezinmesi focus'u mavi; mint gezinmede kullanılmaz. Disabled paylaşım/yeniden analiz, puanlar ve fixture'lar değişmedi. Sayfa değiştiren eylemler anchor/Next Link olarak kaldı.
+- Yalnız DemoNav için dört TR/EN mesajı eklendi; önceki metinler korundu. Yeni bağımlılık veya API eklenmedi.
+
+### Kontroller
+
+| Kontrol | Sonuç |
+| --- | --- |
+| npm run lint / typecheck / build | Son stil/token haliyle üçü de başarılı |
+| Üç sayfa TR/EN gezinmesi | Her dilden altı yön, toplam 12 gerçek link tıklaması; doğru URL ve tek aria-current=page geçti |
+| Geri dönüş | Rapor→ana sayfa, seçim→rapor, durumlar→seçim gerçek linklerle geçti |
+| Dil ve state | Üç sayfada TR↔EN aynı URL; özel repo seçimleri dil değişiminde korundu |
+| Semantik/klavye | Tüm gezinme anchor; Tab ile bir sonraki link, Enter ile geçiş; alt seçim eyleminde Enter geçti. Link focus 3px mavi. |
+| Hover | Gerçek pointer hareketinde ikincil zemin rgb(23,38,66)→rgb(32,55,99); focus görüntüsü ayrıca incelendi |
+| Responsive/görsel | Üç sayfa × TR/EN × 320/390/1440 genişliğinde taşma yok; tüm üst linkler viewport içinde. 390 ve 1440 ekranları alınıp temsilî TR/EN mobil/masaüstü görüntüleri araçla incelendi. |
+| Ayrım/koruma | Ana sayfada demo-nav yok, ana demo linki /demo; global header değişmedi. Pasif paylaşım butonları disabled. |
+| Runtime/ağ | Temiz Chrome oturumunda 0 console/runtime hatası, 0 harici HTTP isteği |
+| Kontrast | İkincil metin/zemin 13,79:1; hover 10,74:1; çerçeve/zemin 3,26:1 |
+| Dosya/index/diff | Tur başlangıcı hash'leriyle fixture/analiz/seçim davranışı ve bağımlılık koruması; TR/EN anahtar eşliği; git diff --check geçti, index boş |
+
+Kurulu Chrome ayrı /tmp/repovitrin-demo-nav-chrome profiliyle kullanıldı; kullanıcı profili değiştirilmedi. Kullanıcının localhost:3000 sunucusu yeniden kullanıldı ve kapatılmadı. Görseller/ölçümler /tmp/repovitrin-demo-nav-review altında; geçici kontrol script'i repoya eklenmedi. Yeni test altyapısı veya uzak CI çalışması yok.
+
+### İnceleme ve durma noktası
+
+**Kullanıcı görsel kabulü henüz verilmedi; bu revizyon veya A1 toplamı kabul edilmiş/tamamlanmış sayılmaz.** Önceki native durum select menüsünün gerçek kullanıcı klavye kontrolü hâlâ açık; bu tur kapsamı dışında olduğu için kapatılmadı.
+
+İncele: http://localhost:3000/demo, http://localhost:3000/demo/select, http://localhost:3000/demo/states. Sunucu kapalıysa `npm run dev`.
+
+Bu tur değişenler: yeni src/components/demo-nav.tsx; üç demo page.tsx, src/features/analysis/analysis-states.tsx (yalnız link sınıfları), globals.css, tr/en mesajları; docs/DESIGN.md, STATUS.md, TASKS.md. Önceki A1.2 değişiklikleri ayrıca duruyor. Teknik kontroller geçti; görsel kabul bekleniyor. Stage/commit/push yapılmadı. Kullanıcı incelemesi için dur; sonraki işe geçme.
+
+## A1.2 — repo seçimi ve durumlar — 28 Ekim 2026
+
+### Başlangıç ve yetki
+
+- HEAD `a78abde feat: add bilingual landing page and demo report`; git status/diff ve index başlangıçta temizdi. Kullanıcı değişikliği yoktu.
+- Kullanıcı a78abde commit/push, **GitHub Actions CI başarısı** ve ana sayfa/demo masaüstü/mobil görsel kabulünü bildirdi. CI bu oturumda API'den yeniden sorgulanmadı. Yeni A1.2 değişiklikleri için uzak CI sonucu yok.
+- Görev TASKS'taki A1 repo seçimi ve tüm durumlar maddeleriyle eşleştirildi. Yetki yalnız A1 arayüzüdür; A2'ye geçilmez.
+
+### Yapılanlar
+
+- `/demo/select`: mira-sample profili ve dört kurmaca repo. İlk iki sabitlenmiş repo seçili başlar. İsim, açıklama, ana dil, pinned ve gerçek checkbox gösterilir. Seçimler sample-101…104 kimlikleriyle state'tedir; sayı türetilir.
+- En fazla üç seçim; sınırda seçilmemişler disabled, seçililer kaldırılabilir. Sıfırda devam disabled ve gerekçe görünür. Dil değişiminde sıfır/özel iki kimlik/üç seçim korunur.
+- Devam yalnız “Analiz ekranı örneklerini gör” adıyla `/demo/states` açar; seçimlerden skor/rapor üretmez. `/demo` sabit 77,5 örneği olarak kalır; sonuna sade seçim bağlantısı eklendi. Ana sayfa kodu/bağlantısı korunuyor.
+- `/demo/states`: elle seçilen altı örnek; loading, kullanıcı bulunamadı, uygun public repo yok, ağ/servis hatası, rate-limit, eksik analiz. Polite/atomic status alanı ve doğru geri dönüş bağlantıları var. Native select etiketli ve focus görünür.
+- Loading statik kalır; otomatik başarı, sahte yüzde/zaman/reset geri sayımı yok. Yeniden deneme gerçekmiş gibi sunulmaz. Partial yalnız bir bilinen bulguyu korur; toplam skor/profil tipi göstermez. Sabit başarılı örneğe ayrı açıklamalı link verilir.
+- Fixture'lar bileşenlerden ayrı, iki küçük Client Component yalnız sayfa mesajlarını alır. Yeni bağımlılık/store/workflow motoru, API route, GitHub/MongoDB/AI veya PNG yok.
+- Mevcut CSS kuralları değiştirilmeden yeni ekranlara ait stiller eklendi. Önceki ana sayfa, ResultSummary, root layout, locale action, puan fixture'ı, paket/lock/config, kaynak sözleşme ve referans görseli korundu.
+
+### Doğrulama
+
+| Kontrol | Gerçek sonuç |
+| --- | --- |
+| npm run lint | Başarılı; --max-warnings=0 |
+| npm run typecheck | Başarılı |
+| npm run build | Başarılı; /, /demo, /demo/select ve /demo/states server-render |
+| Seçim davranışı, temiz Chrome | İlk iki ID, seçim/kaldırma, 0/3 sınırları, limitte kaldırabilme ve dördüncüye geçmeme doğrulandı. |
+| Dil değişimi, gerçek tıklamalar | Sıfır, ilk seçimden farklı iki ID ve üç seçim TR/EN değişiminde korundu; durum örneği de locale değişiminde aynı kaldı. |
+| Checkbox klavye/focus | Gerçek Space ile seç/kaldır, Tab/Shift+Tab ve 3px outline geçti. |
+| Altı durum | Select change olayıyla her örnek görüntülendi; loading beklemede kaldı, partial bulgu tuttu ve normal skor/tip üretmedi; devam yalnız durum sayfasını açtı. |
+| Tarayıcı console / network | Temiz Chrome kontrolünde 0 runtime/console hatası ve 0 harici HTTP isteği. Yerel Next navigasyonu/dil işlemleri analiz isteği sayılmadı. |
+| Taşma | Yeni iki sayfa × TR/EN × 320/360/390/768/1440: scrollWidth <= viewport. Uzun repo adlarıyla tekrar geçti. Altı durum ayrıca iki dilde 320px'de geçti. |
+| Görsel inceleme | Yeni ekranlarda 360/390/768/1440 TR/EN görüntüleri kaydedildi; mobil/masaüstü ve altı durumdan temsilî görüntüler araçla açılıp incelendi. Önceki ana sayfa/demo 360/768 regresyon görüntüleri ve ölçümleri alındı. |
+| Mesaj / koruma / diff | TR/EN anahtar eşliği, eski mesajların korunması, paket/config/fixture korunması ve git diff --check doğrulandı. Index boş. |
+
+Kurulu Chrome ayrı temiz `/tmp/repovitrin-a1-selection-chrome` profiliyle kullanıldı; kullanıcı Chrome profili okunmadı/değiştirilmedi. Kullanıcının localhost:3000 dev sunucusu yeniden kullanıldı ve kapatılmadı. Geçici CDP script'leri repoya eklenmedi; yeni test altyapısı kurulmadı. Vitest/RTL/Playwright/axe çalıştırılmış gibi raporlanmıyor. Bu kontroller kalıcı test suite'i değildir. Görüntü/ölçüm çıktıları `/tmp/repovitrin-a1-selection-review/` altında, commit kapsamı dışındadır.
+
+### Açık kalanlar ve sınırlar
+
+- Native select menüsünde klavyeyle seçenek değiştirme, macOS headless CDP denemelerinde doğrulanamadı. Etiket, odak ve 3px focus geçiyor; altı duruma geçiş DOM change olayıyla kontrol edildi. Bu sonuç native menünün gerçek kullanıcı klavye kontrolü yerine sayılmadı. Kullanıcı yeni sayfada Tab + yön tuşları/Enter ile kontrol etmeli.
+- Yeni repo seçimi ve durum ekranları **kullanıcı görsel/işlevsel kabulünü bekliyor**. Önceki ana sayfa/demo kabulü geçerli; yeni ekranları kapsadığı varsayılmıyor. Bu nedenle A1 toplam kabulü henüz kapanmadı.
+- Yeni A1.2 uzak CI sonucu yok. ESLint 9 bakım desteği sınırlaması D011'deki haliyle sürüyor. Gerçek servis davranışı, limit/reset/yeniden deneme ve normalizasyon A2+ kapsamıdır; bu tur doğrulanmadı.
+
+### İnceleme ve commit
+
+- http://localhost:3000/demo/select — 0/3 sınırı, kaldırma, farklı ID seçimleri ve TR/EN korunumu.
+- http://localhost:3000/demo/states — altı durumu elle değiştir; özellikle native menünün klavye kullanımını ve partial puansızlığını incele.
+- http://localhost:3000/demo — sabit rapor ve yeni seçim bağlantısı. Sunucu kapalıysa `npm run dev`.
+
+Kod ve belirtilen yerel kontroller commit hazırlığına uygun; native menü kontrolü ve yeni kullanıcı kabulü açık. Önerilen commit: `feat: add demo repository selection and analysis states`.
+
+Commit kapsamı: AGENTS.md, README.md; docs/ARCHITECTURE.md, DESIGN.md, DECISIONS.md, TASKS.md, STATUS.md; src/app/demo/page.tsx, src/app/demo/select/page.tsx, src/app/demo/states/page.tsx, src/app/globals.css; src/features/analysis/repo-picker.tsx, analysis-states.tsx, selection-demo.ts, state-demo.ts; src/messages/tr.json, en.json.
+
+Stage/commit/push yapılmadı. Kullanıcı incelemesi için dur; “commit attım, devam” demeden başka işe veya A2'ye geçme.
 
 ## Kullanıcı görsel kabulü — 28 Ekim 2026
 

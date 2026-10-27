@@ -112,3 +112,13 @@ Stabil sürüm etiketleri ve peer/engine gereksinimleri npm kayıt defterinden d
 - Dil cookie'si nedeniyle iki sayfa request sırasında server-render edilir. Gerçek rapor/paylaşım dili seçimi bu aşamanın kapsamında değildir.
 
 Resmi kurulum kaynağı: [next-intl App Router](https://next-intl.dev/docs/getting-started/app-router) ve [istek yapılandırması](https://next-intl.dev/docs/usage/configuration). A0 ESLint kararı D011 ile korunur.
+
+## A1 repo seçimi ve durum örnekleri
+
+- `/demo/select` ve `/demo/states` iki yeni server page'dir. Her biri yalnız kendi Select/States mesajlarını NextIntlClientProvider ile ilgili Client Component'e verir. Kabul edilmiş root layout, dil Server Action'ı ve ana sayfa değiştirilmedi.
+- RepoPicker, repos ve initialSelectedIds props'larını alır. `useState` içinde repo kimlik dizisi tutulur; sayı bu diziden türetilir. Üç sınırı hem checkbox disabled durumunda hem güncelleme fonksiyonunda uygulanır. Seçili kutular sınırda da etkin kalır. Dil Server Action'ının RSC güncellemesinde bileşen kimliği korunduğu için seçim sıfırlanmaz; browser kontrolüyle doğrulandı. Sayfa yenileme/cihazlar arası kalıcılık vaat edilmez; store/localStorage eklenmedi.
+- AnalysisStates yalnız StateExample[] props'larını ve elle seçilen örneği tutar. Altı durum verisi state-demo.ts içinde, repo adayları selection-demo.ts içinde; görünür metinler mevcut TR/EN mesaj dosyalarında. Genel workflow motoru veya adapter tasarlanmadı.
+- Devam eylemi yalnız `/demo/states` navigasyonudur. Seçili kimlikler bir backend'e gönderilmez, puanlama çalışmaz. Sabit `/demo` raporu bağımsız kalır. Kısmi örnekte bir bilinen bulgu ve puan üretmeme açıklaması gösterilir.
+- Yeni paket, API route, GitHub/MongoDB/AI isteği, zamanlayıcı, reset sayacı veya PNG eklenmedi. Yerel Next navigasyonu ve mevcut dil tercihi dışında analiz isteği yoktur.
+
+Client çeviri referansı: [next-intl Server/Client Components](https://next-intl.dev/docs/environments/server-client-components).

@@ -61,7 +61,8 @@
     "countRule": "Repo sayısı bonus sağlamaz.",
     "demoDetails": "Repo meta verisi ve README’de demo sinyali aranır. Dış bağlantıların çalışması kontrol edilmez.",
     "installDetails": "Yalnız “Kurulum” başlığı yeterli değildir; bölümde en az bir komut veya kod bloğu gerekir.",
-    "typeReasonLabel": "Neden Gizli Cevher?"
+    "typeReasonLabel": "Neden Gizli Cevher?",
+    "selectExample": "Repo seçimi örneğini incele"
   },
   "Checks": {
     "bio": {
@@ -145,5 +146,88 @@
     "usage": "README.md → çalıştırma / kullanım bölümü",
     "technology": "README.md → teknolojiler bölümü",
     "features": "README.md → özellikler bölümü"
+  },
+  "Select": {
+    "back": "Sabit örnek rapora dön",
+    "badge": "Örnek repo seçimi",
+    "title": "İncelenmesini istediğin 1–3 projeyi seç.",
+    "intro": "Bu kurmaca liste yalnız seçim örneğidir. Seçimlerin yeni bir analiz veya puan oluşturmaz.",
+    "projects": "Örnek projeler",
+    "legend": "İncelenecek örnek projeler",
+    "count": "{count}/3 proje seçili",
+    "limit": "En fazla 3 proje seçebilirsin.",
+    "limitReached": "3 proje seçtin. Başka bir proje için önce seçtiklerinden birini kaldır.",
+    "selected": "Seçili",
+    "pinned": "Sabitlenmiş",
+    "empty": "Devam etmek için en az bir proje seç.",
+    "nextHint": "Bir sonraki sayfada analiz durumlarının örneklerini inceleyeceksin. Gerçek analiz başlatılmaz.",
+    "continue": "Analiz ekranı örneklerini gör",
+    "descriptions": {
+      "lantern": "Küçük işletmeler için sade, erişilebilir bir ürün vitrini.",
+      "orbit": "Günlük işleri küçük adımlara ayıran kişisel görev planlayıcı.",
+      "weather": "Hava durumunu tek bakışta gösteren, mobil öncelikli bir arayüz.",
+      "journal": "Okuma notlarını ve ilerlemeyi takip etmek için hazırlanmış, uzun açıklamaları ve farklı ekran boyutlarını da düşünen erişilebilir bir günlük arayüzü."
+    }
+  },
+  "States": {
+    "back": "Repo seçimi örneğine dön",
+    "badge": "Örnek analiz durumları",
+    "title": "Analiz sırasında neler görebilirsin?",
+    "intro": "Bir durumu seçip görünümünü incele. Bu sayfa gerçek istek göndermez.",
+    "label": "İncelenecek örnek durum",
+    "pickerHint": "Bu seçici yalnız demo inceleme aracıdır; analiz başlatmaz.",
+    "knownTitle": "Alınabilen veriden bilinen bulgu",
+    "knownDescription": "Projenin kısa açıklaması mevcut.",
+    "partialScore": "Eksik veri sıfır puan sayılmaz. Toplam puan ve profil tipi bu örnekte gösterilmez.",
+    "reportHint": "Tamamlanmış bir görünümü de inceleyebilirsin. Aşağıdaki rapor, seçimlerinden bağımsız sabit bir örnektir.",
+    "reportLink": "Sabit örnek raporu aç",
+    "loading": {
+      "name": "Profil ve repolar yükleniyor",
+      "title": "Profil ve projeler yükleniyor",
+      "description": "Profil bilgileri ve seçilen projeler hazırlanırken bu görünüm gösterilir.",
+      "guidance": "Bu örnek bekleme durumunda kalır; kendiliğinden bir rapora geçmez.",
+      "action": "Repo seçimi örneğine dön"
+    },
+    "notFound": {
+      "name": "Kullanıcı bulunamadı",
+      "title": "Bu kullanıcı bulunamadı",
+      "description": "Kullanıcı adı hatalı olabilir veya profil artık mevcut olmayabilir.",
+      "guidance": "Gerçek analiz açıldığında kullanıcı adını kontrol edip yeniden deneyebilirsin.",
+      "action": "Kullanıcı adı alanına dön"
+    },
+    "empty": {
+      "name": "Uygun public repo yok",
+      "title": "İncelenebilecek public proje yok",
+      "description": "Bu kapsamda public, sahibine ait ve arşivlenmemiş bir repo bulunamadığında puan verilmez.",
+      "guidance": "Bu bir yeterlilik yargısı değildir. Gerçek analizde başka bir profil deneyebilirsin.",
+      "action": "Kullanıcı adı alanına dön"
+    },
+    "network": {
+      "name": "Ağ veya servis hatası",
+      "title": "Verilere şu an ulaşılamıyor",
+      "description": "Bağlantı veya hizmet sorunu nedeniyle analiz tamamlanamadığında bu görünüm gösterilir.",
+      "guidance": "Gerçek analizde yeniden deneme sunulacak. Bu örnek yeniden istek göndermez.",
+      "action": "Seçim örneğine geri dön"
+    },
+    "rateLimit": {
+      "name": "İstek sınırına ulaşıldı",
+      "title": "Şimdilik istek sınırına ulaşıldı",
+      "description": "Kısa sürede çok fazla istek olduğunda analize ara vermek gerekir.",
+      "guidance": "Bu örnekte gerçek sıfırlanma bilgisi yok; bekleme süresi veya geri sayım gösterilmez.",
+      "action": "Seçim örneğine geri dön"
+    },
+    "partial": {
+      "name": "Eksik analiz",
+      "title": "Bazı veriler alınamadı",
+      "description": "İncelenebilen alanların bulguları korunur; alınamayan veriler eksiklik olarak puanlanmaz.",
+      "guidance": "Gerçek analizde eksik veriler için yeniden deneme sunulacak. Bu örnek istek göndermez.",
+      "action": "Seçim örneğine geri dön"
+    }
+  },
+  "DemoNav": {
+    "label": "Demoyu keşfet",
+    "report": "Örnek rapor",
+    "select": "Proje seçimi",
+    "states": "Analiz durumları"
   }
 }
