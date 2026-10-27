@@ -1,0 +1,149 @@
+{
+  "Common": {
+    "skip": "Skip to content",
+    "language": "Interface language",
+    "home": "Home",
+    "author": "Being built by {name}.",
+    "demo": "Sample analysis",
+    "demoNote": "A sample result for a fictional profile; no real analysis was performed.",
+    "back": "Back to home",
+    "points": "{earned} / {max}",
+    "pass": "Found",
+    "fail": "Not found",
+    "source": "Source / field inspected",
+    "evidence": "Inspect sample evidence",
+    "scope": "Analysis scope",
+    "rule": "Rules version {version}",
+    "notQuality": "This score measures portfolio presentation, not code quality, developer skill or hiring prospects."
+  },
+  "Home": {
+    "eyebrow": "A FRESH LOOK AT YOUR GITHUB PORTFOLIO",
+    "title": "Your projects are good. Does your <accent>profile</accent> show it?",
+    "intro": "See the gaps in your presentation. Find a clear first step, backed by evidence.",
+    "label": "GitHub username or profile URL",
+    "placeholder": "username or github.com/username",
+    "inputHint": "Analysis is not available yet. The action below opens a fixed sample profile.",
+    "demoAction": "Explore a sample analysis",
+    "howTitle": "A better first impression, one step at a time.",
+    "discoverTitle": "Discover",
+    "discover": "See what your profile shows and what it leaves out.",
+    "improveTitle": "Improve",
+    "improve": "Start with one specific task, backed by evidence.",
+    "shareTitle": "Share",
+    "share": "Share verified progress in a future release.",
+    "previewLink": "Open the sample report"
+  },
+  "Demo": {
+    "title": "Hidden Gem",
+    "summary": "The projects have a clear purpose. Demo and setup details need attention.",
+    "scoreLabel": "Portfolio presentation score",
+    "scope": "{count} sample repositories reviewed.",
+    "typeReason": "Why this type? Both repositories pass the description and purpose checks. One lacks a demo, another lacks installation steps, and the profile lacks a website. This label does not endorse technical quality.",
+    "whyTitle": "Why this result?",
+    "demoMissing": "No live demo link was found in the reviewed fields.",
+    "installMissing": "The setup steps are missing the commands to run.",
+    "firstLabel": "FIRST STEP",
+    "firstTitle": "Add a live demo link to {repo}.",
+    "otherTitle": "Your next two steps",
+    "installTask": "Add setup commands to {repo}.",
+    "usageTask": "Explain how to run {repo}.",
+    "sharingTitle": "Sharing and reanalysis",
+    "sharingText": "These features will be available in a later stage.",
+    "share": "Sharing coming soon",
+    "retry": "Reanalysis coming soon",
+    "categoriesTitle": "Behind the score",
+    "categoriesIntro": "Inspect the checks and score contributions.",
+    "average": "Repository checks are averaged equally across the two selected repositories.",
+    "repoContribution": "Raw contribution for this repository; the category score is the repository average.",
+    "profile": "Profile",
+    "projects": "Projects",
+    "readme": "README",
+    "countRule": "More repositories do not earn a bonus.",
+    "demoDetails": "Repository metadata and README are inspected for a demo signal. External links are not checked for availability.",
+    "installDetails": "An “Installation” heading alone is not enough; the section needs at least one command or code block.",
+    "typeReasonLabel": "Why Hidden Gem?"
+  },
+  "Checks": {
+    "bio": {
+      "label": "Bio",
+      "pass": "A non-empty bio is present.",
+      "fail": "The bio field is empty."
+    },
+    "website": {
+      "label": "Website / portfolio",
+      "pass": "A valid http(s) website field is present; availability is not verified.",
+      "fail": "The website field is empty; no valid http(s) link was found."
+    },
+    "profileReadme": {
+      "label": "Profile README",
+      "pass": "A non-empty profile README is present.",
+      "fail": "No profile README was found."
+    },
+    "description": {
+      "label": "Repository description",
+      "pass": "A non-empty repository description is present.",
+      "fail": "The repository description is empty."
+    },
+    "topics": {
+      "label": "At least one topic",
+      "pass": "Frontend and web topics are present in the sample metadata.",
+      "fail": "No topic was found."
+    },
+    "demo": {
+      "label": "Labelled demo link",
+      "pass": "The README includes a labelled live demo link. Its availability was not verified.",
+      "fail": "No labelled demo link appears in the README sample; the homepage field is also empty."
+    },
+    "image": {
+      "label": "Screenshot / image",
+      "pass": "The sample README AST contains an image reference; loading was not verified.",
+      "fail": "No image reference was found in the sample README AST."
+    },
+    "readme": {
+      "label": "Non-empty README",
+      "pass": "The README exists and is not empty.",
+      "fail": "No non-empty README was found."
+    },
+    "purpose": {
+      "label": "Project purpose",
+      "pass": "A purpose heading is followed by an explanatory paragraph.",
+      "fail": "No purpose section with an explanatory paragraph was found."
+    },
+    "install": {
+      "label": "Installation steps",
+      "pass": "The installation section contains an npm install command block.",
+      "fail": "An installation heading exists, but the section has no command or code block."
+    },
+    "usage": {
+      "label": "Run / usage",
+      "pass": "The usage section contains an npm run dev command and an explanation.",
+      "fail": "No run or usage section was found."
+    },
+    "technology": {
+      "label": "Technologies",
+      "pass": "A list appears under the technologies heading.",
+      "fail": "No technologies section with content was found."
+    },
+    "features": {
+      "label": "Features",
+      "pass": "A list appears under the features heading.",
+      "fail": "No features section with content was found."
+    }
+  },
+  "Sources": {
+    "profile": "Profile fields",
+    "bio": "Profile → bio",
+    "website": "Profile → website",
+    "profileReadme": "Profile README.md",
+    "description": "Repository → description",
+    "topics": "Repository → topics",
+    "demo": "README.md + repository → homepage",
+    "image": "README.md → image references",
+    "readme": "README.md",
+    "purpose": "README.md → purpose section",
+    "install": "README.md → installation section",
+    "usage": "README.md → run / usage section",
+    "technology": "README.md → technologies section",
+    "features": "README.md → features section"
+  }
+}

@@ -100,3 +100,15 @@ MongoDB, Zod, GitHub adapter, next-intl, Markdown parser, UI bileşen kütüphan
 - [GitHub setup-node](https://github.com/actions/setup-node) ve [checkout](https://github.com/actions/checkout)
 
 Stabil sürüm etiketleri ve peer/engine gereksinimleri npm kayıt defterinden de kontrol edildi. Kurulan tam sürümler DECISIONS.md'de; gerçek kontrol sonuçları STATUS.md'de tutulur.
+
+## A1 ilk bölüm — ana sayfa ve demo
+
+- Yeni doğrudan bağımlılıklar: next-intl 4.14.9 (TR/EN mesajları), lucide-react 1.62.0 (kullanılan ikonlar). Stabil sürüm/peer aralıkları mevcut Next 16.4.3 ve React 19.3.1 ile doğrulandı; başka doğrudan bağımlılık eklenmedi.
+- `src/i18n/request.ts`, `locale` cookie değerini tr/en olarak sınırlar; varsayılan Türkçedir. `src/i18n/actions.ts` Server Action üzerinden tercihi yazar. Revalidation mevcut URL'yi değiştirmez. Cookie HttpOnly, SameSite=Lax, bir yıl; production'da Secure.
+- URL'ler `/` ve `/demo` olarak kalır; locale segmenti/middleware gerekmez. Bu aşamada tüm çeviriler Server Component içinde kullanılır; client provider veya uygulama state katmanı eklenmedi. Root HTML lang ve metadata da seçili dile uyar.
+- Görünen metinler `src/messages/tr.json` ve `en.json` içinde; marka/yazar mevcut config'tedir. Kullanıcı adı alanı hiçbir analiz isteğine veya fixture değişikliğine bağlanmaz.
+- `src/features/analysis/demo.ts`, sabit check değerleri ve toplamları içerir. Sunum bileşeni saf puanlama motoru veya GitHub normalizasyonu yapmaz. Dış URL, gerçek token, snapshot veya ağ adapter'ı içermez.
+- Native details/summary, kategori ve kanıt açılımını yönetir; ek client state veya accordion bağımlılığı yok. Başlangıç durumları kapalıdır. Gerçek veri geliyormuş gibi loading/success üretilmez.
+- Dil cookie'si nedeniyle iki sayfa request sırasında server-render edilir. Gerçek rapor/paylaşım dili seçimi bu aşamanın kapsamında değildir.
+
+Resmi kurulum kaynağı: [next-intl App Router](https://next-intl.dev/docs/getting-started/app-router) ve [istek yapılandırması](https://next-intl.dev/docs/usage/configuration). A0 ESLint kararı D011 ile korunur.

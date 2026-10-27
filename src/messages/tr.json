@@ -1,0 +1,149 @@
+{
+  "Common": {
+    "skip": "İçeriğe geç",
+    "language": "Arayüz dili",
+    "home": "Ana sayfa",
+    "author": "{name} tarafından geliştiriliyor.",
+    "demo": "Örnek analiz",
+    "demoNote": "Kurmaca bir profilin örnek sonucu; gerçek analiz yapılmadı.",
+    "back": "Ana sayfaya dön",
+    "points": "{earned} / {max}",
+    "pass": "Bulundu",
+    "fail": "Bulunamadı",
+    "source": "İncelenen kaynak / alan",
+    "evidence": "Örnek kanıtı incele",
+    "scope": "Analiz kapsamı",
+    "rule": "Kural sürümü {version}",
+    "notQuality": "Bu puan yalnız portfolyo sunumunu ölçer; kod kalitesini, geliştirici seviyesini veya işe alınma ihtimalini değil."
+  },
+  "Home": {
+    "eyebrow": "GITHUB PORTFOLYONA BİR DE BURADAN BAK",
+    "title": "Projelerin iyi. Peki <accent>profilin</accent> bunu gösteriyor mu?",
+    "intro": "Sunumdaki eksikleri gör. Nereden başlayacağını kanıtlarıyla öğren.",
+    "label": "GitHub kullanıcı adı veya profil URL’si",
+    "placeholder": "kullanici veya github.com/kullanici",
+    "inputHint": "Analiz henüz açık değil. Aşağıdaki eylem sabit örnek profili açar.",
+    "demoAction": "Örnek analizi keşfet",
+    "howTitle": "İyi bir ilk izlenim, küçük adımlarla.",
+    "discoverTitle": "Keşfet",
+    "discover": "Profilindeki güçlü ve eksik noktaları gör.",
+    "improveTitle": "Düzelt",
+    "improve": "Kanıtı olan, somut bir görevle başla.",
+    "shareTitle": "Paylaş",
+    "share": "Doğrulanan gelişimini ileride paylaş.",
+    "previewLink": "Örnek raporu aç"
+  },
+  "Demo": {
+    "title": "Gizli Cevher",
+    "summary": "Projelerin amacı net. Demo ve kurulum adımları eksik.",
+    "scoreLabel": "Vitrin puanı",
+    "scope": "{count} örnek repo değerlendirildi.",
+    "typeReason": "Neden bu tip? İki repoda da açıklama ve amaç kontrolleri geçti. Bir repoda demo, diğerinde kurulum ve profilde website kontrolü eksik. Bu etiket teknik kalite onayı değildir.",
+    "whyTitle": "Neden bu sonuç?",
+    "demoMissing": "İncelenen alanlarda canlı demo bağlantısı bulunamadı.",
+    "installMissing": "Kurulum adımlarında çalıştırılacak komutlar eksik.",
+    "firstLabel": "İLK ADIM",
+    "firstTitle": "{repo} projesine canlı demo bağlantısı ekle.",
+    "otherTitle": "Sonraki iki adım",
+    "installTask": "{repo} için kurulum komutlarını ekle.",
+    "usageTask": "{repo} projesinin nasıl çalıştırılacağını açıkla.",
+    "sharingTitle": "Paylaşım ve yeniden analiz",
+    "sharingText": "Bu özellikler sonraki aşamada açılacak.",
+    "share": "Paylaşım yakında",
+    "retry": "Yeniden analiz yakında",
+    "categoriesTitle": "Puanın ayrıntıları",
+    "categoriesIntro": "Kontrolleri ve puan katkılarını incele.",
+    "average": "Repo kontrolleri iki seçili repo üzerinden eşit ağırlıkla ortalanır.",
+    "repoContribution": "Bu reponun ham katkısı; kategori puanı repo ortalamasıdır.",
+    "profile": "Profil",
+    "projects": "Projeler",
+    "readme": "README",
+    "countRule": "Repo sayısı bonus sağlamaz.",
+    "demoDetails": "Repo meta verisi ve README’de demo sinyali aranır. Dış bağlantıların çalışması kontrol edilmez.",
+    "installDetails": "Yalnız “Kurulum” başlığı yeterli değildir; bölümde en az bir komut veya kod bloğu gerekir.",
+    "typeReasonLabel": "Neden Gizli Cevher?"
+  },
+  "Checks": {
+    "bio": {
+      "label": "Bio",
+      "pass": "Boş olmayan bio alanı mevcut.",
+      "fail": "Bio alanı boş."
+    },
+    "website": {
+      "label": "Website / portfolyo",
+      "pass": "Geçerli http(s) website alanı mevcut; erişilebilirliği doğrulanmaz.",
+      "fail": "Website alanı boş; geçerli http(s) bağlantı bulunamadı."
+    },
+    "profileReadme": {
+      "label": "Profil README’si",
+      "pass": "Boş olmayan profil README’si mevcut.",
+      "fail": "Profil README’si bulunamadı."
+    },
+    "description": {
+      "label": "Repo açıklaması",
+      "pass": "Boş olmayan repo açıklaması mevcut.",
+      "fail": "Repo açıklaması boş."
+    },
+    "topics": {
+      "label": "En az bir topic",
+      "pass": "Frontend ve web topic’leri örnek meta veride mevcut.",
+      "fail": "Topic bulunamadı."
+    },
+    "demo": {
+      "label": "İşaretlenmiş demo bağlantısı",
+      "pass": "README’de işaretlenmiş bir canlı demo bağlantısı var. Bağlantının çalışması doğrulanmadı.",
+      "fail": "README’de işaretlenmiş demo bağlantısı yok; homepage alanı da boş."
+    },
+    "image": {
+      "label": "Ekran görüntüsü / görsel",
+      "pass": "README AST örneğinde bir görsel referansı mevcut; yüklenmesi doğrulanmadı.",
+      "fail": "README AST örneğinde görsel referansı bulunamadı."
+    },
+    "readme": {
+      "label": "Boş olmayan README",
+      "pass": "README dosyası mevcut ve boş değil.",
+      "fail": "Boş olmayan README bulunamadı."
+    },
+    "purpose": {
+      "label": "Proje amacı",
+      "pass": "Amaç başlığı altında projeyi açıklayan bir paragraf mevcut.",
+      "fail": "Amaç bölümü ve açıklayıcı paragraf birlikte bulunamadı."
+    },
+    "install": {
+      "label": "Kurulum adımları",
+      "pass": "Kurulum bölümünde npm install komut bloğu mevcut.",
+      "fail": "Kurulum başlığı var, ancak bölümde komut veya kod bloğu yok."
+    },
+    "usage": {
+      "label": "Çalıştırma / kullanım",
+      "pass": "Kullanım bölümünde npm run dev komutu ve açıklama mevcut.",
+      "fail": "Çalıştırma veya kullanım bölümü bulunamadı."
+    },
+    "technology": {
+      "label": "Teknolojiler",
+      "pass": "Teknolojiler başlığı altında bir liste mevcut.",
+      "fail": "Teknoloji bölümü ve içeriği bulunamadı."
+    },
+    "features": {
+      "label": "Özellikler",
+      "pass": "Özellikler başlığı altında bir liste mevcut.",
+      "fail": "Özellikler bölümü ve içeriği bulunamadı."
+    }
+  },
+  "Sources": {
+    "profile": "Profil alanları",
+    "bio": "Profil → bio",
+    "website": "Profil → website",
+    "profileReadme": "Profil README.md",
+    "description": "Repo → description",
+    "topics": "Repo → topics",
+    "demo": "README.md + repo → homepage",
+    "image": "README.md → görsel referansları",
+    "readme": "README.md",
+    "purpose": "README.md → amaç bölümü",
+    "install": "README.md → kurulum bölümü",
+    "usage": "README.md → çalıştırma / kullanım bölümü",
+    "technology": "README.md → teknolojiler bölümü",
+    "features": "README.md → özellikler bölümü"
+  }
+}

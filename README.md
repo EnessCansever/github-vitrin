@@ -1,6 +1,6 @@
 # RepoVitrin
 
-Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. Şu anda yalnız Next.js altyapısı ve geliştirme durumu sayfası var. Analiz, puanlama, TR/EN ürün arayüzü, veri saklama ve paylaşım henüz uygulanmadı. A1 başlamadı.
+Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. A1’in ilk bölümü olarak TR/EN ana sayfa ve `/demo` üzerinde kurmaca verili sonuç ekranı hazırlandı. Gerçek GitHub analizi, puanlama motoru, repo seçimi, veri saklama ve paylaşım henüz uygulanmadı. A1’in bütünü tamamlanmadı.
 
 ## Gereksinimler ve kurulum
 
@@ -11,9 +11,13 @@ npm ci
 npm run dev
 ```
 
-Başlangıç sayfası: http://localhost:3000
+Ana sayfa: http://localhost:3000
 
-A0 için `.env.local` oluşturmak veya bir secret sağlamak gerekmez. `.env.example` gelecekte sunucuda kullanılacak `GITHUB_TOKEN`, `MONGODB_URI` ve `SIGNING_SECRET` isimlerini boş değerlerle belgeler. Bu aşamada okunmazlar. Gerçek değerler Git'e eklenmemeli; `NEXT_PUBLIC_` altında kullanılmamalıdır.
+Örnek sonuç: http://localhost:3000/demo
+
+TR/EN seçimi aynı sayfada kalır ve dil tercihi cookie’de saklanır. Kullanıcı adı alanı analiz başlatmaz; demo eylemi her zaman aynı kurmaca profile gider.
+
+Bu ekranlar için `.env.local` oluşturmak veya bir secret sağlamak gerekmez. `.env.example` gelecekte sunucuda kullanılacak `GITHUB_TOKEN`, `MONGODB_URI` ve `SIGNING_SECRET` isimlerini boş değerlerle belgeler. Bu aşamada okunmazlar. Gerçek değerler Git'e eklenmemeli; `NEXT_PUBLIC_` altında kullanılmamalıdır.
 
 ## Kontroller ve production çalıştırma
 
@@ -30,7 +34,10 @@ GitHub Actions, push ve pull request üzerinde `npm ci`, lint, typecheck ve buil
 
 ## Yapı
 
-- `src/app`: App Router başlangıç sayfası, layout ve merkezi CSS tasarım tokenları.
+- `src/app`: App Router ana sayfa, demo, ortak layout ve merkezi CSS tasarım tokenları.
+- `src/components`: ortak marka, dil seçimi ve geliştirici imzası.
+- `src/i18n`, `src/messages`: next-intl istek/dil ayarları ve TR/EN metinleri.
+- `src/features/analysis/demo.ts`: sabit kurmaca örnek; puanlama motoru değildir.
 - `src/config/site.ts`: çalışma markası ve geliştirici bağlantı bilgileri. Bilinmeyen Instagram adresi boştur.
 - `docs`: ürün, mimari, puanlama, tasarım ve aşama kayıtları.
 

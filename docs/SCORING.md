@@ -60,3 +60,17 @@ Puanlama fonksiyonu normalize edilmiş girdi ve kural sürümü alır; ağ, veri
 - Öncelikli üç görevin sıralama/eşitlik kuralları henüz ayrıntılandırılmadı.
 
 Bu maddeler yeni ürün kararı veya uygulanmış algoritma değildir.
+
+## A1 örnek fixture — motor değildir
+
+`src/features/analysis/demo.ts`, kurmaca mira-sample profili ve paper-lantern / quiet-orbit repoları için statik UI verisidir. Gerçek README, AST, GitHub kaynağı veya zaman damgası üretildiği iddia edilmez; tüm kanıtlar örnek olarak etiketlenir. 1.0.0 kural sürümüne göre hazırlanmış 23 check vardır; ağırlıklar değişmedi.
+
+| Kategori | paper-lantern | quiet-orbit | Gösterilen kategori |
+| --- | --- | --- | --- |
+| Profil | Ortak profil: bio 5 + website 0 + profil README 10 | Aynı profil | 15/20 |
+| Projeler | Açıklama 10 + topic 5 + demo 0 + görsel 0 = 15 | 10 + 5 + 10 + 5 = 30 | (15 + 30) / 2 = 22,5/30 |
+| README | 10 + 10 + 10 + 10 + 5 + 5 = 50 | README 10 + amaç 10 + kurulum 0 + kullanım 0 + teknoloji 5 + özellik 5 = 30 | (50 + 30) / 2 = 40/50 |
+
+Toplam: **15 + 22,5 + 40 = 77,5/100**. EN arayüzünde yalnız sayı biçimi 77.5 olarak değişir. Gizli Cevher: iki repo açıklaması ve amacı pass, en az bir demo/kurulum/profil kontrolü fail; hiçbir-demo-yok koşulu oluşmaz ve toplam 80 altında kalır. Etiketin nedenleri ekranda açıklanır. Seçilen ilk görev ve diğer iki görev fixture'a ait editoryal sıradır; gerçek öneri önceliklendirme motoru yazılmadı.
+
+Aritmetik ve tip koşulları tek seferlik kontrolle doğrulandı; kontrol script'i veya test altyapısı repoya eklenmedi. A3 saf motor/fixture testleri hâlâ açık.

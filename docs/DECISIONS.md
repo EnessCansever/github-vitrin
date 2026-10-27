@@ -126,3 +126,35 @@ Force, legacy-peer-deps, override, canary veya kural kapatma kullanılmadı. Son
 - [Next ESLint yapılandırması](https://nextjs.org/docs/app/api-reference/config/eslint)
 - [Next 16.4.3 rule-context kaynak kodu](https://github.com/vercel/next.js/blob/v16.4.3/packages/eslint-config-next/src/rule-context.ts)
 - npm registry metadata endpointleri: `https://registry.npmjs.org/<paket-adı>`; yerel kurulu package.json ile karşılaştırıldı. Özellikle eslint-config-next, eslint, eslint-plugin-import, eslint-plugin-react ve eslint-plugin-jsx-a11y latest/peer/engine alanları kontrol edildi. Web sayfası aracı registry URL'lerini açamadı; veriler Node fetch ile doğrudan resmi registry'den alındı.
+
+### D012 — A1 ilk bölüm yetkisi ve A0 CI — 28 Ekim 2026
+
+Kullanıcı A0 fcd3718 commit'ini gönderdiğini ve GitHub Actions CI'ın başarılı olduğunu bildirdi. Yerel HEAD fcd3718 ve temiz çalışma alanı doğrulandı; uzak CI bu oturumda API'den yeniden sorgulanmadı. Yeni yetki yalnız ana sayfa + örnek verili mobil öncelikli sonuç ve TR/EN'dir. Repo seçimi, tüm durumlar ve A1'in bütünü tamamlanmış sayılmaz.
+
+Etkilenen dosyalar: AGENTS.md, STATUS.md, TASKS.md, README.md.
+
+### D013 — Aynı URL'de TR/EN ve küçük bileşen yapısı
+
+next-intl 4.14.9, request config + locale cookie + Server Action ile kullanıldı. Dil değişimi mevcut sayfada kalır; tüm metinler iki mesaj dosyasından gelir. Bu aşama server-render edilen iki sayfa olduğu için client state/provider veya locale route segmenti eklenmedi. Lucide 1.62.0 yalnız kullanılan ikonlar için eklendi. Native details/summary, ek accordion bağımlılığı gerektirmeden kanıt ve kategori açılımlarını sağlar.
+
+Etkilenen dosyalar: next.config.ts, package.json, package-lock.json, src/i18n/*, src/messages/*, src/components/*, src/app/layout.tsx, ARCHITECTURE.md.
+
+### D014 — Dürüst demo ve 77,5 puan
+
+Sabit kurmaca profil mira-sample ve iki kurmaca repo seçildi. Gerçek kaynak URL'si, fetch veya analiz motoru yoktur. Demo giriş alanından etkilenmez. Fixture 15/20 profil + 22,5/30 projeler + 40/50 README = 77,5; Gizli Cevher koşulları sağlanır. Her check ve bulgu örnek gerekçe/alan gösterir; gerçek GitHub kanıtı olduğu iddia edilmez. Paylaşım ve yeniden analiz açıkça pasiftir. Görev sırası yalnız bu örneğin sabit içeriğidir.
+
+Etkilenen dosyalar: src/features/analysis/demo.ts, src/app/page.tsx, src/app/demo/page.tsx, src/messages/*, SCORING.md.
+
+### D015 — Referans kimliği ve erişilebilir mavi eylem
+
+Marka #4169FF korunur. Beyaz metinle 4,5:1 gereksinimini karşılamak için dolu eylemde #3C63F0 (4,96:1) kullanıldı. Bu bir tema değişikliği değildir; referans kimliği içinde okunabilir eylem rengi ayrımıdır. Mint #72E5BF yalnız ilk görev ve focus için kullanılır. Native accordion semantiği ve CSS odak halkaları uygulandı; tarayıcı aracı olmadığından görsel/klavye/taşma doğrulaması kullanıcı incelemesine açık bırakılır.
+
+Etkilenen dosyalar: src/app/globals.css, DESIGN.md, STATUS.md, TASKS.md.
+
+### D016 — A1.1 görsel kabul öncesi düzeltme — 28 Ekim 2026
+
+Kullanıcı ilk görünümü kabul etmedi. Boşluklar küçültüldü; pazarlama paneli yerine fixture tabanlı gerçek sonuç önizlemesi, demoda birleşik sonuç kartı kullanıldı. İki kullanım somut olarak aynı kimlik/puanı gösterdiği için tek ResultSummary sunum bileşeni paylaşıldı. Veri katmanı veya yeni soyut altyapı eklenmedi. Metinler iki dilde sadeleşti; teknik alan ve gerekçeler açılımlarda korunur. Fixture, puanlama ve backend kapsamı değişmedi.
+
+Özel browser aracı sunulmasa da mevcut Chrome ile ayrı eklentisiz profilde yerel doğrulama yapılabildi. Hydration farkı, uygulama dışı data-yd nitelikleriyle kontrollü olarak yeniden üretildi; temiz profilde yok. Belirli eklenti adı tespit edilmedi; uyarı gizlenmedi. Görsel kabul kullanıcıdan bekleniyor.
+
+Etkilenen dosyalar: src/app/page.tsx, src/app/demo/page.tsx, src/app/globals.css, src/components/result-summary.tsx, src/messages/tr.json, src/messages/en.json, docs/DESIGN.md, docs/TASKS.md, docs/STATUS.md.

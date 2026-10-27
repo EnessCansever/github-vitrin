@@ -41,3 +41,21 @@ Görselin işlevsel eksiklerinde ana sözleşme otoritedir. A0 başlangıcında 
 ## A0 altyapı sınırı
 
 `src/app/globals.css` merkezi ink (#0B1020), brand (#4169FF), paper (#F5F5F0) ve sistem fontu tokenlarını içerir. Başlangıç sayfası yalnız geliştirme durumunu bildirir; sonuç ekranı veya onaylı A1 tasarımı değildir. Harici font isteği yoktur. Mint A0 ekranında gerekmediği için eklenmedi. Tarayıcı, kontrast ve responsive incelemeleri A1 kapsamında açık kalır.
+
+## A1 ilk bölüm uygulaması
+
+Referans pano bu oturumda yeniden görsel olarak incelendi. Koyu ink, küçük elmas kimliği, açık tipografi, repo bazlı bulgular ve ilk görev hiyerarşisi kullanıldı. Ana sayfa büyük bir başlık, tek giriş alanı ve açık örnek eylemiyle başlar; rapor örneği bir yan panelde somutlaşır. Sonuç sayfası mobilde tek sütun, geniş ekranda bulgular/görev ve kategori ayrıntıları olarak iki sütundur. DOM okuma sırası kimlik/puan → bulgular → ilk görev → pasif paylaşım → kategoriler/diğer görevlerdir.
+
+Yeni merkezi tokenlar: surface #10182B, border #2B3B58, muted #A8B5D0, link #A6BCFF, mint #72E5BF. Marka #4169FF değişmedi. Beyaz metin bu marka renginde 4,48:1 verdiği için dolu eylem arka planında yakın mavi action #3C63F0 kullanılır (4,96:1); hover #3356DF (5,94:1). Mint yalnız ilk eylem ve focus vurgusundadır. Metin boyutları en az 12px; sistem fontu Türkçe karakterleri destekler, harici font isteği yoktur.
+
+Görünür focus, input label + açıklama ilişkisi, skip link, native details/summary ve açıklaması bulunan disabled paylaşım/yeniden analiz butonları uygulandı. Uzun metinler için grid minmax(0, …), min-width:0 ve ilgili adlarda overflow-wrap:anywhere kullanıldı; yatay taşmayı gizleyen global overflow-x:hidden eklenmedi. Animasyon/sahte ilerleme yoktur.
+
+Renk kontrastları sayısal hesapla ve semantik yapı kaynak/HTML incelemesiyle kontrol edildi. **Tarayıcı aracı bulunmadığından 360/390/768/1440 screenshot, gerçek klavye kullanımı, focus/accordion görüntüsü, 320px ve uzun ad taşması görsel olarak doğrulanmadı.** Bunlar STATUS/TASKS içinde manuel kontrol olarak açık; uygulanmış CSS tarayıcı doğrulaması yerine sayılmaz.
+
+## A1.1 görsel geri bildirim revizyonu — 28 Ekim 2026
+
+Kullanıcının yedi masaüstü ekranı referans panoyla karşılaştırıldı: ilk sürümde büyük hero boşluğu ve pazarlama ağırlıklı sağ panel ana eylemi aşağı itiyordu; demo kimlik ve puanı sınırlı bir kartta birleşmiyordu. Kullanıcı bu görünüme kabul vermedi.
+
+Header minimum 76px, masaüstü hero üst boşluğu 40px olarak düzenlendi. Sabit içerik yüksekliği/kırpma yok. Başlıkta profilin/profile, var olan #4169FF ile vurgulanır; büyük metin kontrast eşiğine tabidir. Sonuç kartı `ResultSummary` ile hem önizleme hem demo için ortak sunulur; küçük elmas, kullanıcı, tip ve skor aynı kimliği korur. Önizleme üç kategori ve tek repo bulgusu gösterir. Teknik gerekçeler ve kaynaklar native açılımlarda kalır; ana anlatım kısadır. Yeni tema, dekorasyon veya animasyon eklenmedi; eski CSS kuralları düzenlendi, kullanılmayan pazarlama stilleri kaldırıldı.
+
+Önceki turdaki tarayıcı doğrulama eksikliği bu revizyonda **kurulu Chrome + ayrı temiz profil + CDP** ile kısmen kapatıldı: iki sayfa/iki dil 390×844 ve 1440×900 ekranları görüntülendi; 320px/uzun ad/açık accordion taşması, dil tıklamaları ve klavye odakları kontrol edildi. Masaüstünde ana CTA altı y=622px, önizleme altı TR y=585px/EN y=563px; 900px ilk ekran koşulu geçti. Bu sonuçlar tüm A1 genişlikleri/ekranları veya kullanıcı görsel kabulü anlamına gelmez. Tam ölçümler ve hydration araştırması STATUS'tadır.
