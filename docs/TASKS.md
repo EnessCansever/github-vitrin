@@ -188,7 +188,7 @@ A2 kaynak sözleşme §11 teknik kabul incelemesi: public adapter/normalizasyon/
 
 Bu dilim yalnız ana sayfa ve ortak demo üst kimliğidir; tüm uygulama yeniden tasarlanmış sayılmaz. Ürün/puanlama/backend sözleşmeleri ve gerçek seçim tasarımı korunur. Yeni public yayın veya paylaşım PNG üretimi yapılmadı.
 
-### A3 Puanlama — teknik motor ve gerçek sonuç dilimi; yeni kullanıcı görsel kabulü açık
+### A3 Puanlama — teknik motor ve gerçek sonuç dilimi; kabul edildi
 
 - [x] Saf kurallar + sentetik fixture testleri; her check için ID/scope/sürüm/durum/earned/max/kanıt/öneri anahtarı; 20/30/50 kategori aritmetiği ve yuvarlama.
 - [x] Unknown/dil bağımsızlığı, 1/3 eşdeğer repo, kesirli ortalama, missing/boş/unknown README, sıfır/uygunsuz/yinelenen repo ve GraphQL partial kökenli unknown davranışı.
@@ -226,15 +226,34 @@ Bu dilim yalnız ana sayfa ve ortak demo üst kimliğidir; tüm uygulama yeniden
 - [x] Gerçek Chrome/CDP: dört sayfada mobil/masaüstü uzun scroll, 320px taşma, native Tab/Space ve header altında kalan hedefin otomatik görünmesi. Gerçek analiz ilk/yeni giriş, TR/EN'de aynı DOM/istek korunumu ve reduced-motion doğrudan görünüm ölçüldü.
 - [x] Mobil ilk giriş ve masaüstü yeni analiz kısa gerçek ekran kayıtları alındı; timestamp'li kare ve opacity/transform ölçümleriyle incelendi. Normal giriş ~689ms; locale/accordion tekrar başlatmadı, reduced-motion yeni animasyon üretmedi. Incomplete canlı hareket kontrolü yapılmadı.
 - [x] Dar revizyon sonrası mevcut 266 test, lint, typecheck, production build ve diff/koruma kontrolü; motor/adapter/action/fixture/puan/öneri sırası değişmedi. Sonuçlar STATUS'ta kayıtlıdır.
-- [ ] Yeni gerçek sonuç arayüzü için kullanıcı görsel kabulü.
-- [ ] Yeni arayüz diliminin kullanıcı commit/push ve uzak CI doğrulaması; ee7328e yalnız önceki motor commit'idir.
+- [x] Yeni gerçek sonuç görünümü, sticky header ve giriş hareketi için kullanıcı kabulü alındı (29 Ekim 2026, kullanıcı bildirimi).
+- [x] Kullanıcı 5ad54fb commit/push bilgisini verdi; uzak CI başarısı kullanıcı ekran görüntüsüyle sağlanan doğrulama olarak kaydedildi. Bu tur bağımsız uzak sorgu yapılmadı.
 
-Kaynak sözleşme §11 A3'ün iki teknik maddesi motor/test paketiyle karşılandı; yeni gerçek sonuç dilimi yerelde doğrulandı. **Yeni kullanıcı görsel kabulü ve yeni CI açık olduğundan A3'ün tamamı onaylandı/bitti sayılmaz.** 1.0.0'da not_applicable kullanılmaz; ileride kullanımı/aritmetiği tanımlanmadan payda değiştirilemez. MongoDB/karşılaştırma A4, paylaşım A5 kapsamındadır.
+Kaynak sözleşme §11 A3'ün iki teknik maddesi motor/test paketiyle karşılandı; gerçek sonuç dilimi yerelde doğrulandı. **Kullanıcı mevcut A3 görünümünü kabul etti, 5ad54fb commit/push ve uzak CI kapıları kullanıcı doğrulamasıyla kapandı; A3 kabul kriterleri tamamlandı.** Canlı incomplete hareket/görsel kontrolünün yapılmamış olduğu önceki test sınırı korunur; deterministik null/unknown testleri geçerlidir. 1.0.0'da not_applicable kullanılmaz; ileride aritmetiği tanımlanmadan payda değiştirilemez. Yalnız aşağıdaki A4.1 dilimi yetkilendirildi.
 
 ### A4 Depolama/karşılaştırma:
 
 - [ ] Snapshot, cache, atomik throttle, lock, TTL; uyumlu/uyumsuz karşılaştırma testleri.
 - [ ] Yenilemenin GitHub verisini gerçekten yeniden aldığı ve cache sonucunu yeni ilerleme saymadığı doğrulanır.
+
+### A4.1 — snapshot modeli ve sunucu saklama/okuma (ilk sınırlı dilim)
+
+- [x] AGENTS ve ilgili belgeler; temiz Git/HEAD 5ad54fb, A3 kabul kriterleri ve kullanıcı ekran görüntüsüyle uzak CI doğrulaması kaydı.
+- [x] MongoDB native driver 7.7.0 stabil sürüm/Node uyumunu resmi kaynak ve paket metadatasıyla doğrula; npm/lock tam sürüm. Sistem Node'u değiştirme.
+- [x] Mevcut Report için strict snapshotVersion=1 şeması; ayrı rulesVersion, profil kimliği, repo seti/hash, fetchedAt karşılığı checkedAt, puan/check/kanıt/tip/görevleri koru. Mesaj anahtarları/parametreleri dil bağımsız, token/ham README/API/çeviri yok.
+- [x] Complete/incomplete/null ve check/scope/kategori/görev referansları; geçersiz kayıtları hem oluşturma hem okumada reddet. Motoru yeniden çalıştırma.
+- [x] Server-only createSnapshot/readSnapshot; immutable insert, UUID ve ayrı 256-bit read token/hash; kimlik tek başına erişim vermez. Public endpoint veya action bağlantısı yok.
+- [x] Çağrı anında env/bağlantı, process/HMR havuz paylaşımı; güvenli configuration/unavailable/invalid_report/invalid_record hataları. Başarısız bağlantı temizliği ve sonradan açık çağrıda tekrar deneme.
+- [x] Sözleşmedeki 30 gün TTL: expiresAt=createdAt+30 gün, unique _id ve idempotent expiry indeksi; okuma expiry filtresi. Yeni varsayımsal silme/indeks politikası yok.
+- [x] Şema/kayıt dönüşümü/bozuk veri/null/token/expiry/güvenli DB hatası ve havuz için deterministik mock testler. ignoreUndefined:true ve gerçek BSON codec ile ağsız complete/incomplete dönüşüm; gerçek MongoDB entegrasyonu sayılmaz, test/CI DB ağı veya secret gerektirmez.
+- [x] Son kontroller: 13 dosya/311 test (45 yeni DB davranışı), lint, typecheck, Mongo/GitHub env değerleri boş production build ve diff/koruma başarılı; index boş. Gerçek sonuçlar STATUS'ta.
+- [x] .env.example boş MONGODB_URI/MONGODB_DB, README kullanıcı kurulum adımı ve PRODUCT/ARCHITECTURE/DECISIONS kayıtları. Gerçek env açılmadı/değiştirilmedi.
+- [x] Gerçek Atlas smoke: kullanıcı MONGODB_DB satırını kaydettikten sonra mevcut modüllerle repovitrin_dev bağlantısı/indeks/create/read, complete 86,7 ve bütün rapor alanlarının korunması, yanlış token/bulunmayan kimlik null, incomplete toplam/tip null ve bilinen bulgular doğrulandı. Başka DB'ye erişim yok; URI/token/hash yazdırılmadı.
+- [x] Üçüncü sentetik kaydın süresi geçince DB'de mevcutken uygulama okumasının null döndürmesi; expiresAt:1 / expireAfterSeconds:0 ve _id_ indeksi doğrulandı. Fiziksel otomatik TTL silinmesi gözlenmedi; indeks varlığı silinme kanıtı değildir.
+- [x] Yalnız bu çalıştırmada oluşturulan üç kayıt kimlik/scope ile ayrı ayrı silindi ve bulunamadıkları doğrulandı; geçici çalıştırıcı kaldırıldı, dev sunucusu korundu. Kod/test/paket değişmediğinden geniş kontroller tekrarlanmadı; belge diff/index ve başlangıç dosya koruması kontrol edildi. UUID'ler/sonuçlar STATUS'ta.
+- [ ] A4.1 kullanıcı incelemesi, commit/push ve bu yeni paketin uzak CI doğrulaması.
+
+A4.1 uygulaması A4'ün bütünü değildir. Analiz action'ına yazım, kalıcı rapor sayfası/URL, cache, karşılaştırma, dağıtık atomik throttle/lock ve paylaşım/yayın bu tur yapılmaz. Sonraki dilim yalnız açık kullanıcı mesajıyla başlar.
 
 ### A5 Paylaşım:
 

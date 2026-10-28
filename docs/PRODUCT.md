@@ -36,6 +36,12 @@ Skor aynı/azalmışsa başarı kurgulama. İlk analiz kartı hâlâ paylaşıla
 Giriş olmadığı için profil sahipliği doğrulanmaz. Kopyalarda varsayılan "Bu profil" kullan; "Benim profilim" seçimi sahiplik rozeti anlamına gelmez.
 Cihaz geçmişi localStorage'da sınırlı erişim kimlikleriyle tutulur; cihazlar arası hesap geçmişi vaat edilmez.
 
+## A4.1 uygulama sınırı — 29 Ekim 2026
+
+A3 mevcut gerçek sonuç görünümü kullanıcı tarafından kabul edildi; 5ad54fb uzak CI başarısı kullanıcı ekran görüntüsüyle sağlanan doğrulamadır. A4'ün bu ilk dilimi yalnız immutable snapshot modeli ve sunucuda oluşturma/tokenla okuma katmanıdır. Mevcut analiz otomatik kaydedilmez; kullanıcıya kalıcı sonuç URL'si veya public rapor sunulmaz. Public shareReports gelecekte ayrı kullanıcı işlemi/nesnesidir.
+
+Mevcut raporun profil kimliği/login'i, veri zamanı, seçili repo kapsamı, sürüm, complete/incomplete durumu, puan/kategori/check kanıtları, profil tipi gerekçeleri ve önerileri korunur. Snapshot biçim sürümü kural sürümünden ayrıdır. Çevrilmiş metin yerine mevcut mesaj/kural anahtarları ve scope parametreleri saklanır; yeniden dil seçimi hesaplamayı değiştirmez. Incomplete rapor saklanabilir, toplam/tip null kalır ve iki tam analiz karşılaştırmasının yerine geçmez. 30 gün TTL ve tahmin edilemeyen read token kaynak sözleşme §7'den gelir; yeni saklama/silme politikası eklenmedi. Cache, karşılaştırma, cihaz geçmişi, action bağlantısı ve public erişim henüz uygulanmadı.
+
 ## Belge sınırları
 
 Puanlama SCORING.md, teknik yapı ARCHITECTURE.md, görsel kurallar DESIGN.md içindedir. Paylaşım ve karşılaştırma kapsamı bu belgelerle birlikte uygulanır. Mevcut ilerleme STATUS.md ve TASKS.md ile takip edilir.

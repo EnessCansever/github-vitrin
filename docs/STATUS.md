@@ -1,12 +1,104 @@
 # Güncel durum
 
-Son güncelleme: 28 Ekim 2026 (Europe/Istanbul).
+Son güncelleme: 29 Ekim 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A3 — gerçek sonuç arayüzü ve dar sticky header/giriş hareketi revizyonu yerelde doğrulandı; kullanıcı görsel kabulü açık.** Bu revizyon başlarken HEAD ee7328e, önceki A3 arayüz değişiklikleri commitlenmemiş ve index boştu; mevcut paket korundu. Motorun ee7328e uzak CI başarısı **kullanıcı tarafından sağlanan ekran görüntüsü doğrulamasıdır**; yeni A3 paketinin uzak CI sonucu değildir. Yeni görsel kabul ve commit/CI kapıları açık olduğundan A3'ün bütünü onaylandı/bitti sayılmaz. A4'e geçilmez.
+**A4.1 — snapshot modeli ve sunucu saklama/okuma katmanı; gerçek Atlas smoke kontrolü başarılı.** HEAD 5ad54fb ve mevcut A4.1 paketi hâlâ commitlenmemiştir; index boş. Kullanıcı tarafından sağlanan 5ad54fb uzak CI ekran görüntüsü önceki A3 koduna aittir; yeni A4.1 CI sonucu yoktur. Önceki eksik MONGODB_DB engeli kullanıcı dosyayı kaydettikten sonra giderildi; gerçek create/read/indeks/erişim/expiry ve test kayıtlarının temizliği doğrulandı. Otomatik fiziksel TTL silinmesi gözlenmedi. A4.1 kullanıcı inceleme/commit ve yeni CI kapısı açık; A4'ün cache/throttle/lock/karşılaştırma bütünü bitmiş sayılmaz.
 
-## A3 sticky header ve gerçek sonuç girişi revizyonu — 28 Ekim 2026
+## A4.1 gerçek Atlas smoke sonucu — 29 Ekim 2026
+
+Kullanıcı eksik MONGODB_DB satırını proje kökündeki .env.local dosyasına ekleyip kaydettiğini bildirdi. Yeniden Node env yüklemesinde iki değişkenin varlığı ve hedefin repovitrin_dev ile eşleşmesi boolean olarak doğrulandı; çalışma anında DB adı override edilmedi. Gizli dosya içeriği/URI/parola/okuma tokenı/hash veya tam kayıt araç çıktısına alınmadı, env dosyası değiştirilmedi.
+
+Geçici Node sunucu çalıştırıcısı, kurulu jiti ve gerçek react-server export çözümlemesiyle mevcut getDatabase/createSnapshot/readSnapshot modüllerini çağırdı. Yeni bağımlılık/public endpoint veya Vitest setup/mock kullanılmadı; gerçek Atlas işlemleri yapıldı. Mevcut küçük sentetik Markdown girdilerinden saf motorla yalnız iki rapor hazırlandı; gerçek GitHub hesabı/verisi kullanılmadı. Okuma modülü motoru çağırmaz; okunan raporlar girdiyle bütün olarak (optional undefined alanları dışında JSON karşılığıyla) karşılaştırıldı.
+
+| Smoke kontrolü | Gerçek sonuç |
+| --- | --- |
+| Bağlantı / yetki | **Başarılı:** mevcut getDatabase ile repovitrin_dev bağlantısı ve ping; bu DB'de gereken indeks/yaz/oku/temizlik işlemleri başarılı. Başka DB'ye erişim denenmedi; kapsam dışı yetki hakkında iddia yok. |
+| İndeks kurulumu / tanımı | **Başarılı:** createSnapshot kendi idempotent createIndex tanımını çalıştırdı; listIndexes içinde _id_ ve snapshot_expiry, key={expiresAt:1}, expireAfterSeconds=0 doğrulandı. Başka indeks tanımı uygulanmadı. |
+| Complete oluşturma / doğru token | **Başarılı:** sentetik üç-repo raporu, **86,7** puan, snapshotVersion=1 / rulesVersion=1.0.0. Bütün kategori/check/kanıt/görev alanları, veri zamanı ve öneri sırası aynen korundu; token/hash okuma çıktısında yok. Bu gerçek GitHub hesabının puanı değildir. |
+| Yanlış token | **Başarılı:** aynı kimlik + farklı geçerli token null döndürdü. |
+| Bulunmayan kimlik | **Başarılı:** rastgele UUID'nin DB'de olmadığı doğrulandı; bu kimlik + token ile uygulama null döndürdü. |
+| Incomplete oluşturma / okuma | **Başarılı:** status=incomplete, toplam=null, profil tipi=null; bilinen kategori, fail ve unknown/earned=null check'ler ve öneri sırası korundu. |
+| Süresi geçmiş kayıt | **Başarılı:** yalnız bu çalıştırmanın üçüncü kaydındaki createdAt/expiresAt, 30 gün farkı ve geçerli şema korunarak geçmişe alındı. Uygulama null döndürdükten sonra kaydın DB'de hâlâ bulunduğu ayrıca doğrulandı; reddin fiziksel yokluktan gelmediği görüldü. |
+| Fiziksel TTL silinmesi | **Gözlenmedi.** İndeks tanımı ve uygulama expiry kontrolü doğrulandı; MongoDB'nin otomatik fiziksel temizliği doğrulanmış sayılmaz. Uzun bekleme yapılmadı. |
+| Kimlikle temizlik | **Başarılı:** oluşturulan 3 kayıt için ayrı deleteOne; her kimlik için sonrasında bulunamadığı doğrulandı. Mevcut kayıtlar değiştirilmedi; toplu silme/collection veya DB silme yok. |
+
+### Temizlenen sentetik kayıt kimlikleri
+
+- Complete: 33d009c5-9998-4782-836f-fb81d7387cef
+- Incomplete: 2f1e51fd-b984-47fe-b177-cb465188cbff
+- Expiry örneği: c7f96ddc-6ac9-4b26-b791-31bed89d76b6
+
+Bunlar erişim tokenı değil, artık DB'de bulunmadığı doğrulanmış test kayıtlarının UUID kimlikleridir. Rastgele çalıştırma scope'u ile yalnız bu oturumun oluşturduğu kayıtlar seçildi; her silme kimlik + aynı scope filtresiyle sınırlandı. Başarılı çalıştırıcının kendi bağlantı havuzu kapatıldı; kullanıcının geliştirme sunucusu (PID 2391) korundu. Geçici çalıştırıcı ve yerel sonuç dosyaları kaldırıldı.
+
+Bu tur **uygulama kodu/test/dependency değişmedi**; başlangıç hash karşılaştırmasıyla önceki commitlenmemiş A4.1 dosyaları korundu. Önceki 311 test/lint/typecheck/build bu yüzden tekrar çalıştırılmadı; aşağıdaki önceki başarılı sonuçlar geçerlidir, yeni test çalışması gibi sunulmaz. Bu turun kontrolleri gerçek Atlas smoke ve belge diff/index/koruma kontrolüdür. Güncellenen belgeler STATUS/TASKS/README ve artık açık olmayan entegrasyon durumunu netleştiren ARCHITECTURE'dır. Yeni public/debug endpointi veya normal test/CI'da secret gereksinimi yoktur.
+
+**A4.1 yerel ve gerçek DB kontrolleriyle inceleme/commit için hazırdır; kullanıcı kabulü, commit/push ve yeni uzak CI açık.** Fiziksel TTL gözlemi açık doğrulama sınırıdır; gerçek rapor action bağlantısı/kalıcı URL, cache/karşılaştırma/throttle/lock, paylaşım ve yayın bu tur yapılmadı. Sıradaki somut adım mevcut A4.1 paketinin kullanıcı incelemesidir; sonraki dilime açık mesaj olmadan geçilmez. Commit kapsamı aşağıdaki mevcut A4.1 kod/test/paket/env/belge dosyalarının tamamıdır; yalnız belge commit'i önerilmez. Öneri: `feat: add MongoDB report snapshot storage`. Stage/commit/push/yayın yapılmadı.
+
+## Önceki kayıt — A4.1 yapılandırma nedeniyle duran smoke denemesi — 29 Ekim 2026
+
+Kullanıcı Atlas geliştirme cluster'ını ve yalnız repovitrin_dev üzerinde readWrite yetkili kullanıcıyı hazırladığını, env değişkenlerini eklediğini bildirdi. Başlangıç HEAD hâlâ 5ad54fb; mevcut A4.1 paketi commitlenmemiş ve index boştu. Önceki değişiklikler korundu.
+
+**Engel: çalışma anında MONGODB_DB boş/eksik.** Node env yükleyicisiyle URI değerinin mevcut olduğu yalnız boolean olarak doğrulandı; hedef veritabanı adı yüklenmedi. Process'te yükleme öncesi iki değişken de yoktu; mevcut shell değişkeninin env dosyasını gölgelemesi tespit edilmedi. Hedefin repovitrin_dev olması zorunlu tutularak bağlantı açılmadan duruldu (ilk çalıştırıcı güvenli kodu wrong_database; tanı: eksik DB yapılandırması). URI/parola/token/hash veya env içeriği yazdırılmadı; env dosyası değiştirilmedi. Kullanıcıdan yalnız MONGODB_DB=repovitrin_dev satırını kaydedip bildirmesi istendi; secret istenmedi.
+
+| Smoke kontrolü | Gerçek sonuç |
+| --- | --- |
+| Geçici sunucu çalıştırıcısı / modül yükleme | Mevcut getDatabase/createSnapshot/readSnapshot ve saf sentetik veri modülleri yüklenebildi. Kurulu jiti ile gerçek react-server marker export'u çözüldü; yeni bağımlılık veya Vitest mock/setup kullanılmadı. |
+| Env / hedef doğrulama | **Başarısız:** MONGODB_URI var; MONGODB_DB boş/eksik. Bu bir yapılandırma engelidir; MongoDB ağı/yetkisi veya uygulama kayıt hatası olarak sunulmaz. |
+| Gerçek bağlantı / indeks kurulumu | Çalıştırılmadı; yapılandırma guard'ı daha önce durdu. İndeks oluşturulmadı. |
+| Complete yaz/oku, puan/sürüm/kanıt/öneri sırası | Çalıştırılmadı; gerçek round-trip doğrulanmadı. |
+| Yanlış token / bulunmayan kimlik | Çalıştırılmadı. |
+| Incomplete null puan/tip | Çalıştırılmadı. |
+| Süresi geçmiş kaydın reddi | Çalıştırılmadı. |
+| Gerçek TTL alanı/ayarı / fiziksel silinme | Çalıştırılmadı; indeks varlığı ve fiziksel silinme gözlenmedi. Uzun bekleme yapılmadı. |
+| Test kayıtları / temizlik | Oluşturulan kayıt **0**, temizlenecek kayıt **0**. Mevcut kayıt/collection/veritabanında değişiklik yok. Geçici çalıştırıcı kaldırıldı. |
+
+Bu tur uygulama kodu değişmediğinden önceki 311 test/lint/typecheck/build tekrar çalıştırılmadı; önceki başarılı sonuçlar aşağıdadır ve canlı entegrasyon kanıtı değildir. Son belge diff/index ve başlangıç dosya koruma kontrolü yapıldı. Kullanıcının geliştirme sunucusu korundu; public/debug endpointi, action bağlantısı, yeni paket veya secret gerektiren CI testi eklenmedi.
+
+Gerçek MongoDB smoke kontrolü **tamamlanmadı**. Sıradaki somut adım kullanıcının MONGODB_DB değerini kaydetmesinin ardından aynı sınırlı smoke kontrolünü yeniden çalıştırmaktır; ağ/yetki hakkında başarı/başarısızlık çıkarımı yapılamaz. A4.1 kabul/commit ve yeni uzak CI açık kalır. Stage/commit/push/yayın yapılmadı; sonraki dilime geçilmedi. Commit kapsamı aşağıdaki mevcut A4.1 paketi ve bu STATUS/TASKS smoke kaydıdır; yalnız belge commit'i önerilmez. Mesaj önerisi değişmez: `feat: add MongoDB report snapshot storage`.
+
+## A3 kapanış değerlendirmesi — 29 Ekim 2026
+
+Kaynak sözleşme §11 A3: saf kurallar/fixture/kanıt/kategori aritmetiği ve unknown/dil/repo sayısı/README/boş kapsam/GraphQL partial davranışları önceki motor/test paketiyle doğrulandı. Gerçek analiz ve sonuç bağlantısı, son header/hareket revizyonu dahil yerelde 266 test ve gerçek Chrome kontrolleriyle kaydedilmişti. Kullanıcı mevcut A3 görünümünü kabul etti; 5ad54fb commit/push ve kullanıcı ekran görüntüsüyle uzak CI doğrulaması son açık kabul kapılarını kapatır. **A3 mevcut kabul kriterlerine göre tamamlandı.** Canlı incomplete görsel/hareket durumunun ayrıca zorlanmamış olduğu önceki sınır tarihsel kayıtta kalır; yeni bir kontrol yapılmış gibi sunulmaz. Yeni kullanıcı mesajı yalnız A4.1'e yetki verir.
+
+## A4.1 snapshot katmanı — 29 Ekim 2026
+
+### Uygulanan kapsam
+
+- Resmi MongoDB native driver **7.7.0**, Node 22.13.0 ile uyumlu stabil npm sürümü olarak doğrulandı; npm/lockfile kilitli. Yalnız bu doğrudan bağımlılık eklendi; sistem Node'u değişmedi. npm install 11 transitif paket ekledi, 0 vulnerability raporladı; bu gerçek DB entegrasyonu değildir.
+- `src/lib/db/{client,errors,snapshot-schema,snapshots}.ts`: server-only lazy process/HMR havuzu, strict sürümlü snapshot ve küçük create/read. Import/envsiz build bağlantı açmaz. Eksik/bozuk ayar configuration; bağlantı/izin/işlem hatası unavailable; invalid_report/invalid_record güvenli veri hatalarıdır. URI/parola/ham DB hata nesnesi veya cause dönmez/loglanmaz.
+- Mevcut güvenli Report DTO'su; profil ID/login, repo seti ve hash, gerçek checkedAt, rulesVersion, kategori/check katkısı, kanıt kaynakları ve TR/EN mesaj anahtarları, tip gerekçeleri ve öneri sırası korunur. Snapshot biçimi **1**, scoring sürümü **1.0.0** ayrı alanlardır. Motor yeniden çalıştırılmaz; ham README/excerpt/API/secret/çevrilmiş metin saklanmaz. Complete ve incomplete saklanabilir; unknown/null ile bilinen bulgular aynen korunur.
+- Immutable insert, UUID kimlik, ayrı **256-bit** rastgele read token; DB yalnız SHA-256 hash tutar. Salt kimlikle okuma yoktur. Dış endpoint veya public rapor açılmadı; create/read yalnız sunucudan çağrılabilir.
+- Kaynak sözleşme §7'de zaten tanımlı **30 gün TTL**: createdAt+30 gün expiresAt ve idempotent expiry indeksi. `_id` varsayılan unique indeksi dışında ek indeks yok. Okuma hem sorguda hem yanıt sonrası süreyi denetler; DB beklerken biten kayıt da dönmez. Bu tur gerçek DB'ye indeks gönderilmedi/silme yapılmadı; yeni varsayımsal politika eklenmedi.
+- `.env.example` MONGODB_URI/MONGODB_DB değerlerini boş belgeler; gerçek env dosyaları açılmadı/değiştirilmedi/yazdırılmadı. SIGNING_SECRET bu katmanda gerekmez. Kurulum README'de, ayrıntılı eşleme ARCHITECTURE ve D027'de.
+- Mevcut analyze/getRepos action'ları, motor, adapter, UI/header/hareket, TR/EN ürün metinleri ve demo fixture korunur. Otomatik snapshot yazımı, kalıcı rapor sayfası/URL, cache, karşılaştırma, throttle/lock, paylaşım/PNG ve yayın eklenmedi.
+
+### Kontroller
+
+| Kontrol | Gerçek sonuç |
+| --- | --- |
+| npm test | **13 dosya / 311 test başarılı**: önceki 266 + 45 yeni deterministik DB davranış testi. Gerçek GitHub/DB/secret yok; bağlantı/collection sahtedir. Gerçek BSON codec yalnız ağsız bellek dönüşümünde kullanıldı. |
+| Şema / dönüşüm | 1/3 repo ve kesirli mevcut rapor, complete/incomplete/null; veri zamanı, sürüm, scope/set hash, kimlik/kanıt/görev referansları ve iki dil mesaj anahtarları korundu. Insert ignoreUndefined:true ile optional evidence yokluğu korunur, gerçek null puan değişmez; actual driver BSON codec ile iki yönde doğrulandı. Girdi değişmedi, öneri sırası yeniden üretilmedi. |
+| Geçersiz veri / erişim | Ek secret/ham alan, bozuk kaynak/katkı/kategori/toplam/referans/sürüm/kayıt reddi. Ayrı token hash ve expiry filtresi, DB beklerken expiry, hash'in okuma çıktısından çıkarılması doğrulandı. |
+| DB hata / havuz | İzin/bağlantı/index/insert/read/unacknowledged hataları güvenli; index hatasında insert yok. Lazy import ve eksik env, eşzamanlı tek havuz, başarısız bağlantı temizliği/sonradan açık çağrı test edildi. Gerçek Mongo protokol/Atlas doğrulaması değildir. |
+| npm run lint | Başarılı, max-warnings=0. Yeni import testindeki Next'in rezerve `module` adı `client` olarak düzeltildi; kural kapatılmadı. |
+| npm run typecheck | Başarılı; Next tip üretimi ve strict TypeScript. |
+| npm run build | Başarılı; GITHUB_TOKEN/MONGODB_URI/MONGODB_DB/SIGNING_SECRET process değerleri boş verilerek çalıştırıldı. Gerçek bağlantı gerekmedi; aynı beş route, yeni public endpoint yok. |
+| Diff / koruma | git diff --check başarılı, index boş. Action/motor/adapter/UI/mesaj/fixture/sözleşme/görsel/font/CI dosyaları için git diff --exit-code başarılı. Yeni dosyalar sade ad/yorum/tekrar/soyutlama açısından incelendi; yeni test/ODM aracı veya ignore/force eklenmedi. |
+
+### Açık işler ve durma noktası
+
+- **Gerçek MongoDB bağlantısı, DB kullanıcısı/izinler, BSON yaz/oku ve gerçek expiry indeksi/TTL davranışı doğrulanmadı.** Sahte DB testleri bunun kanıtı değildir. Gerçek hesap/secret oluşturulmadı veya istenmedi; normal test/CI gerçek DB'ye bağlanmaz.
+- Bir sonraki kullanıcı kurulumu: kendi geliştirme MongoDB/Atlas ortamı, ilgili DB'ye readWrite yetkili kullanıcı ve gerekli IP erişimi; ignore edilen env içine MONGODB_URI ve MONGODB_DB değerlerini kendisi ekler. Kurulum ayrıntısı README'de resmi kaynaklarla bulunur. Sonraki açık mesaj olmadan canlı DB smoke veya action bağlantısı başlatılmaz.
+- A4.1 yerel kontrollerle inceleme/commit için hazırdır; kullanıcı incelemesi, commit/push ve **yeni paketin uzak CI doğrulaması açık**. 5ad54fb doğrulaması önceki A3 koduna aittir. A4'ün bütün kabul kriterleri tamamlanmadı.
+- Stage/commit/push/yayın yapılmadı; yeni public bağlantı verilmedi. Sıradaki somut adım kullanıcı incelemesi ve ayrı yetkilendirilecek gerçek DB entegrasyon kontrolüdür.
+
+Commit önerisi: `feat: add MongoDB report snapshot storage`.
+
+Commit kapsamı: `.env.example`, `AGENTS.md`, `README.md`, `package.json`, `package-lock.json`; `src/lib/db/{client,errors,snapshot-schema,snapshots}.ts`; `tests/db/{fixtures,client.test,schema.test,snapshots.test}.ts`; `docs/{PRODUCT,ARCHITECTURE,DECISIONS,STATUS,TASKS}.md`.
+
+## Önceki kayıt — A3 sticky header ve gerçek sonuç girişi revizyonu — 28 Ekim 2026
 
 ### Dar değişiklikler
 

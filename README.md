@@ -1,6 +1,6 @@
 # RepoVitrin
 
-Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. Ana sayfa kullanıcı adı veya desteklenen GitHub profil URL'siyle gerçek public profili ve uygun repo adaylarını getirir; 1–3 proje seçilebilir. Seçimden sonra **Sunumu analiz et** eylemi gerçek profil/README verileriyle puan ve kanıt üretir. `/demo`, `/demo/select`, `/demo/states` kurmaca örnekler olarak ayrıdır; gerçek seçim sabit demo puanına yönlendirilmez. A2.2 akışı kullanıcı tarafından kabul edildi. Developer ID ana sayfa/demo tasarımı kullanıcı tarafından görsel ve hareket açısından kabul edildi. A3 gerçek sonuç arayüzünün kullanıcı görsel kabulü bekleniyor.
+Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. Ana sayfa kullanıcı adı veya desteklenen GitHub profil URL'siyle gerçek public profili ve uygun repo adaylarını getirir; 1–3 proje seçilebilir. Seçimden sonra **Sunumu analiz et** eylemi gerçek profil/README verileriyle puan ve kanıt üretir. `/demo`, `/demo/select`, `/demo/states` kurmaca örnekler olarak ayrıdır; gerçek seçim sabit demo puanına yönlendirilmez. A3 gerçek sonuç görünümü kullanıcı tarafından kabul edildi; 5ad54fb uzak CI başarısı kullanıcı ekran görüntüsüyle doğrulandı. A4.1 yalnız ayrı sunucu snapshot katmanını hazırlar; mevcut akış henüz rapor kaydetmez.
 
 ## Gereksinimler ve kurulum
 
@@ -21,7 +21,7 @@ Durum örnekleri: http://localhost:3000/demo/states
 
 TR/EN aynı sayfada kalır ve dil cookie'de tutulur. Gerçek seçim aynı ana sayfada açılır; dil değişimi yeni GitHub isteği göndermez ve seçimleri korur. Yeni aramada eski profil/seçimler temizlenir; geç eski yanıt yeni aramayı ezmez. Sunumu analiz et, sunucuda kimlik/kapsamı yeniden doğrulayıp README verilerini saf motora verir. Sonuç, seçim ve kanıtlar dil değişiminde korunur; veri zamanı değişmez. Eksik analizde toplam/tip hesaplanmaz, bilinen kategoriler görünür. Geri dönüş ve gerçek yeniden veri alma eylemleri vardır. Demo eylemi her zaman bağımsız kurmaca profile gider. Tam sayfa yenilemede canlı seçim ve sonuç belleği sıfırlanır; kalıcı rapor URL’si/cache/geçmiş yoktur.
 
-Demo ekranları, testler ve build için secret gerekmez. `.env.example`, `GITHUB_TOKEN`, `MONGODB_URI` ve `SIGNING_SECRET` isimlerini boş değerlerle belgeler. Yalnız GitHub adapter’ı çağrıldığında sunucuda `GITHUB_TOKEN` okunur. Diğer iki değişken henüz kullanılmaz. Gerçek değerleri Git’e veya `NEXT_PUBLIC_` değişkenlerine eklemeyin.
+Demo ekranları, testler ve build için secret gerekmez. `.env.example`, `GITHUB_TOKEN`, `MONGODB_URI`, `MONGODB_DB` ve `SIGNING_SECRET` isimlerini boş değerlerle belgeler. GitHub adapter’ı çağrıldığında sunucuda `GITHUB_TOKEN`, yalnız yeni snapshot modülü çağrıldığında MongoDB değişkenleri okunur. Mevcut arayüz veritabanını kullanmaz; `SIGNING_SECRET` henüz kullanılmaz. Gerçek değerleri Git’e veya `NEXT_PUBLIC_` değişkenlerine eklemeyin.
 
 ## Kontroller ve production çalıştırma
 
@@ -45,8 +45,9 @@ GitHub Actions, push ve pull request üzerinde `npm ci`, test, lint, typecheck v
 - `src/features/analysis/demo.ts`: sabit kurmaca örnek; puanlama motoru değildir.
 - `src/features/analysis/scoring`: sunucu analiz akışından çağrılan saf puanlama motoru; rulesVersion 1.0.0, Markdown AST ve kanıt/öneri çıktısı. Kurallar ve tespit sınırları [SCORING](docs/SCORING.md) içinde.
 - `src/lib/github`: server-only public adapter, Zod doğrulama, normalize edilmiş veri ve tipli hatalar; mevcut Server Action profil/aday erişimini kullanır.
+- `src/lib/db`: server-only MongoDB native driver havuzu, snapshot şeması ve ayrı create/read fonksiyonları. Mevcut analiz action'ından çağrılmaz.
 - `src/features/analysis/{live-analysis,live-report,report}`: geçici analiz state’i, güvenli sonuç DTO’su ve sonuç sunumu.
-- `tests/github`, `tests/scoring`, `tests/analysis`: ağ kullanmayan adapter/action/motor ve sonuç render testleri.
+- `tests/github`, `tests/scoring`, `tests/analysis`, `tests/db`: ağ kullanmayan adapter/action/motor, sonuç render ve sahte DB ile snapshot/bağlantı davranış testleri. Sahte DB testleri gerçek MongoDB entegrasyon kanıtı değildir.
 - `src/config/site.ts`: çalışma markası ve geliştirici bağlantı bilgileri. Bilinmeyen Instagram adresi boştur.
 - `docs`: ürün, mimari, puanlama, tasarım ve aşama kayıtları.
 
@@ -85,4 +86,20 @@ Ana sayfa ve ortak demo kimlik kartı, docs/design/developer-id-concept.png yön
 
 Ana sayfada profili getir, 1–3 proje seç, **Sunumu analiz et**. Ayrı analyze Server Action'ı yalnız username, profileId ve repo id/name kabul eder; metadata, puan, bulgu veya sürüm kabul etmez. Zod strict seçim doğrulaması, ham username/istek boyutu ve tekrar eden ID/ad kontrolü vardır. Analiz payload'ı 2 KiB, Next body sınırı 8 KiB'dir. Profil ID/login, seçilen repo ID/sahiplik/public/archive/fork kapsamı sunucuda tekrar doğrulanır. Her işlem yeni client kullanır; işlem içindeki çağrılar aynı 20 saniye/40 istek bütçesini paylaşır.
 
-Sonuç checkedAt UTC ve rulesVersion içerir. İstemciye yalnız profil ID/login, motorun puan/kategori/check/tip/görevleri ve güvenli GitHub kaynak alanları döner; tam README, alıntı metni, token, Error veya ham API yanıtı dönmez. İncomplete raporda null toplam/tip korunur; bilinen kontrol/kategoriler kaybolmaz. Kaynaklar yalnız GitHub üzerinde açılır; dış demo siteleri taranmaz. Görevlerin sırası/puan etkisi arayüzde yeniden hesaplanmaz. A3 arayüzünün kullanıcı görsel kabulü ve yeni commit sonrası uzak CI açık; dağıtık abuse/cache/paylaşım/yayın yoktur.
+Sonuç checkedAt UTC ve rulesVersion içerir. İstemciye yalnız profil ID/login, motorun puan/kategori/check/tip/görevleri ve güvenli GitHub kaynak alanları döner; tam README, alıntı metni, token, Error veya ham API yanıtı dönmez. İncomplete raporda null toplam/tip korunur; bilinen kontrol/kategoriler kaybolmaz. Kaynaklar yalnız GitHub üzerinde açılır; dış demo siteleri taranmaz. Görevlerin sırası/puan etkisi arayüzde yeniden hesaplanmaz. A3 kullanıcı görsel kabulü ve 5ad54fb uzak CI doğrulaması kullanıcı tarafından sağlandı. Dağıtık abuse/cache/paylaşım/yayın yoktur.
+
+## A4.1 snapshot katmanı ve sonraki yerel kurulum
+
+Yalnız sunucudan `createSnapshot(report)` ve `readSnapshot(id, readToken)` kullanılabilir. Bunlar Server Action/public API değildir ve mevcut analize bağlanmadı. Bu nedenle şu an MongoDB olmadan mevcut uygulama, testler ve build çalışır; kalıcı rapor sayfası/bağlantısı henüz yoktur.
+
+Sonraki gerçek entegrasyon kontrolü için kullanıcı kendi MongoDB/Atlas geliştirme veritabanını hazırlayıp ignore edilen `.env.local` dosyasına `MONGODB_URI` ve `MONGODB_DB` değerlerini kendisi eklemelidir. URI `mongodb://` veya `mongodb+srv://`, ayrı DB adı 1–63 ASCII harf/rakam/tire/alt çizgi olmalıdır; varsayılan `test` veritabanı seçilmez. Örnekteki değerler bilinçli olarak boştur. Atlas'ta yalnız ilgili veritabanına `readWrite` yetkili bir database user ve yerel bağlantının IP access list izni yeterlidir; geniş yönetici rolü gerekmez. [Database user kurulumu](https://www.mongodb.com/docs/atlas/security-add-mongodb-users/), [readWrite yetkileri](https://www.mongodb.com/docs/manual/reference/built-in-roles/#readwrite), [IP access list](https://www.mongodb.com/docs/atlas/security/ip-access-list/). URI/parolayı paylaşmayın veya loglamayın; gerçek hesap/secret bu dilimde oluşturulmadı/istenmedi.
+
+Resmi `mongodb` **7.7.0** kullanılır; mevcut Node 22.13.0 desteklenir. [Driver uyumluluğu](https://www.mongodb.com/docs/drivers/compatibility/?driver-language=javascript&javascript-driver-framework=nodejs). Bağlantı import sırasında açılmaz. İlk çağrıda oluşturulan process havuzu sonraki çağrılarda/HMR'da yeniden kullanılır; her istekte kapatılmaz. Bağlantı başarısızsa havuz kaydı temizlenir, sonraki açık çağrı yeniden deneyebilir; kör retry yoktur. Env değişince sunucuyu yeniden başlatın. Eksik/bozuk ayar `configuration`; bağlantı/yetki/operasyon sorunu güvenli `unavailable` verir, URI veya ham DB hatası döndürülmez.
+
+`analysisSnapshots` kaydı immutable'dır: ayrı UUID kimliği, 256-bit rastgele okuma tokenının SHA-256 hash'i, snapshotVersion=1, repo seti/hash'i, createdAt/expiresAt ve mevcut rapor DTO'su. `rulesVersion=1.0.0` bağımsızdır; puanlar, null değerler, kanıt ve öneri sırası korunur, okurken motor çalıştırılmaz. TR/EN için kural/mesaj kimlikleri ve scope parametreleri saklanır; hazır çevrilmiş bulgu metni, token/ham README/API nesnesi saklanmaz. Salt kimlikle erişim yoktur; token yalnız oluşturma sonucunda bir kez verilir ve loglanmamalıdır.
+
+Yazımda `ignoreUndefined:true`, bulunmayan optional kanıt alanlarının driver tarafından null'a çevrilmesini önler; gerçek null puanlar aynen kalır. Ağsız testlerde gerçek BSON dönüşümü de kontrol edilir, ancak bu gerçek veritabanı bağlantısını doğrulamaz.
+
+Sözleşme §7'deki **30 gün TTL** uygulanır: expiresAt=createdAt+30 gün, ilk yazım öncesi idempotent `expiresAt` TTL indeksi kurulur; `_id` MongoDB'nin unique indeksidir. [TTL temizliği gecikebilir](https://www.mongodb.com/docs/manual/core/index-ttl/); okuma ayrıca süreyi kontrol eder. Başka silme politikası/indeks, cache, karşılaştırma veya public paylaşım eklenmedi. Complete ve incomplete kayıtlar ayrı durumlarıyla saklanabilir; incomplete toplam/tip null kalır ve karşılaştırılabilir tam analiz sayılmaz.
+
+29 Ekim 2026 opt-in yerel smoke kontrolünde, kullanıcının hazırladığı repovitrin_dev Atlas veritabanında mevcut modüllerle bağlantı/indeks, complete ve incomplete BSON yaz/oku, yanlış token/bulunmayan kimlik ve expiry reddi **gerçekten doğrulandı**. Yalnız o çalıştırmanın üç sentetik kaydı kimlikleriyle temizlendi; geçici çalıştırıcı kaldırıldı. Fiziksel otomatik TTL silinmesi gözlenmedi; indeks tanımı bunun kanıtı sayılmaz. Ayrıntı [STATUS](docs/STATUS.md) içinde. Deterministik testler hâlâ sahte driver/collection kullanır; normal test/CI gerçek DB veya secret gerektirmez. Snapshot yazımı normal analizde otomatik başlamaz; kalıcı rapor URL'si veya public erişim henüz yoktur.

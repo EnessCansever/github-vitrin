@@ -204,3 +204,43 @@ ProfileSearch arama durumunu, LiveAnalysis analiz işlem kimliğini/pending/sonu
 LiveReport yalnız motorun kategori/check/tip/öneri dizilerini sunar; puan toplamaz/ortalama hesaplamaz/sıralamaz. Kaynaklar GitHub linki, path/satır/Blob SHA ve yerelleştirilmiş kanıt metnidir; README render edilmez. IdentityCard, sunucu demo wrapper'ı ResultSummary ile canlı client sunumunda ortaktır. Incomplete: toplam null, tip/mühür yok; tam kategoriler ve bilinen bulgular korunur, tekrar alma ve geri dönüş açıktır. Tam yenilemede kaybolan sayfa state'i kalıcı rapor URL'si değildir. Demo fixture/editoryal metin ve üç demo route'u ayrı kalır.
 
 Tests/github/analysis.test.ts gerçek HTTP mock'larıyla girdi/scope/identity/DTO/complete/incomplete/hata/bütçe doğrular; tests/analysis/report.test.tsx mevcut React renderer/next-intl ile null ve yerelleştirme/sunum sırasını kontrol eder. CI hâlâ ağ/secret gerektirmez; yeni bağımlılık/test aracı eklenmez. Yerel Chrome/CDP gerçek akış kontrolü CI sonucu değildir. MongoDB/kalıcı cache, karşılaştırma, paylaşım/PNG, dağıtık abuse ve deployment bu dilimde yoktur.
+
+## A4.1 — snapshot modeli ve ayrı sunucu saklama/okuma katmanı
+
+`src/lib/db` yalnız server-only modüller içerir. Mevcut actions/UI/adapter/motor bu modülleri import etmez; veri akışına DB yazımı bağlanmadı. Yeni route, public/debug endpointi, rapor sayfası veya shareReports yoktur. `mongodb` 7.7.0 resmi native driver, mevcut Node 22.13.0 ile uyumludur; Mongoose/ODM veya repository framework eklenmedi.
+
+- `client.ts`: `getDatabase()` yalnız çağrı anında MONGODB_URI ve ayrı MONGODB_DB doğrular. URI şeması mongodb/mongodb+srv; DB adı 1–63 ASCII harf/rakam/tire/alt çizgi. Eksik/geçersiz ayar configuration, bağlantı hatası unavailable. Global process promise aynı client havuzunu eşzamanlı çağrı/HMR'da paylaşır; GitHubClient'ın işlem başına yeni client kuralından ayrıdır. Env değişiminde restart gerekir. Başarısız bağlantı temizlenip client kapatılır; sonraki açık çağrı yeniden bağlanabilir. Her işlemde close/kör retry yoktur.
+- Havuz max=10/min=0, idle=60s; server selection/connect=5s, checkout=2s, operation timeoutMS=8s. Bunlar DB çağrısı sınırlarıdır; GitHub 20s/40 istek bütçesine henüz DB eklenmedi. Atlas gerçek kapasite/latency uygunluğu bu dilimde ölçülmedi.
+- `snapshot-schema.ts`: snapshotVersion=1 için strict Zod; ayrı rulesVersion=1.0.0 desteklenir. Bilinmeyen biçim/kural sürümü okunabilir diye varsayılmaz; migrasyon/uyum kararı gerekir. Mevcut `Report` tipine compile-time uyum denetlenir. Ham README/excerpt, adapter Error/errorCode, avatar, token veya ek alanlar reddedilir. İzinli evidence alanları güvenli github.com URL'si, field, path/branch/Blob SHA/satır/availability/detailKey'dir.
+- Şema profil/repo scope ve check kimliği tekilliği, 1–3 repo/13–33 check, üç benzersiz kategori, earned/status ve complete/incomplete/null tutarlılığı, gösterilen kategori toplamı, tip/görev check referanslarını doğrular. 1.0.0'da not_applicable kabul edilmez. Bu depolama doğrulamasıdır; Markdown/motor yeniden çalıştırılmaz, puan/tip/öneri sırası düzeltilmez veya yeniden üretilmez.
+
+### Saklanan belge ve alan eşlemesi
+
+| Alan | Anlam |
+| --- | --- |
+| _id | Rastgele UUID; MongoDB'nin varsayılan unique _id indeksi. |
+| snapshotVersion | Belge/DTO biçimi, 1. Scoring rulesVersion ile aynı kavram değildir. |
+| report.profile.id / login | Sözleşmedeki githubUserId / loginAtAnalysis; o andaki kimlik. |
+| selectedRepoIds / scopeHash | Check scope'larından çıkarılan sayısal artan benzersiz repo ID'leri; scopeHash sıralanmış ID JSON dizisinin SHA-256'sı. Repo sırası hash'i değiştirmez; kullanıcı ve kural sürümü ayrıca tutulur. Bu henüz karşılaştırma/cache anahtarı uygulaması değildir. |
+| report.checkedAt | Sözleşmedeki fetchedAt: A3 sunucu veri alma zamanı, değiştirilmez. |
+| report.rulesVersion | Puanlama kural sürümü; her check'te de korunur. |
+| report.status / score / categories / checks | Complete/incomplete; kategori/check katkıları, fail/pass/unknown ve sınırlı normalize kanıt. Findings, ayrı kopya yerine checks dizisidir. |
+| report.profileType / recommendations | Gerekçe check ID'leri, en fazla üç görevin mesaj anahtarı/target/rawImpact/categoryImpact ve mevcut sırası. |
+| createdAt / expiresAt | Mongo BSON Date; sunucuda kayıt oluşturma zamanı ve createdAt+30 gün. Analiz veri zamanından ayrıdır. |
+| readTokenHash | 32 rastgele byte tokenının SHA-256 hash'i. Ham okuma tokenı DB'ye/loga yazılmaz. |
+
+Yerelleştirme: `rule`, `suggestionKey`, `evidence.detailKey`, scope id/name ve puan etkileri mevcut TR/EN şablonlarının parametrelerini taşır; hazır çevrilmiş bulgu/öneri metni veya locale saklanmaz. Rapor aynı dil bağımsız değerlerle sunulabilir. Mesaj anahtarlarının gelecek sürümlerde kaldırılması ayrı uyum/migrasyon sorumluluğudur.
+
+`snapshots.ts` iki küçük fonksiyon sunar: `createSnapshot(report)` strict doğrulama sonrası index/create/insert yapar, `{id, readToken}` döndürür; `readSnapshot(id, readToken)` kimlik+token hash+expiresAt filtreli okur ve **dönen kaydı yeniden şemayla doğrular**. Kaydedilen raporun puan/öneri sırası aynen döner. Hash istemci DTO'suna çıkmaz; okuma dönüşündeki tarih alanları ISO string'dir. Hatalı erişim biçimi, bulunamayan/yanlış tokenlı/süresi geçmiş kayıt null; bozuk saklanmış veri invalid_record, bozuk oluşturma girdisi invalid_report, eksik ayar configuration, DB/izin/işlem hatası unavailable. Ham DB hatası veya URI cause/log olarak taşınmaz. Şema yalnız güvenilen sunucu çıktısını saklama sınırıdır; gelecekte istemci raporu/puanı doğrudan kabul eden action yazılmaz.
+
+Insert `ignoreUndefined:true` kullanır: isteğe bağlı path/SHA/satır gibi bulunmayan alanlar BSON'a yazılmaz; gerçek unknown puan/null değerleri korunur. Driver'ın varsayılan undefined→null dönüşümü strict okuma şemasını bozacağından bu ayar saklama sözleşmesinin parçasıdır. [Resmi BSON undefined davranışı](https://www.mongodb.com/docs/drivers/node/current/data-formats/bson/undefined-values/). Mevcut driver'ın gerçek BSON serializer/deserializer'ıyla ağsız complete/incomplete dönüşüm test edildi; gerçek MongoDB sunucusuna insert/read yapıldığı anlamına gelmez.
+
+### Saklama süresi, indeks ve görünürlük
+
+Kaynak sözleşme §7'deki **30 gün TTL** aynen korunur. `expiresAt` üzerinde `expireAfterSeconds:0`, `snapshot_expiry` adlı tek alanlı TTL indeksi her create öncesi idempotent olarak istenir; index/izin hatasında insert yapılmaz. `_id` zaten unique olduğundan ek id/token/kullanıcı/karşılaştırma indeksi eklenmedi. TTL temizliği anlık değildir; read filtresi ve doğrulama sonrası süre kontrolü bitmiş kaydı döndürmez. Yeni varsayımsal silme politikası/collection kurulmadı. Gerçek Atlas smoke'ta yalnız bu uygulama indeks tanımı çalıştırılıp doğrulandı; fiziksel otomatik TTL silinmesi gözlenmedi.
+
+Complete ve incomplete aynı biçimde saklanabilir; unknown sıfıra çevrilmez, bilinen bulgular korunur. Incomplete toplam/tip null'dır ve karşılaştırma uygunluğu verilmez. Yalnız ID ile okuma yoktur; ayrı tahmin edilemeyen token gerekir. Bu modül sunucuda kalır, dış endpoint olmadığı için bu dilim kayıtları public hâle getirmez. Snapshot ve ilerideki public shareReports ayrı nesnelerdir.
+
+`tests/db` mock driver/collection ile şema, dönüşüm, null/kimlik/expiry/token ve güvenli hata/pool davranışını doğrular; bu testler gerçek DB kanıtı değildir. Ayrı 29 Ekim 2026 opt-in smoke'ta mevcut modüllerle repovitrin_dev Atlas bağlantısı, gereken indeks/yaz/oku yetkileri, complete/incomplete BSON round-trip, token/kimlik ve DB'de mevcut süresi geçmiş kaydın uygulamada reddi doğrulandı. Yalnız üç sentetik test kaydı kimlikle temizlendi, geçici çalıştırıcı kaldırıldı; ayrıntı STATUS'ta. Fiziksel TTL silinmesi gözlenmedi ve gerçek DB hata türleri bu olumlu smoke'ta zorlanmadı. Normal test/CI secret gerektirmez. Action bağlantısı, kalıcı URL, cache, karşılaştırma, atomik throttle/lock, share ve yayın sonraki yetkili dilimlere kalır.
+
+Resmi referanslar: [Node/driver uyumluluğu](https://www.mongodb.com/docs/drivers/compatibility/?driver-language=javascript&javascript-driver-framework=nodejs), [process başına havuz kullanımı](https://www.mongodb.com/docs/drivers/node/current/connect/connection-options/connection-pools/), [bağlantı seçenekleri](https://www.mongodb.com/docs/drivers/node/current/connect/connection-options/), [TTL ve gecikmeli temizleme](https://www.mongodb.com/docs/manual/core/index-ttl/). Paket sürümü npm metadatası/lockfile ile doğrulandı; sistem Node kurulumu değiştirilmedi.
