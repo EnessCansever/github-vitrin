@@ -4,9 +4,107 @@ Son güncelleme: 28 Ekim 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A3 — genel başlık/numara tespiti ve bulgu dili revizyonu yerel kontroller ve tekrarlanan gerçek smoke ile tamamlandı; arayüz bağlantısı açık.** HEAD hâlâ 7025b91; motor commitlenmemiş durumda, revizyon aynı A3 paketine dahildir. Önceki çalışma alanı korunur, index boş. 7025b91 CI başarısı önceki tasarım commit'i için kullanıcı bildirimidir; yeni motor/revizyon için uzak CI sonucu yoktur. A3'ün bütünü tamamlanmış sayılmaz.
+**A3 — gerçek sonuç arayüzü ve dar sticky header/giriş hareketi revizyonu yerelde doğrulandı; kullanıcı görsel kabulü açık.** Bu revizyon başlarken HEAD ee7328e, önceki A3 arayüz değişiklikleri commitlenmemiş ve index boştu; mevcut paket korundu. Motorun ee7328e uzak CI başarısı **kullanıcı tarafından sağlanan ekran görüntüsü doğrulamasıdır**; yeni A3 paketinin uzak CI sonucu değildir. Yeni görsel kabul ve commit/CI kapıları açık olduğundan A3'ün bütünü onaylandı/bitti sayılmaz. A4'e geçilmez.
 
-## A3 yanlış negatif revizyonu — 28 Ekim 2026, 21:07 +03
+## A3 sticky header ve gerçek sonuç girişi revizyonu — 28 Ekim 2026
+
+### Dar değişiklikler
+
+- Ortak SiteHeader tam genişlikte sticky/top:0; marka ve dil seçici aynı shell içinde. Opak ink zemin/ince sınır korunur. Header mobilde 68px, >=768px'de 76px; scroll-padding ve hedef margin'i odağın/sonuç başlangıcının altında kalmasını önler. Skip link header üstünde görünür.
+- Gerçek kart 520ms opacity/12px translateY, mevcut gerçek kategori genişlikleri 80+600ms scaleX, öneri/detay 140+420ms hafif giriş. Toplam planlanan süre 680ms; metin ve puan ilk kareden gerçek değerlerdir. Mevcut mount yaşam süresi kullanılır; locale/accordion/re-render giriş başlatmaz. Reduced-motion bütün hareket/gecikmeyi kaldırır; null kategoride doluluk düğümü üretilmez.
+- Profil araması başarı sonrası parent/child çift kaydırması kaldırıldı; aynı başlık için Strict Mode effect tekrarı DOM referansıyla teklenir. Focus preventScroll ve tek açık scroll kullanır. Raporun tamamı live region yapılmadı.
+- Bu revizyonda yalnız src/components/site-header.tsx, src/app/globals.css, src/features/analysis/{profile-search,live-analysis}.tsx ve docs/{DESIGN,DECISIONS,STATUS,TASKS}.md değişti. Önceden commitlenmemiş diğer A3 dosyaları korunur; motor/adapter/action/puan/öneri sırası/fixture/metin veya bağımlılık değişmedi. Gerekçe D026'da.
+
+### Gerçek tarayıcı ve hareket kontrolü
+
+Kullanıcının localhost:3000 sunucusu korunarak kurulu Chrome ayrı temiz profille CDP üzerinden kullanıldı. Gerçek EnessCansever formu ve üç seçili repo ile mevcut action/motor çağrıldı; bu kontrolde gelen 90 puan sabitlenmedi. Token ve tam README okunmadı/loglanmadı; gerçek ağ çağrısı mevcut sunucuda kaldı.
+
+| Kontrol | Gözlenen sonuç |
+| --- | --- |
+| Uzun scroll / sticky | /, /demo, /demo/select, /demo/states: 390×844 ve 1440×900'de header top=0, tam viewport genişliği. /demo/states uzun partial örneğiyle de kontrol edildi. Body/html overflow görünür, transform yok. |
+| Mobil / taşma | Dört sayfada 320/390/1440px yatay taşma 0; 320px durum ekranında header genişliği 320, TR/EN viewport içinde. Kabul edilmiş kart yerleşimi yeniden tasarlanmadı. |
+| Tab / focus | Header TR/EN erişilebilir ve 3px focus görünür. Demo kategori başlığı başlangıçta header altında y=40 iken native Tab sonrası y=96, header altı=68 oldu. Space accordion açıyor. Skip link y=12/z=30 ve üstündeki hit-test doğrulandı. |
+| İlk gerçek sonuç | Kart/çubuk/gövde için 5 giriş olayı (1+3+1); ilk ölçümde gerçek 90 metni mevcut. Kart/çubukların tamamı yaklaşık 689ms'de son durumuna ulaştı; içerik animationend beklemiyor. |
+| TR/EN / accordion | Aynı rapor DOM'u, giriş olayı ve scroll sayısı korundu. Dil değişiminde yalnız locale POST'u görüldü; yeni analiz/GitHub isteği başlatılmadı. Accordion açılması sonuç girişini tekrar etmedi. |
+| Yeni analiz | Yeni kabul edilen yanıt yeni rapor DOM'u ve yalnız 5 yeni giriş olayı üretti. Sonuç başlığı odaklandı; mobil/masaüstü header altında kalmadı. |
+| Reduced-motion | Sonraki gerçek analizde yeni giriş olayı 0. İlk örneklemede (~1ms) opacity=1, transform=none, gerçek kategori dolulukları hazır; animasyon/gecikme yok. |
+| Tek scroll | Profil/seçim başarı geçişinde tek scroll; pending ve kabul edilen sonuçta ayrı birer scroll. Geliştirme Strict Mode aynı başlığı yeniden kaydırmadı. |
+| Incomplete sınırı | Mevcut render testleri ve kaynakta null kategori için doluluk span'ı olmaması korundu. Canlı incomplete yanıt bu revizyonda zorlanmadı; bu durum için yeni canlı hareket/görsel kontrolü yapılmış sayılmaz. |
+
+Gerçek CDP ekran kayıtları: [mobil ilk sonuç](/tmp/repovitrin-a3-motion-review/first-result-mobile.mp4) (1,20s) ve [masaüstü yeni analiz](/tmp/repovitrin-a3-motion-review/new-analysis-desktop.mp4) (1,12s). Klipler girişin öncesi/sonrasını da içerir; hareket süresi klip uzunluğu değildir. Gerçek timestamp'li kareler ve requestAnimationFrame opacity/transform/doluluk ölçümleri birlikte incelendi; yalnız screenshot ile hareket doğrulaması yapılmadı. Görseller: [mobil sticky ana sayfa](/tmp/repovitrin-a3-motion-review/home-sticky-390.png), [demo klavye odağı](/tmp/repovitrin-a3-motion-review/demo-focus-390.png). Bunlar geçici yerel inceleme dosyalarıdır; ürün paylaşım sistemi veya repo asset'i değildir.
+
+### Kontroller ve açık kapılar
+
+- Son kaynaklarda npm test: **10 dosya/266 test başarılı**; npm run lint, npm run typecheck ve npm run build başarılı. Mevcut beş route korunur; yeni test aracı/bağımlılık eklenmedi.
+- git diff --check başarılı, index boş. Başlangıç dosya hash'leriyle karşılaştırmada yalnız yukarıdaki sekiz dosya değişti; diğer commitlenmemiş A3 dosyaları korundu. Stage/commit/push/yayın yapılmadı. Bu revizyon ayrı belge commit'i değil, mevcut commitlenmemiş A3 paketinin parçasıdır.
+- **Yeni gerçek sonuç/header hareketi için kullanıcı incelemesi ve yeni paketin uzak CI doğrulaması açık.** Önceki demo/Developer ID kabulü bu revizyonun kabulü sayılmaz. A3 bütünü tamamlandı denmez; sıradaki iş kullanıcı incelemesidir.
+- Commit kapsamı aşağıdaki A3 paketine src/components/site-header.tsx eklenerek aynı kalır. Öneri: `feat: connect repository selection to live analysis`.
+
+## Önceki kayıt — A3 gerçek analiz ve sonuç dilimi — 28 Ekim 2026
+
+### Değişiklik kapsamı
+
+- Mevcut Server Action dosyasında analyze: yalnız username/profileId ve 1–3 repo id/name, strict Zod, ID/ad tekilliği, raw username <=256 UTF-8 byte, JSON <=2 KiB. Mevcut Next body <=8 KiB korunur. Metadata, score, findings, checkedAt veya rulesVersion istemciden alınmaz.
+- Her analiz işlemi yeni GitHubClient; aynı işlemde profil ID/login, selected ID/owner/public/archive/fork yeniden doğrulaması, README'ler, ortak 20 saniye/40 istek bütçesi. Repo/sahiplik erişim değişimi güvenli selectionChanged; ağ/limit/configuration ayrı kullanıcı kodları. Metadata/README girdisi sunucuda mevcut scoreAnalysis'a verilir; checkedAt ve motor rulesVersion korunur.
+- Report DTO yalnız public profil ID/login, repo sayısı ve motorun kategori/check/tip/görevleri ile izinli GitHub kanıt alanları. Tam README, excerpt, Error/errorCode, ham API yanıtı, avatar veya token istemciye aktarılmaz. Unknown fail/0'a çevrilmez; incomplete toplam/tip null, bilinen kategoriler ve bulgular korunur.
+- RepoPicker canlı devamı gerçek Sunumu analiz et eylemi. LiveAnalysis işlem kimliği/ref guard ile çift gönderim ve geri dönüş/unmount sonrası eski yanıtı atar. Seçim hidden/mounted kaldığı için sonuçtan dönüş ve TR/EN'de ID state'i korunur. Render/locale değişimi analiz çağırmaz; retry açık kullanıcı eylemiyle yeni veri alır.
+- Ortak IdentityCard, eski ResultSummary demo wrapper'ı ve yeni LiveReport'ta kullanılır. Gerçek kategori/toplam/tip ve gerekçe check ID'leri, kontrol earned/max/durum/kaynak, en fazla üç görev ve motor etkisi sunulur. UI skor/ortalama/sıralama hesaplamaz. Incomplete normal profil tipi/mühür/0 puan göstermez. Geçici sonuç notu vardır; kalıcı rapor URL'si/paylaşım/indirme eylemi yoktur.
+- Puanlama motoru, ağırlıklar/alias/profil tipi kuralları ve sabit demo fixture/editoryal içerik değişmedi. Yeni dependency, DB/cache, karşılaştırma, paylaşım/PNG, dağıtık abuse veya yayın yoktur. Ayrıntılı karar D025, sunum DESIGN, teknik sınır ARCHITECTURE içindedir.
+
+### Son yerel kontroller
+
+| Kontrol | Gerçek sonuç |
+| --- | --- |
+| npm test | **10 dosya / 266 test başarılı**. Önceki 228'e 35 action + 3 render davranış testi eklendi. HTTP mock kullanır; gerçek GitHub veya secret gerekmez. |
+| npm run lint | Başarılı, max-warnings=0; lint/TypeScript kuralları kapatılmadı. |
+| npm run typecheck | Başarılı, Next tip üretimi + strict TypeScript. |
+| npm run build | Başarılı, mevcut /, /_not-found, /demo, /demo/select, /demo/states. Sonuç için yeni route/debug endpointi yok. |
+| DTO/sınır testleri | Bozuk/ekstra/tekrarlı girdi, UTF-8 byte, değişen profil/repo kimliği ve owner/private/fork/archive, complete/incomplete, güvenli hata, taze/ortak bütçe ve güvenli serileştirme. |
+| Render testleri | TR/EN gerçek kart/veri/link; incomplete null toplam/tip, bilinen kategori; server görev sırası/etkisini aynen gösterme. Vitest yalnız mevcut keşfine .tsx eklenerek kullanıldı; yeni araç yok. |
+| İstemci sınırı | Son production static chunk'larında GitHubClient, GITHUB_TOKEN, api.github.com, scoreAnalysis ve remark-parse işaretleri bulunmadı. Adapter/parser/motor uygulaması browser'a taşınmadı. |
+| Diff / koruma | git diff --check geçti; index boş. Motor/adapter/fixture/sözleşme/görsel/font/lisans/package/lock/CI workflow korunur. Değişen kod sade ad/yorum/tekrar/soyutlama açısından incelendi. |
+
+İlk test beklentisinde doğrulanmış eksik profil README'sinden gelen gerçek ek görev de beklentiye alındı; motoru teste uydurma yapılmadı. Render testinin React children tip/lint çakışması standart JSX/.tsx ile düzeltildi; unknown check'te azami değer korunarak — / max gösterimi de doğrulandı; ignore/assertion/kural kapatma kullanılmadı. Tablodaki kontroller son kaynaklara aittir.
+
+### Gerçek tarayıcı ve canlı veri kontrolü
+
+Kurulu Chrome, ayrı temiz /tmp/repovitrin-a3-ui-chrome profili ve yerel CDP ile kullanıldı; kullanıcının localhost:3000 geliştirme sunucusu korundu. Gerçek formda EnessCansever kullanıcı adı ve desteklenen profil URL'si native Enter ile gönderildi; 14 uygun aday ve pinned ön seçim alındı. Gerçek analizde seçilenler:
+
+- jobfit-tr / 1298347513
+- fixora / 1196372816
+- barber-appointment-management-system / 1142364200
+
+Bu incelemede gerçek sonuç **complete, Profil 20 + Projeler 23,3 + README 46,7 = 90, Gizli Cevher** oldu. Değer UI'a sabitlenmedi; gerçek action/motor yanıtından geldi. Son üç-repo veri zamanı arayüzde 28 Ekim 2026 18:47 UTC idi. Bu sayı gelecek analizler için garanti değildir. Demo ayrı MS/mira-sample/77,5 olarak kaldı.
+
+| Tarayıcı kontrolü | Kanıt ve sonuç |
+| --- | --- |
+| Analiz / çift gönderim | Klavyeyle analiz başlatma + hemen ikinci tıklama tek analiz POST'u oluşturdu; gerçek pending ve sonuç başlığına focus görüldü. |
+| TR/EN | İki yönde sonuç, kategori sayıları/veri zamanı ve üç seçili ID korundu. Her locale geçişinde yalnız locale POST'u; yeni analiz/veri zamanı oluşmadı. |
+| Seçim / geri dönüş | Sonuçtan seçim ekranına dönüşte seçili ID'ler aynı; native Space ile kaldırma/ekleme ve 3 sınırı, sıfırda pasif eylem/gerekçe geçti. Yeni form girdisi eski seçim/sonucu temizledi; profil aramasına dönüş raporu/seçimi kaldırıp github-profile alanına odak verdi. |
+| Geç yanıt | Eski üç-repo POST yanıtı CDP ile bekletildi; seçime dönüş ve tek-repo yeni işlem başlatıldı. Eski yanıt bırakıldığında eski rapor gösterilmedi, yeni tek-repo raporu tamamlandı. Next action kuyruğu sıralı davrandı; tam paralel yeni-önce-bitiş ayrıca zorlanmadı. |
+| Hata / gerçek retry | Tarayıcı offline iken yeniden analiz güvenli network ekranını/h2 focus'u gösterdi; online yapılıp Verileri yeniden al ile gerçek istek tekrarlandı ve yeni zamanlı sonuç geldi. Bu kontrollü istemci ağ kesintisidir, gerçek GitHub servis kesintisi değildir. |
+| Klavye / kanıt | Checkbox, analiz butonu, kategori ve görev kanıtı native Space ile çalıştı; 3px focus görüldü. Kanıt linkleri gerçek GitHub repo/README kaynağına, varsa satıra gider; tespit sınırı metni kaynakta görüldü. |
+| Görsel / taşma | TR/EN gerçek sonuç, 390×844 mobil ve 1440×900 masaüstü görüntüleri alındı/incelendi; açık kategori/kanıt ve uzun kullanıcı/repo adlarında 320/390/768/1440 yatay taşma 0. |
+| Hareket | Reduced-motion altında sonuç içeriğinde animation=none, summary transition=0s; yeni animasyon eklenmedi. |
+| Demo / ortak kart | /demo görünümünde MS, 77,5, örnek etiketi ve kategoriler korundu; üst gezinmeyle /demo/select ve /demo/states geçişi, örnek seçimde 2 başlangıç ID ve örnek durum menüsünde 6 seçenek korundu; 320px taşma 0. Son olağan akış event kaydında console/runtime hatası yoktu. |
+
+Görüntüler /tmp/repovitrin-a3-ui altında: result-tr-390.png, result-tr-1440.png, result-en-1440.png, details-en-390.png, evidence-tr-390.png, demo-tr-390.png. Sonuç TR mobil/EN masaüstü ve kanıt/detay görüntüleri gerçekten açılıp incelendi. Bunlar yerel inceleme screenshot'larıdır, ürün paylaşım PNG sistemi değildir.
+
+### Açık kalanlar ve durma noktası
+
+- **Yeni A3 gerçek sonuç arayüzünün kullanıcı görsel kabulü bekleniyor.** Önceki Developer ID/demo kabulü yeni canlı sonuç kabulü sayılmaz. Kaynak A3 teknik kriterleri karşılanmış olsa da bu kapı açıkken aşamanın tamamı onaylandı denmez.
+- Incomplete ve auth/rate-limit/kimlik değişimi deterministik testlerle doğrulandı; canlı GitHub'da bu hatalar bilinçli üretilmedi. Incomplete için gerçek tarayıcı görsel incelemesi yapılmış sayılmaz. Gerçek olumlu akış, yerel ağ hatası/retry ve geciken yanıt ayrı kontrol edildi.
+- Yeni dilimin kullanıcı commit/push ve uzak CI sonucu açık. ee7328e kullanıcı ekran görüntüsü doğrulaması önceki motor commit'ine aittir; bu yeni UI kodunun CI kanıtı değildir.
+- Sonuç/seçim aynı sayfa belleğindedir; tam yenileme kaybettirir. Kalıcı rapor/cache, dağıtık abuse ve yayın bu dilimde yoktur; yerel geliştirme/inceleme sınırı sürer. Kullanıcının sunucusu durdurulmaz; yalnız kontrol Chrome'u/çalıştırıcısı kapatılır.
+- Gerçek .env.local içeriği açılmadı/değiştirilmedi/loglanmadı; runtime GitHub erişimi mevcut sunucuda kaldı. Token/Authorization veya tam README loglanmadı. Stage/commit/push/yayın yapılmadı; A4'e geçilmedi.
+
+Yerel kontrollerle kullanıcı incelemesine hazır. Öneri: `feat: connect repository selection to live analysis`.
+
+Commit kapsamı: AGENTS.md, README.md, vitest.config.mjs; src/app/{page.tsx,globals.css}; src/components/{identity-card,result-summary}.tsx; src/features/analysis/{actions.ts,profile-search.tsx,repo-picker.tsx,live-analysis.tsx,live-report.tsx,report.ts}; src/messages/{tr,en}.json; tests/github/analysis.test.ts, tests/analysis/report.test.tsx; docs/{ARCHITECTURE,DESIGN,DECISIONS,STATUS,TASKS}.md.
+
+İnceleme: npm run dev → http://localhost:3000 → kullanıcı adı/profil URL'si → 1–3 proje → Sunumu analiz et. Kalıcı sonuç adresi yoktur. Sıradaki somut adım kullanıcı görsel incelemesi; açık devam mesajı olmadan yeni aşamaya geçilmez.
+
+## Önceki kayıt — A3 yanlış negatif revizyonu — 28 Ekim 2026, 21:07 +03
 
 ### Dar değişiklikler
 

@@ -9,10 +9,9 @@ import type { RepoOption } from "./selection";
 type Props = {
   repos: RepoOption[];
   initialSelectedIds: string[];
-  mode?: "demo" | "live";
-};
+} & ({mode: "live"; onAnalyze: (ids: string[]) => void} | {mode?: "demo"; onAnalyze?: never});
 
-export function RepoPicker({ repos, initialSelectedIds, mode = "demo" }: Props) {
+export function RepoPicker({ repos, initialSelectedIds, mode = "demo", onAnalyze }: Props) {
   const t = useTranslations("Select");
   const [selectedIds, setSelectedIds] = useState(initialSelectedIds);
   const atLimit = selectedIds.length === 3;
@@ -70,10 +69,10 @@ export function RepoPicker({ repos, initialSelectedIds, mode = "demo" }: Props) 
         })}
       </fieldset>
       <div className="selection-next">
-        <p id="selection-next-help">{t(mode === "live" ? (empty ? "liveEmpty" : "scoringPending") : (empty ? "empty" : "nextHint"))}</p>
+        <p id="selection-next-help">{t(mode === "live" ? (empty ? "liveEmpty" : "analysisHint") : (empty ? "empty" : "nextHint"))}</p>
         {mode === "live" ? (
-          <button type="button" disabled className="button button-disabled" aria-describedby="selection-next-help">
-            {t("scoringPending")}
+          <button type="button" disabled={empty} className={`button ${empty ? "button-disabled" : "button-primary"}`} aria-describedby="selection-next-help" onClick={() => onAnalyze?.(selectedIds)}>
+            {t("analyze")}<ArrowRight size={18} aria-hidden="true" />
           </button>
         ) : empty ? (
           <button type="button" disabled className="button button-disabled" aria-describedby="selection-next-help">

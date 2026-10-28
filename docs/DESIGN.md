@@ -109,3 +109,29 @@ Hareket: başlık 420ms, hero kartı 500ms, tek iterasyon; başlangıç opacity 
 Tarayıcı incelemesi: TR/EN 390×844 ve 1440×900 ana sayfa/demo; diğer demo seçim/durum sayfalarının görüntüleri de incelendi. /, /demo, /demo/select, /demo/states için 320/390/768/1000/1440 taşması yok. Input focus, native Space/Enter accordion, üç kategori ve kanıt açılımı, disabled eylem, uzun kullanıcı adı ve reduced-motion doğrulandı. Yeni tasarım kullanıcı kabulü henüz verilmedi; önceki A2.2 işlev kabulü korunur.
 
 Font kaynakları: [Barlow Condensed](https://github.com/google/fonts/tree/main/ofl/barlowcondensed), [Manrope](https://github.com/google/fonts/tree/main/ofl/manrope), [IBM Plex Mono](https://github.com/google/fonts/tree/main/ofl/ibmplexmono). Yerel lisans/kaynak dizini: [fonts](../src/app/fonts/README.md).
+
+
+## A3 gerçek sonuç sunumu — kullanıcı görsel kabulü bekleniyor
+
+Kabul edilmiş Developer ID kimliği korunur. Ortak IdentityCard gerçek rapor ve önceki ResultSummary demo wrapper'ında kullanılır; demo MS/77,5/kategori/özet ve hero hareketleri aynı kalır. Gerçek kart public profil, gerçek motor tipi/puanı, kategori değerleri, zaman ve sürüm taşır. Yeni doğrulanmışlık/sahiplik/meslek iddiası yoktur. Eksik analiz kartında toplam çizgi ve Hesaplanmadı metni vardır; profil tipi veya lime mühür gösterilmez. Bilinen kategori puanı korunur, eksik kategori ayrıca işaretlenir.
+
+Ana sayfadaki seçim devamı artık Sunumu analiz et; sıfır seçim pasif ve açıklamalıdır. Sonuç aynı sayfanın ayrı canlı analiz bölgesinde açılır; örnek kart/demo bağlantısı ayrı etiketlidir. Üstte proje seçimine ve profil aramasına dönüş; sonra kimlik/özet → öncelikli görevler ve açılabilir kategori/kanıt → kısa puan kapsamı/geçici sonuç notu. İlk görev mevcut mint görev vurgusunu, geri/tekrar eylemleri ortak mavi ikincil stili kullanır. Paylaşım/indirme veya kalıcı bağlantı eylemi yoktur.
+
+Her kategori altında repo/profil scope'u, motorun verdiği earned/max ve açık durum metni görülür. Kanıt içinde kısa yerelleştirilmiş tespit/gerekçe, GitHub linki, gerçek path/satır/Blob SHA vardır; teknik ayrıntılar ana eylem başlığını doldurmaz. Yapısal fail içerik kesin yok demek değildir; ekle/düzenle önerileri Scoring mesajlarından gelir. Öneri etkileri motor verisidir; arayüz yeni skor üretmez.
+
+Native checkbox/details, status bildirimleri, sonuç/hata h2 odağı ve 3px görünür focus korunur. Sonuç/seçim dil değişiminde korunur; yeniden analiz başlatılmaz. Kullanıcı geri döndüğünde checkbox state'i aynı kalır. Yeni hareket eklenmedi; mevcut details hareketleri reduced-motion altında kaldırılır. Uzun ad/path/SHA için min-width:0 ve overflow-wrap kullanılır; global taşma gizleme/kırpma yoktur.
+
+Yerel Chrome incelemesi, sayısal taşma ve klavye/hareket sonuçları STATUS'ta kayıtlıdır. Bu kayıt yeni A3 arayüzüne kullanıcı görsel kabulü verildiği anlamına gelmez; kabul açık kalır.
+
+
+## A3 sticky header ve gerçek sonuç girişi — kullanıcı incelemesi bekleniyor
+
+Ortak SiteHeader body'nin doğrudan çocuğu olarak kalır. Header artık tam genişlikte sticky/top:0/z-index:20, opak ink zemin ve ince border taşır; marka/dil formu içeride aynı shell hizasındadır. Body/html üzerinde sticky'yi sınırlayan overflow/transform yoktur. Header yüksekliği merkezi --header-height ile mobilde 68px, >=768px'de 76px; min-height kullanılır, içerik kırpılmaz. Root scroll-padding-block-start = header yüksekliği +16px, hedeflerde scroll-margin-block=12px. Full header payı hem padding hem margin'e eklenip boşluk ikiye katlanmaz. Skip link z-index:30 ile header üstünde görünür.
+
+Scroll/focus: profil araması başarı sonrası aynı seçim alanını iki bileşenden kaydırma kaldırıldı; başarıyı LiveAnalysis yönetir, ProfileSearch yalnız kendi arama hatasını odaklar. LiveAnalysis aynı başlık DOM düğümüne tekrar focus/scroll yapmaz; geliştirme Strict Mode tekrarı da teklenir. Açık scroll işlemi bulunan focus çağrıları preventScroll kullanır. Analiz pending ve kabul edilen sonuç ayrı durumlar olarak birer kez kaydırılır; root sticky payı sonuç başlangıcını/odağı header altından çıkarır. Başlık odağı korunur; raporun tamamına live region eklenmez. Scroll listener/ResizeObserver veya yeni bağımlılık yoktur.
+
+Yalnız .live-report kapsamındaki yeni sonuç mount'unda giriş vardır: kimlik kartı mevcut card-in keyframe'iyle 520ms, opacity .8→1 ve translateY 12px→0. Metin/puan baştan gerçek değerdir; animasyon sayısal puan üretmez. Gerçek genişliği zaten atanmış mevcut kategori dolulukları result-bar-in ile scaleX(0→1), soldan, 80ms gecikme +600ms hareket yapar. Öneri/detay gövdesi mevcut detail-in ile 140ms gecikme +420ms, daha küçük 3px hareket/opacity .85→1 kullanır. Toplam planlanan giriş 680ms'dir; rotate/zoom/sürekli hareket yoktur. Base CSS görünürdür; animation backwards yalnız girişte uygulanır, JS/animationend ile gizlilik/etkileşim kilidi kurulmaz.
+
+Mevcut analiz akışı yeni analizde önceki response'u kaldırıp kabul edilen yeni sonuçta LiveReport'u mount eder. TR/EN veya sıradan re-render mevcut DOM'u korur; native accordion açılması giriş selector'larını değiştirmez. Incomplete aynı card/body kapsamındadır; null kategori track'inin doluluk span'ı zaten oluşturulmadığından o alanda sahte 0/100 veya doluluk animasyonu yoktur. Var olan global reduced-motion kuralı bütün hareket/delay/transition'ları kaldırır ve gerçek genişlik/metinleri doğrudan gösterir. Demo fixture/animasyonları ve kart yerleşimi yeniden tasarlanmadı.
+
+Yerel Chrome ölçümleri ve yaklaşık 1,2s mobil / 1,12s masaüstü gerçek ekran kayıtları STATUS'tadır. Hareket yalnız screenshot ile onaylanmış sayılmaz; kare/timestamp ve requestAnimationFrame ölçümleri de incelendi. Yeni sonuç/header için kullanıcı görsel kabulü ve yeni uzak CI açık kalır.

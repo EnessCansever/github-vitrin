@@ -23,7 +23,14 @@
 }
 
 :root {
+  --header-height: 68px;
+  --header-offset: calc(var(--header-height) + 16px);
   color-scheme: dark;
+  scroll-padding-block-start: var(--header-offset);
+}
+
+:where(main, a, button, input, select, summary, [tabindex]) {
+  scroll-margin-block: 12px;
 }
 
 body {
@@ -97,7 +104,7 @@ p {
   position: fixed;
   top: -100px;
   left: 20px;
-  z-index: 10;
+  z-index: 30;
   background: var(--color-paper);
   color: var(--color-ink);
   padding: 12px 20px;
@@ -109,12 +116,19 @@ p {
 }
 
 .site-header {
-  min-height: 76px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--color-ink);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.site-header-inner {
+  min-height: calc(var(--header-height) - 1px);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  border-bottom: 1px solid var(--color-border);
 }
 
 .brand {
@@ -1113,6 +1127,9 @@ details[open] > .category-content {
 }
 
 @media (min-width: 768px) {
+  :root {
+    --header-height: 76px;
+  }
   .shell {
     width: min(100% - 80px, 1120px);
   }
@@ -1606,7 +1623,7 @@ details[open] > .category-content {
 .search-result {
   margin-bottom: 32px;
   min-width: 0;
-  scroll-margin-top: 20px;
+  scroll-margin-block: 12px;
 }
 
 .search-result h2:focus-visible {
@@ -1628,4 +1645,100 @@ details[open] > .category-content {
   background: var(--color-secondary);
   border-color: var(--color-secondary-border);
   color: var(--color-muted);
+}
+
+.report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.report-retry, .report-session-note {
+  margin-top: 18px;
+}
+
+.report-incomplete {
+  margin-top: 18px;
+}
+
+.report-meta {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  margin-top: 18px;
+}
+
+.report-tasks, .type-checks {
+  padding: 0;
+  list-style: none;
+}
+
+.report-task > div {
+  min-width: 0;
+  width: 100%;
+}
+
+.report-task h3 {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+
+.report-tasks .first-step {
+  margin-block: 0 14px;
+}
+
+.task-impact {
+  color: var(--color-muted);
+  font-size: .75rem;
+  margin-top: 8px;
+}
+
+.report-source + .report-source {
+  margin-top: 16px;
+  border-top: 1px solid var(--color-border);
+  padding-top: 14px;
+}
+
+.report-source a, .source-sha, .type-checks li, .live-report .check-title h4 {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.report-source a {
+  display: block;
+  padding-block: 10px;
+  line-height: 1.6;
+}
+
+.type-checks li + li {
+  border-top: 1px solid var(--color-card-rule);
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+.live-report .identity-type:focus-visible {
+  outline: 3px solid var(--color-card-ink);
+  outline-offset: 4px;
+}
+
+
+.live-report > .identity-card {
+  animation: card-in 520ms ease-out backwards;
+}
+
+.live-report .identity-track > span {
+  transform-origin: left;
+  animation: result-bar-in 600ms ease-out 80ms backwards;
+}
+
+.live-report > .result-body {
+  animation: detail-in 420ms ease-out 140ms backwards;
+}
+
+@keyframes result-bar-in {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }

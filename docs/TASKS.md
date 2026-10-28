@@ -188,7 +188,7 @@ A2 kaynak sözleşme §11 teknik kabul incelemesi: public adapter/normalizasyon/
 
 Bu dilim yalnız ana sayfa ve ortak demo üst kimliğidir; tüm uygulama yeniden tasarlanmış sayılmaz. Ürün/puanlama/backend sözleşmeleri ve gerçek seçim tasarımı korunur. Yeni public yayın veya paylaşım PNG üretimi yapılmadı.
 
-### A3 Puanlama — motor dilimi; gerçek sonuç arayüz bağlantısı açık
+### A3 Puanlama — teknik motor ve gerçek sonuç dilimi; yeni kullanıcı görsel kabulü açık
 
 - [x] Saf kurallar + sentetik fixture testleri; her check için ID/scope/sürüm/durum/earned/max/kanıt/öneri anahtarı; 20/30/50 kategori aritmetiği ve yuvarlama.
 - [x] Unknown/dil bağımsızlığı, 1/3 eşdeğer repo, kesirli ortalama, missing/boş/unknown README, sıfır/uygunsuz/yinelenen repo ve GraphQL partial kökenli unknown davranışı.
@@ -197,7 +197,7 @@ Bu dilim yalnız ana sayfa ve ortak demo üst kimliğidir; tüm uygulama yeniden
 - [x] UI demo fixture'ı değiştirmeden 23 check ve 15 + 22,5 + 40 = 77,5 doğrulaması; editoryal öneri sırası farkı kaydedildi.
 - [x] Saflık, aynı sonuç, donmuş girdinin korunması, ağ/saat/rastgelelik kullanmama ve TR/EN mesaj anahtarları testleri.
 - [x] A3 motor ve dar revizyon: 8 dosya/228 test (ilk motor 197 + 31 yeni regresyon); lint, typecheck, production build ve diff kontrolleri başarılı. Sonuçlar STATUS'ta kayıtlı.
-- [ ] Gerçek seçim → adapter README/metadata → motor → sonuç ekranı bağlantısı; bu tur yetkilendirilmedi/uygulanmadı. Mevcut UI puanlama devamı pasif kalır.
+- [x] Gerçek seçim → yeniden doğrulanan profil/repo → adapter README/metadata → saf motor → Developer ID gerçek sonuç bağlantısı. Kullanıcı bu dilimi açıkça yetkilendirdi; sıfır seçim pasif, 1–3 seçim gerçek analizi başlatır.
 - [x] İlk gerçek smoke: EnessCansever/jobfit-tr/fixora/barber gerçek ID ve kapsamı adapter üzerinden doğrulandı; tek client bütçesinde complete, 20 + 23,3 + 30 = 73,3, Vitrin Yapımda. Profil/üç proje README found; bu önceki motor sonucudur.
 - [x] Aynı okunan README metninde fixora demo, jobfit kurulum/teknoloji ve ek amaç/kullanım/bölüm sınırı örnekleri satır ve Blob SHA ile karşılaştırıldı; ayrıntılar STATUS'ta. Amaç/kullanım kaçırmaları belgelenmiş alias/bölüm sınırıdır; içerik gerçekten yok sayılmadı, puan/kural değiştirilmedi.
 - [x] İlk smoke çalıştırıcısı kaldırıldı; normal test/CI ve UI değişmedi. Yalnız ilk belge smoke turunda kod değişmediğinden geniş kontroller tekrarlanmadı; sonraki kod revizyonunun kontrolleri ayrıca yapıldı.
@@ -206,10 +206,30 @@ Bu dilim yalnız ana sayfa ve ortak demo üst kimliğidir; tüm uygulama yeniden
 - [x] Genel başlık/numara için olumlu ve ilgisiz başlık/komşu bölüm için olumsuz sentetik regresyonlar; gerçek README'ler fixture'a kopyalanmadı, yeni bağımlılık eklenmedi.
 - [x] Yerel kontroller sonrası aynı üç repo tek client ile yeniden alındı; aynı normalize girdide eski/yeni gerçek motor karşılaştırması: complete 73,3 → 90, README 30 → 46,7; 5 fail→pass. SHA'lar önceki smoke ile de aynı. Değişim tespit düzeltmesi, profil gelişimi değildir.
 - [x] Jobfit usage fail sınırı korundu; Kurulum komutu komşu Kullanım bölümüne taşınmadı. Kalan sınır ve yeni ölçülü görev metni STATUS'ta. Geçici çalıştırıcı ve önceki kaynak kopyaları kaldırıldı.
-- [ ] Dar revizyonu içeren aynı A3 motor paketinin kullanıcı incelemesi; henüz commitlenmedi, ayrı belge commit'i kapsamı gibi sunulmaz.
-- [ ] Bu motor diliminin kullanıcı commit/push ve yeni uzak CI doğrulaması. 7025b91 önceki tasarım commit'idir; yeni motorun CI kanıtı değildir.
+- [x] Dar revizyonu içeren motor paketi ee7328e ile commitlendi; kullanıcı yeni gerçek analiz/arayüz dilimine açık yetki verdi.
+- [x] ee7328e motor commit'i için uzak CI başarısı kullanıcı tarafından sağlanan ekran görüntüsü doğrulaması olarak kaydedildi; bağımsız uzak sorgu yapılmadı. Yeni arayüz diliminin CI sonucu değildir.
 
-A3'ün tamamı bitti sayılmaz. 1.0.0'da not_applicable kullanılmaz; ileride kullanımı/aritmetiği tanımlanmadan payda değiştirilemez. MongoDB/karşılaştırma A4, paylaşım A5 kapsamındadır.
+### A3 gerçek analiz ve sonuç arayüzü — bu dilim
+
+- [x] Temiz Git başlangıcı/HEAD ee7328e, AGENTS ve ilgili belgeler; motorun kullanıcı tarafından sağlanan uzak CI doğrulamasını kaydet.
+- [x] Analyze Server Action: strict/byte/seçim tekilliği doğrulaması; profile ID/login ve repo ID/owner/public/archive/fork yeniden doğrulama; istemciden metadata/puan/bulgu kabul etmeme.
+- [x] İşlem başına yeni client ve ortak bütçe; gerçek profil/README/selected metadata'dan motor girdisi. Report checkedAt/rulesVersion ve güvenli serileştirilebilir kanıt/öneri çıktısı.
+- [x] Gerçek score/category/type/reason/check/evidence ve en çok üç görev + motor etkisi; arayüzde yeniden skor veya sıralama yok. Developer ID IdentityCard ortak, demo fixture ve editoryal içerik korunur.
+- [x] Pending/çift gönderim/ref guard, eski yanıtları atma, güvenli hata/gerçek retry ve profil/seçime geri dönüş; incomplete null toplam/tip, bilinen kategori ve bulguları koruma.
+- [x] TR/EN'de sonuç/veri zamanı/seçili ID korunumu; dil değişimi yeni analiz başlatmıyor. Tam yenileme kalıcılığı veya kalıcı rapor linki iddiası yok.
+- [x] 38 yeni deterministik test (35 action + 3 render); toplam 10 dosya/266 test. Geçersiz/tamper/scope, complete/incomplete, DTO güvenliği, ortak/fresh bütçe ve sonuç sunumu. Lint/typecheck/build ve diff kontrolü sonuçları STATUS'ta.
+- [x] Temiz Chrome/CDP gerçek EnessCansever formu ve üç proje analizi, skorun motordan gelmesi, native Enter/Space/focus/accordion, üç/sıfır seçimi, geri dönüş, geç yanıt ve ağ kesintisi/gerçek retry kontrolleri.
+- [x] TR/EN sonuç ve seçim korunumu, 320/390/768/1440 taşma ve uzun adlar, reduced-motion; mobil/masaüstü görüntüleri incelendi. Incomplete tarayıcıda canlı veriyle zorlanmadı; deterministik render testinde doğrulandı.
+- [x] Dar A3 revizyonu: tüm sayfalarda ortak tam genişlikli sticky header; mobil/masaüstü opak zemin, ince sınır, TR/EN ve skip link erişimi; scroll-padding/margin ile başlık/Tab odağı payı.
+- [x] Yeni gerçek sonuç mount'unda 520ms kart, 80+600ms gerçek kategori dolulukları ve 140+420ms detay girişi; başlangıçtan gerçek metin/puan, null kategoride sahte doluluk yok. Mevcut CSS/reduced-motion, yeni bağımlılık yok.
+- [x] Profil başarı parent/child ve Strict Mode çift scroll'u giderildi; aynı başlığa tek focus/scroll. Yeni sonuç başlığı odaklanır, raporun tamamı live region değildir.
+- [x] Gerçek Chrome/CDP: dört sayfada mobil/masaüstü uzun scroll, 320px taşma, native Tab/Space ve header altında kalan hedefin otomatik görünmesi. Gerçek analiz ilk/yeni giriş, TR/EN'de aynı DOM/istek korunumu ve reduced-motion doğrudan görünüm ölçüldü.
+- [x] Mobil ilk giriş ve masaüstü yeni analiz kısa gerçek ekran kayıtları alındı; timestamp'li kare ve opacity/transform ölçümleriyle incelendi. Normal giriş ~689ms; locale/accordion tekrar başlatmadı, reduced-motion yeni animasyon üretmedi. Incomplete canlı hareket kontrolü yapılmadı.
+- [x] Dar revizyon sonrası mevcut 266 test, lint, typecheck, production build ve diff/koruma kontrolü; motor/adapter/action/fixture/puan/öneri sırası değişmedi. Sonuçlar STATUS'ta kayıtlıdır.
+- [ ] Yeni gerçek sonuç arayüzü için kullanıcı görsel kabulü.
+- [ ] Yeni arayüz diliminin kullanıcı commit/push ve uzak CI doğrulaması; ee7328e yalnız önceki motor commit'idir.
+
+Kaynak sözleşme §11 A3'ün iki teknik maddesi motor/test paketiyle karşılandı; yeni gerçek sonuç dilimi yerelde doğrulandı. **Yeni kullanıcı görsel kabulü ve yeni CI açık olduğundan A3'ün tamamı onaylandı/bitti sayılmaz.** 1.0.0'da not_applicable kullanılmaz; ileride kullanımı/aritmetiği tanımlanmadan payda değiştirilemez. MongoDB/karşılaştırma A4, paylaşım A5 kapsamındadır.
 
 ### A4 Depolama/karşılaştırma:
 

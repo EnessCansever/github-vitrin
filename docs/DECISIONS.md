@@ -256,3 +256,31 @@ Henüz yayımlanmamış/commitlenmemiş 1.0.0 motoru tamamlanır; önce/sonra mo
 Yeni bağımlılık, AI/ağ tabanlı içerik analizi, UI/adapter değişikliği veya backend genişlemesi yoktur. Geçici gerçek smoke çalıştırıcısı kaldırılır; normal test/CI gerçek ağa bağlanmaz. Detaylı kontrol ve kaynak kanıtları STATUS'ta, tam alias/numara sınırları SCORING'dedir.
 
 Etkilenen dosyalar: src/features/analysis/scoring/{markdown,engine}.ts, src/messages/{tr,en}.json, tests/scoring/{markdown,messages}.test.ts, docs/{SCORING,DECISIONS,STATUS,TASKS}.md. A3 arayüz bağlantısı için yetki yoktur; stage/commit/push/yayın yapılmaz.
+
+
+### D025 — Gerçek analiz action'ı ve sayfada geçici Developer ID sonucu — 28 Ekim 2026
+
+Kullanıcı ee7328e motor commit'i için uzak CI başarısını kullanıcı tarafından sağlanan ekran görüntüsü doğrulaması olarak bildirdi. Yerel HEAD/temiz başlangıç doğrulandı; uzak CI bağımsız sorgulanmadı. Yeni yetki yalnız gerçek analiz/sonuç arayüzüdür; motor sözleşmesi, demo fixture, sonraki depolama/paylaşım/yayın kapsamı değişmez. Yeni arayüz için kullanıcı görsel kabulü açık kalır.
+
+Mevcut actions.ts'ye analiz için tek analyze Server Action eklendi; ayrıca Route Handler oluşturulmadı. Girdi yalnız username/profileId ve 1–3 repo id/name'dir. Strict schema, raw username <=256 UTF-8 byte, payload <=2 KiB, mevcut Next body <=8 KiB ve tekillik sınırları kullanılır. Profil ve repo kimliği/sahiplik/public kapsamı yeniden alınır; client metadata/puan/gerekçe gönderemez. Her analyze işlemi yeni GitHubClient kurar; kendi çağrıları ortak 20 saniye/40 istek bütçesini paylaşır. checkedAt sunucudan, rulesVersion motordan gelir.
+
+Report DTO'su puanlama sonucunu serileştirilebilir public alanlarla sunar; tam README, excerpt, adapter hata nesnesi/kodu, avatar ve token aktarılmaz. GitHub kaynak URL/path/satır/Blob SHA ve yerelleştirme anahtarları yeterlidir. Unknown/incomplete motor tarafından aynen korunur; safe action hata kodu veya eksik sonuç demo fallback'e dönüşmez.
+
+ProfileSearch aramayı, LiveAnalysis analiz pending/response/requestId'sini, RepoPicker seçim ID'lerini tutar. Seçim mounted/hidden kaldığından sonuçtan dönüş ve locale refresh state'i korur. Genel store/workflow veya yeni bağımlılık gerekmedi. Ref guard aynı pending işlemi tekrar göndermez; seçim ekranına dönüş/unmount eski yanıtı geçersiz kılar. Gerçek sunucu isteğinin iptal edildiği iddia edilmez. Sonuç aynı sayfadadır ve tam yenilemede kaybolur; URL'si saklanabilir kalıcı rapor değildir.
+
+IdentityCard, önceki demo wrapper'ı ResultSummary ile gerçek LiveReport'ta ortak basılı kimlik sunumudur. Demo MS, 77,5, kategori ve editoryal metni korunur. Canlı sonuç kartı ve detayları yalnız motor verisini sunar; arayüz puan/ortalama/öneri sırası hesaplamaz. Eksik toplam çizgi/hesaplanmadı, tip ve mühür yok; bilinen kategori/check'ler korunur. Native details/checkbox/focus, uzun metin sarma ve reduced-motion korunur; paylaşım/indirme eylemi eklenmez.
+
+Mevcut Vitest ve React server renderer ile server action/DTO ve complete/incomplete sunum testleri eklendi; yeni test aracı/dependency yoktur. Yerel Chrome/CDP incelemesi CI'a canlı GitHub gereksinimi eklemez. Teknik sonuçlar STATUS'ta; yeni görsel kabul ve commit/push sonrası yeni CI açık. A4'e veya yayına geçiş yoktur.
+
+Etkilenen dosyalar: AGENTS.md, README.md; src/app/{page.tsx,globals.css}; src/components/{identity-card,result-summary}.tsx; src/features/analysis/{actions.ts,profile-search.tsx,repo-picker.tsx,live-analysis.tsx,live-report.tsx,report.ts}; src/messages/{tr,en}.json; tests/github/analysis.test.ts, tests/analysis/report.test.tsx, vitest.config.mjs (TSX test keşfi); docs/{ARCHITECTURE,DESIGN,DECISIONS,STATUS,TASKS}.md.
+
+
+### D026 — Sticky ortak header ve CSS sonuç girişinin yaşam süresi — 28 Ekim 2026
+
+Kullanıcı, commitlenmemiş A3 paketini koruyarak yalnız ortak sticky header ve gerçek sonuç girişine yetki verdi. Header body altında kalır; opak tam genişlikli sticky yüzey + mevcut shell iç hizası seçildi. Kısa mobil/yüksek masaüstü header tokenı, root scroll-padding ve küçük hedef margin'iyle focus/hash/programatik scroll payı sağlanır. Fixed çözümü, scroll listener veya hareket paketi gerekmedi.
+
+Ölçümde seçim başarı efektinin parent/child tekrarına ek olarak geliştirme Strict Mode tekrarı görüldü. Parent yalnız arama hatasını odaklar; LiveAnalysis son başlık DOM referansıyla aynı focus/scroll'u tekrar etmez. preventScroll + tek açık scroll çağrısı kullanılır; bu, kullanıcı veri/istek akışını değiştirmez.
+
+Giriş, mevcut LiveReport mount yaşam süresine ve yalnız onun CSS selector'larına bağlıdır. Yeni cevapta mount, locale/accordion/re-render'da aynı DOM davranışı tarayıcıda doğrulandı. Mevcut card-in/detail-in keyframe'leri tekrar kullanılır; yalnız kategori scaleX keyframe'i eklendi. Kart 520ms, çubuk 80+600ms, gövde 140+420ms; başlangıç metin/puan gerçek ve okunur, animasyon bitişi beklenmez. Reduced-motion bütün hareket/gecikmeyi kaldırır. Null kategoride doluluk düğümü oluşturulmama sözleşmesi değişmedi.
+
+Motor/adapter/action/puanlama/öneri sırası/demo fixture/metinler/dependency ve kalıcılık kapsamı korunur. Revizyon aynı A3 commit paketine dahildir; yeni kullanıcı görsel kabulü/CI beklenir. Etkilenen dosyalar: src/components/site-header.tsx, src/app/globals.css, src/features/analysis/{profile-search,live-analysis}.tsx, docs/{DESIGN,DECISIONS,STATUS,TASKS}.md. Stage/commit/push/yayın veya A4 geçişi yoktur.

@@ -1,9 +1,13 @@
 "use server";
 
+import {z} from "zod";
 import {GitHubClient} from "../../lib/github/client";
 import {GitHubError} from "../../lib/github/errors";
 import {profileInput} from "../../lib/github/input";
-import type {SearchResult} from "./selection";
+import {repoName} from "../../lib/github/schemas";
+import {RULES_VERSION, scoreAnalysis} from "./scoring/engine";
+import type {AnalysisResponse} from "./report";
+import type {SearchError, SearchResult} from "./selection";
 
 export async function getRepos(input: unknown): Promise<SearchResult> {
   if (typeof input !== "string" || Buffer.byteLength(input, "utf8") > 256) {
@@ -27,15 +31,56 @@ export async function getRepos(input: unknown): Promise<SearchResult> {
       pinnedUnknown: pinned.status === "unknown", limited: candidates.limited,
     };
   } catch (error) {
-    if (error instanceof GitHubError) {
-      switch (error.code) {
-        case "invalid_input": return {status: "error", code: "invalid_input"};
-        case "user_not_found": return {status: "error", code: "notFound"};
-        case "no_repos": return {status: "error", code: "empty"};
-        case "configuration": case "auth": return {status: "error", code: "configuration"};
-        case "rate_limit": return {status: "error", code: "rateLimit"};
-      }
+    return {status: "error", code: safeError(error)};
+  }
+}
+
+function safeError(error: unknown): SearchError {
+  if (error instanceof GitHubError) {
+    switch (error.code) {
+      case "invalid_input": return "invalid_input";
+      case "user_not_found": return "notFound";
+      case "no_repos": return "empty";
+      case "configuration": case "auth": return "configuration";
+      case "rate_limit": return "rateLimit";
     }
-    return {status: "error", code: "network"};
+  }
+  return "network";
+}
+
+const analysisInput = z.object({
+  username: z.string().max(256).refine(value => Buffer.byteLength(value, "utf8") <= 256).pipe(profileInput),
+  profileId: z.number().int().positive().safe(),
+  repos: z.array(z.object({id: z.number().int().positive().safe(), name: repoName}).strict()).min(1).max(3)
+    .refine(repos => new Set(repos.map(repo => repo.id)).size === repos.length &&
+      new Set(repos.map(repo => repo.name.toLowerCase())).size === repos.length),
+}).strict();
+
+export async function analyze(input: unknown): Promise<AnalysisResponse> {
+  const parsed = analysisInput.safeParse(input);
+  if (!parsed.success || Buffer.byteLength(JSON.stringify(input), "utf8") > 2048) {
+    return {status: "error", code: "invalid_input"};
+  }
+  try {
+    const client = new GitHubClient();
+    const profile = await client.getProfile(parsed.data.username);
+    if (profile.id !== parsed.data.profileId || profile.login.toLowerCase() !== parsed.data.username) return {status: "error", code: "selectionChanged"};
+    const repos = await client.getSelected(profile, parsed.data.repos);
+    const profileReadme = await client.getProfileReadme(profile);
+    const checkedAt = new Date().toISOString();
+    const result = scoreAnalysis({rulesVersion: RULES_VERSION, profile, profileReadme, repos, checkedAt});
+    return {status: "success", report: {
+      ...result, profile: {id: profile.id, login: profile.login}, checkedAt, repoCount: repos.length,
+      checks: result.checks.map(check => ({...check, evidence: check.evidence.map(evidence => ({
+        sourceUrl: evidence.sourceUrl, field: evidence.field, path: evidence.path,
+        branch: evidence.branch, sha: evidence.sha, line: evidence.line,
+        availability: evidence.availability, detailKey: evidence.detailKey,
+      }))})),
+    }};
+  } catch (error) {
+    if (error instanceof GitHubError && error.code === "repo_unavailable") {
+      return {status: "error", code: "selectionChanged"};
+    }
+    return {status: "error", code: safeError(error)};
   }
 }

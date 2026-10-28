@@ -178,16 +178,29 @@ Bu bir public ağ girişidir fakat kalıcı/dağıtık abuse koruması değildir
 Resmi referanslar: [Server Actions ve programatik form çağrısı](https://nextjs.org/docs/app/guides/forms), [Server Action body/origin yapılandırması](https://nextjs.org/docs/app/api-reference/config/next-config-js/serverActions). Kurulu Next 16.4.3 config tipleri ve action-handler body parser'ı da kontrol edildi. Yerel aşırı body denemesinde limit doğrulandı; geliştirme sunucusu dahili 413 body-limit hatasını HTTP 500 Server Action yanıtı içinde taşıdı. Bu statü özel bir JSON API sözleşmesi olarak sunulmaz.
 
 
-## A3 — saf puanlama motoru (arayüze bağlı değil)
+## A3 — saf puanlama motoru (bağımsız domain modülü)
 
 - `src/features/analysis/scoring/types.ts`: adapter ile uyumlu normalize girdi, check/evidence, kategori, öneri ve tip çıktısı.
 - `markdown.ts`: unified 11.0.5 / remark-parse 11.0.0 AST incelemesi; açık TR/EN alias'ları ve bölüm sınırları. HTML render/çalıştırma ve URL fetch yoktur. Başlıklar tek geçişte bölüm kapsamına ayrılır; iç içe kapsam en fazla Markdown başlık derinliğidir.
 - `engine.ts`: `scoreAnalysis(input)`; 1–3 uygun repo, sabit sürüm, puan/ortalama/yuvarlama, unknown, profil tipi ve en çok üç görev. Genel workflow/kural motoru yoktur.
 - Adapter'ın Readme/Profile/Repository/ErrorCode tipleri type-only import edilir; yalnız saf login/repo adı Zod şemaları runtime import edilir. Transport, server-only client, env, DB, saat veya AI puanlama modülüne yüklenmez. Saat ve locale bağımlılığı yoktur; checkedAt opsiyonel girdidir. Çıktı yeni nesnelerle oluşturulur, girdi değiştirilmez; repo ID sırası sonucu sabitler.
-- `GitHubClient.getSelected` çıktısındaki `{repo, readme}[]`, profile ve profileReadme ile doğrudan girdi olabilir; bu tur çağrıları birleştiren yeni Server Action/Route Handler oluşturulmadı. Mevcut getRepos yalnız profil/adayları getirmeye devam eder, seçimi bekleyen client yaşam süresi uzatılmaz.
+- `GitHubClient.getSelected` çıktısındaki `{repo, readme}[]`, profile ve profileReadme ile doğrudan girdi olabilir; ilk motor diliminde bu çağrıları birleştiren Server Action oluşturulmamıştı. Güncel analyze bağlantısı aşağıdaki gerçek analiz bölümündedir. getRepos yalnız profil/adayları getirir; seçimi bekleyen client yaşam süresi uzatılmaz.
 - Eksik data kategorisi ve toplam null'dır; bilinen metadata/check bulguları korunur. README yokluğu yalnız adapter'ın doğrulanmış missing durumu veya bilinen boş found metindir. Büyük found metin ikinci savunma olarak unknown/too_large olur; kesilmez.
 - Evidence, varsa Blob SHA'yı dosya kimliği olarak taşır; branch ile kaynak linkini ayrı tutar. Sağlanmayan commit SHA veya zaman damgası uydurulmaz. Güvenli errorCode dışında Error/transport nesnesi döndürülmez.
 - `src/messages/{tr,en}.json` içindeki yeni Scoring alanı hesaplama dışındaki metinleri tutar. Önceki mesajlar ve UI bileşenleri korunur. Motor/demolar henüz birleştirilmez; 77,5 fixture değişmez.
 - `tests/scoring`: ağ/saat/rastgelelik olmadan davranış, Markdown, scope, eksik veri, öneriler, profil tipi ve iki dilde mesaj anahtarları. Mevcut Vitest/CI kullanılmaya devam eder; yeni test aracı veya canlı GitHub testi yoktur.
 
 Tam tespit sınırları ve aritmetik [SCORING](SCORING.md) içindedir. Gerçek kullanıcı sonuç akışı, kalıcı cache/MongoDB ve paylaşım bu dilimde yoktur; public deployment sınırlamaları sürer.
+
+
+## A3 — gerçek analiz ve geçici sonuç arayüzü
+
+`actions.ts` içindeki analyze, getRepos'tan ayrı kullanıcı işlemi için Server Action'dır; aynı işi yapan Route Handler/public debug endpointi eklenmedi. Girdi strict Zod: username, profileId, 1–3 benzersiz id/name; kullanıcı adı raw <=256 byte ve JSON payload <=2 KiB, mevcut framework body <=8 KiB. Fazladan metadata/score/findings/version reddedilir. Profilin ID/login'i getProfile ile, her repo ID ve eligible kapsamı getSelected ile tekrar doğrulanır. Veri değişimi repo_unavailable/kimlik uyuşmazlığında güvenli selectionChanged olur. Repo listesi getirilirken açılan client kullanıcı seçimini beklemez; her analyze işlemi yeni client ve ortak 20 saniye/40 istek bütçesidir.
+
+Güncel repo metadata/README ve profil README sunucuda motora verilir. checkedAt sunucunun gerçek veri alma zamanıdır; RULES_VERSION motor sabitidir. report.ts, serileştirilebilir DTO'yu tanımlar: üstte checkedAt/profile/repoCount, motor sonucu ve yalnız izinli evidence alanları. Excerpt, adapter errorCode/Error, ham metadata/README ve avatar/token aktarılmaz. Güvenli action kodları kullanıcı hatalarına çevrilir; README unknown ise adapter/motor sözleşmesiyle incomplete döner, demo fallback yoktur.
+
+ProfileSearch arama durumunu, LiveAnalysis analiz işlem kimliğini/pending/sonucunu tutar. RepoPicker ID state'i sonuç gösterilirken mounted/hidden kalır; geri dönüşte ve locale refresh'inde seçim kaybolmaz. Yeni arama eski LiveAnalysis'ı kaldırır. Ref guard çift analizi engeller; requestId hem seçim ekranına dönüşte hem unmount'ta artar, eski yanıt uygulanmaz. Sunucu isteğinin iptali vaat edilmez; Next istemci action kuyruğu da kullanıcı işlemlerini sıralayabilir. Sonuç/veri alma render/locale effect'ine bağlı değildir; yalnız açık kullanıcı eylemi ağ işlemi başlatır.
+
+LiveReport yalnız motorun kategori/check/tip/öneri dizilerini sunar; puan toplamaz/ortalama hesaplamaz/sıralamaz. Kaynaklar GitHub linki, path/satır/Blob SHA ve yerelleştirilmiş kanıt metnidir; README render edilmez. IdentityCard, sunucu demo wrapper'ı ResultSummary ile canlı client sunumunda ortaktır. Incomplete: toplam null, tip/mühür yok; tam kategoriler ve bilinen bulgular korunur, tekrar alma ve geri dönüş açıktır. Tam yenilemede kaybolan sayfa state'i kalıcı rapor URL'si değildir. Demo fixture/editoryal metin ve üç demo route'u ayrı kalır.
+
+Tests/github/analysis.test.ts gerçek HTTP mock'larıyla girdi/scope/identity/DTO/complete/incomplete/hata/bütçe doğrular; tests/analysis/report.test.tsx mevcut React renderer/next-intl ile null ve yerelleştirme/sunum sırasını kontrol eder. CI hâlâ ağ/secret gerektirmez; yeni bağımlılık/test aracı eklenmez. Yerel Chrome/CDP gerçek akış kontrolü CI sonucu değildir. MongoDB/kalıcı cache, karşılaştırma, paylaşım/PNG, dağıtık abuse ve deployment bu dilimde yoktur.

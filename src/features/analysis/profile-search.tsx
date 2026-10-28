@@ -6,7 +6,7 @@ import {ArrowRight} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {profileInput} from "../../lib/github/input";
 import {getRepos} from "./actions";
-import {RepoPicker} from "./repo-picker";
+import {LiveAnalysis} from "./live-analysis";
 import {StatePanel} from "./analysis-states";
 import type {SearchResult} from "./selection";
 
@@ -24,7 +24,7 @@ export function ProfileSearch({children, preview}: {children: ReactNode; preview
   const resultRegion = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (result) {
+    if (result?.status === "error") {
       resultRegion.current?.querySelector<HTMLElement>("h2")?.focus({preventScroll: true});
       resultRegion.current?.scrollIntoView({block: "start"});
     }
@@ -104,19 +104,12 @@ export function ProfileSearch({children, preview}: {children: ReactNode; preview
           </StatePanel>
         )}
         {result?.status === "success" && (
-          <section aria-labelledby="live-selection-title">
-            <div className="prototype-heading">
-              <div className="profile-identity">
-                <span className="avatar" aria-hidden="true">{result.profile.login.slice(0, 2).toUpperCase()}</span>
-                <a className="username text-link" href={`https://github.com/${result.profile.login}`}>@{result.profile.login}</a>
-              </div>
-              <h2 id="live-selection-title" tabIndex={-1}>{t("title")}</h2>
-              <p>{t("scope", {count: result.repos.length})}</p>
-              {result.pinnedUnknown && <p className="selection-notice" role="status">{t("pinnedUnknown")}</p>}
-              {result.limited && <p className="selection-notice">{t("limited")}</p>}
-            </div>
-            <RepoPicker key={result.searchId} mode="live" repos={result.repos} initialSelectedIds={result.initialSelectedIds} />
-          </section>
+          <LiveAnalysis key={result.searchId} selection={result} onProfile={() => {
+            requestId.current++;
+            setResult(null);
+            field.current?.focus({preventScroll: true});
+            form.current?.scrollIntoView({block: "center"});
+          }} />
         )}
       </div>
     </>

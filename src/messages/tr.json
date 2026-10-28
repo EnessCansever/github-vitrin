@@ -22,7 +22,7 @@
     "intro": "Public GitHub profilini ve projelerini tek yerde gör. Portfolyona yeni bir gözle bak.",
     "label": "GitHub kullanıcı adı veya profil URL’si",
     "placeholder": "GitHub kullanıcı adın",
-    "inputHint": "Public profilini ve uygun projelerini getir. Puanlama geliştirme aşamasında.",
+    "inputHint": "Public profilini getir, 1–3 proje seç ve sunum analizini başlat.",
     "demoAction": "Örnek analizi keşfet",
     "howTitle": "Koddan ilk izlenime.",
     "discoverTitle": "Keşfet",
@@ -172,8 +172,9 @@
     "liveLegend": "İncelenecek projeler",
     "noDescription": "Açıklama eklenmemiş.",
     "noLanguage": "Dil belirtilmemiş",
-    "scoringPending": "Puanlama geliştirme aşamasında",
-    "liveEmpty": "En az bir proje seç. Puanlama henüz açık değil."
+    "liveEmpty": "Analiz için en az bir proje seç.",
+    "analyze": "Sunumu analiz et",
+    "analysisHint": "Yalnız seçtiğin projeler ve profil sunumu değerlendirilecek."
   },
   "States": {
     "back": "Repo seçimi örneğine dön",
@@ -241,7 +242,7 @@
     "pending": "Profil ve projeler getiriliyor",
     "loading": "GitHub’dan public profil ve uygun projeler alınıyor.",
     "invalid": "Bir GitHub kullanıcı adı veya github.com/kullanici profil adresi gir.",
-    "region": "Profil ve proje seçimi",
+    "region": "Profil, proje seçimi ve analiz sonucu",
     "title": "İncelenmesini istediğin 1–3 projeyi seç.",
     "scope": "Bu profile ait {count} public, arşivlenmemiş ve fork olmayan proje listelendi.",
     "pinnedUnknown": "Sabitlenmiş projeler alınamadı. Son güncellenen uygun projelerle devam edebilirsin.",
@@ -274,7 +275,11 @@
     "label": "DEVELOPER ID",
     "fictional": "Kurmaca profil",
     "categories": "Vitrin puanı kategorileri",
-    "presentation": "Sunum profili · Onay rozeti değildir"
+    "presentation": "Sunum profili · Onay rozeti değildir",
+    "profile": "Profil",
+    "projects": "Projeler",
+    "readme": "README",
+    "incomplete": "Eksik"
   },
   "Scoring": {
     "suggestions": {
@@ -362,5 +367,97 @@
         "unknown": "README özellik kontrolü tamamlanamadı."
       }
     }
+  },
+  "Report": {
+    "complete": "Gerçek analiz",
+    "incomplete": "Eksik analiz",
+    "publicProfile": "Public GitHub profili",
+    "scoreLabel": "Vitrin puanı",
+    "notCalculated": "Hesaplanmadı",
+    "incompleteTitle": "Analiz eksik",
+    "incompleteText": "Bazı veriler alınamadı. Bilinen bulgular korunuyor; belirsiz alanlar sıfır sayılmıyor. Toplam puan ve profil tipi hesaplanmadı.",
+    "loadingTitle": "Sunum inceleniyor",
+    "loadingText": "GitHub’dan güncel profil ve seçili proje verileri alınıp sunum kontrolleri değerlendiriliyor.",
+    "backSelection": "Proje seçimine dön",
+    "backProfile": "Başka profil ara",
+    "retry": "Verileri yeniden al",
+    "reanalyze": "Yeniden analiz et",
+    "typeReason": "Neden bu profil tipi?",
+    "tasksTitle": "Öncelikli adımlar",
+    "tasksIntro": "Yalnız incelenen kapsam için, kanıta dayalı görevler.",
+    "firstStep": "İLK ADIM",
+    "taskNumber": "ADIM {number}",
+    "impact": "Bu kontrol sağlanırsa kategoriye +{points} puan",
+    "rawImpact": "Bu kontrolün ağırlıklı katkısı yaklaşık {points} puan; kategori henüz tamamlanmadı.",
+    "impactNote": "Etkiler tek kontrol için hesaplanır; yuvarlanmış katkılar birlikte toplanmaz.",
+    "noTasks": "Bu kapsamda önceliklendirilecek başarısız kontrol yok.",
+    "noKnownTasks": "Bilinen veride önceliklendirilecek eksiklik yok. Belirsiz alanlar için yeniden veri alabilirsin.",
+    "categoriesTitle": "Puanın ayrıntıları",
+    "categoriesIntro": "Kontrolleri, puan katkılarını ve kaynakları açıp incele.",
+    "average": "Repo kontrolleri {count} seçili proje üzerinden eşit ağırlıkla ortalanır. Aşağıdaki puanlar repo başına ham katkıdır.",
+    "countRule": "Repo sayısı bonus sağlamaz. Tespit edilemeyen içerik farklı bir bölümde bulunabilir.",
+    "evidence": "Kanıt ve tespit sınırları",
+    "sourceLink": "GitHub kaynağı: {field} (yeni sekme)",
+    "path": "Dosya: {path}",
+    "line": "Satır {line}",
+    "sha": "Dosya SHA: {sha}",
+    "scope": "{count} seçili public proje incelendi",
+    "checkedAt": "Veri alınma zamanı: {time} UTC",
+    "temporary": "Bu sonuç bu sayfadaki oturumda tutulur; tam yenilemede kaybolur. Kalıcı rapor bağlantısı ve paylaşım henüz yok.",
+    "status": {
+      "pass": "Koşul sağlandı",
+      "fail": "Koşul eşleşmedi",
+      "unknown": "Veri belirsiz",
+      "not_applicable": "Uygulanamaz"
+    },
+    "types": {
+      "ready": {
+        "title": "Vitrini Hazır",
+        "description": "Puan en az 80; seçili tüm projelerde demo ve kurulum koşulları sağlandı. Bu bir teknik kalite onayı değildir."
+      },
+      "noDemo": {
+        "title": "Demo Nerede?",
+        "description": "İncelenen proje alanlarında tanınan demo bağlantısı eşleşmedi. Bağlantılar farklı biçimde sunulmuş olabilir."
+      },
+      "hiddenGem": {
+        "title": "Gizli Cevher",
+        "description": "Tüm projelerde açıklama ve amaç koşulları sağlandı; demo, kurulum veya profil sunumu koşullarından en az biri eşleşmedi. Bu bir teknik kalite onayı değildir."
+      },
+      "inProgress": {
+        "title": "Vitrin Yapımda",
+        "description": "Bazı sunum koşulları eşleşmedi. Kanıtları inceleyip mevcut içeriği düzenleyebilir veya tamamlayabilirsin."
+      }
+    },
+    "errors": {
+      "invalid_input": {
+        "title": "Seçimi kontrol et",
+        "description": "Geçerli bir profil ve 1–3 farklı proje seç. Gerekirse profili yeniden getir."
+      },
+      "selectionChanged": {
+        "title": "Profil veya proje bilgisi değişti",
+        "description": "Seçilen proje artık bu public kapsamda olmayabilir. Proje seçimine dön veya profili yeniden getir."
+      },
+      "notFound": {
+        "title": "Bu profil artık bulunamıyor",
+        "description": "Kullanıcı adını kontrol et veya başka bir profil ara."
+      },
+      "empty": {
+        "title": "İncelenebilecek proje yok",
+        "description": "Proje seçimine dön ve uygun bir public proje seç."
+      },
+      "network": {
+        "title": "Analiz tamamlanamadı",
+        "description": "Bağlantı veya hizmet sorunu oluştu. Verileri yeniden alabilir veya seçimlerine dönebilirsin."
+      },
+      "rateLimit": {
+        "title": "Şimdilik istek sınırına ulaşıldı",
+        "description": "GitHub erişimine ara vermek gerekiyor. Daha sonra verileri yeniden almayı deneyebilirsin."
+      },
+      "configuration": {
+        "title": "GitHub bağlantısı kullanılamıyor",
+        "description": "Sunucunun bağlantı yapılandırması veya erişim izni kontrol edilmeli. Daha sonra yeniden dene."
+      }
+    },
+    "partialSummary": "Bilinen bulguları ve kategori ayrıntılarını aşağıda inceleyebilirsin."
   }
 }

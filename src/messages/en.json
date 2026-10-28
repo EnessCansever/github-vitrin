@@ -22,7 +22,7 @@
     "intro": "Bring your public GitHub profile and projects together. See your portfolio with fresh eyes.",
     "label": "GitHub username or profile URL",
     "placeholder": "Your GitHub username",
-    "inputHint": "Fetch your public profile and eligible projects. Scoring is in development.",
+    "inputHint": "Fetch your public profile, select 1–3 projects and analyze the presentation.",
     "demoAction": "Explore a sample analysis",
     "howTitle": "From code to first impression.",
     "discoverTitle": "Discover",
@@ -172,8 +172,9 @@
     "liveLegend": "Projects to review",
     "noDescription": "No description provided.",
     "noLanguage": "Language not specified",
-    "scoringPending": "Scoring is in development",
-    "liveEmpty": "Select at least one project. Scoring is not available yet."
+    "liveEmpty": "Select at least one project to analyze.",
+    "analyze": "Analyze the presentation",
+    "analysisHint": "Only your selected projects and profile presentation will be reviewed."
   },
   "States": {
     "back": "Back to sample repository selection",
@@ -241,7 +242,7 @@
     "pending": "Fetching profile and projects",
     "loading": "Fetching the public profile and eligible projects from GitHub.",
     "invalid": "Enter a GitHub username or a github.com/username profile URL.",
-    "region": "Profile and project selection",
+    "region": "Profile, project selection and analysis result",
     "title": "Choose 1–3 projects to review.",
     "scope": "{count} public, owned, non-archived, non-fork projects listed.",
     "pinnedUnknown": "Pinned projects could not be fetched. You can continue with recently updated eligible projects.",
@@ -274,7 +275,11 @@
     "label": "DEVELOPER ID",
     "fictional": "Fictional profile",
     "categories": "Portfolio score categories",
-    "presentation": "Presentation type · Not an endorsement"
+    "presentation": "Presentation type · Not an endorsement",
+    "profile": "Profile",
+    "projects": "Projects",
+    "readme": "README",
+    "incomplete": "Incomplete"
   },
   "Scoring": {
     "suggestions": {
@@ -362,5 +367,97 @@
         "unknown": "The README features check could not be completed."
       }
     }
+  },
+  "Report": {
+    "complete": "Live analysis",
+    "incomplete": "Incomplete analysis",
+    "publicProfile": "Public GitHub profile",
+    "scoreLabel": "Portfolio score",
+    "notCalculated": "Not calculated",
+    "incompleteTitle": "Analysis incomplete",
+    "incompleteText": "Some data could not be retrieved. Known findings are preserved; uncertain fields are not scored as zero. The total and profile type were not calculated.",
+    "loadingTitle": "Reviewing the presentation",
+    "loadingText": "Current profile and selected project data are being retrieved from GitHub and checked for presentation signals.",
+    "backSelection": "Back to project selection",
+    "backProfile": "Find another profile",
+    "retry": "Fetch data again",
+    "reanalyze": "Analyze again",
+    "typeReason": "Why this profile type?",
+    "tasksTitle": "Priority steps",
+    "tasksIntro": "Evidence-based tasks for the inspected scope.",
+    "firstStep": "FIRST STEP",
+    "taskNumber": "STEP {number}",
+    "impact": "Meeting this check adds {points} points to the category",
+    "rawImpact": "This check contributes approximately {points} weighted points; the category is not complete yet.",
+    "impactNote": "Each impact applies to one check; rounded contributions should not be added together.",
+    "noTasks": "There are no failed checks to prioritize within this scope.",
+    "noKnownTasks": "There are no gaps to prioritize in the known data. Fetch again to retry uncertain fields.",
+    "categoriesTitle": "Score details",
+    "categoriesIntro": "Open checks to inspect their points and sources.",
+    "average": "Repository checks are averaged equally across {count} selected projects. Points below are raw contributions per repository.",
+    "countRule": "Repository count earns no bonus. Undetected content may be in another section.",
+    "evidence": "Evidence and detection limits",
+    "sourceLink": "GitHub source: {field} (new tab)",
+    "path": "File: {path}",
+    "line": "Line {line}",
+    "sha": "File SHA: {sha}",
+    "scope": "{count} selected public projects inspected",
+    "checkedAt": "Data retrieved: {time} UTC",
+    "temporary": "This result stays in the current page session and is lost on a full reload. Permanent report links and sharing are not available yet.",
+    "status": {
+      "pass": "Condition met",
+      "fail": "Condition not matched",
+      "unknown": "Data uncertain",
+      "not_applicable": "Not applicable"
+    },
+    "types": {
+      "ready": {
+        "title": "Showcase Ready",
+        "description": "The score is at least 80 and every selected project meets the demo and installation checks. This is not a technical quality endorsement."
+      },
+      "noDemo": {
+        "title": "Where Is the Demo?",
+        "description": "No recognized demo link matched in the inspected project fields. Links may be presented differently."
+      },
+      "hiddenGem": {
+        "title": "Hidden Gem",
+        "description": "Every project meets the description and purpose checks; at least one demo, installation or profile presentation check did not match. This is not a technical quality endorsement."
+      },
+      "inProgress": {
+        "title": "Showcase in Progress",
+        "description": "Some presentation conditions did not match. Inspect the evidence to organize or complete existing content."
+      }
+    },
+    "errors": {
+      "invalid_input": {
+        "title": "Check your selection",
+        "description": "Choose a valid profile and 1–3 different projects. Fetch the profile again if needed."
+      },
+      "selectionChanged": {
+        "title": "Profile or project information changed",
+        "description": "A selected project may no longer be within this public scope. Return to project selection or fetch the profile again."
+      },
+      "notFound": {
+        "title": "This profile can no longer be found",
+        "description": "Check the username or search for another profile."
+      },
+      "empty": {
+        "title": "No projects to inspect",
+        "description": "Return to project selection and choose an eligible public project."
+      },
+      "network": {
+        "title": "Analysis could not be completed",
+        "description": "A connection or service problem occurred. Fetch the data again or return to your selection."
+      },
+      "rateLimit": {
+        "title": "The request limit has been reached",
+        "description": "GitHub access needs a pause. Try fetching the data again later."
+      },
+      "configuration": {
+        "title": "GitHub connection unavailable",
+        "description": "The server connection configuration or access permission needs attention. Try again later."
+      }
+    },
+    "partialSummary": "Known findings and category details remain available below."
   }
 }
