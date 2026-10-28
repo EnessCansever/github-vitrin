@@ -275,5 +275,92 @@
     "fictional": "Kurmaca profil",
     "categories": "Vitrin puanı kategorileri",
     "presentation": "Sunum profili · Onay rozeti değildir"
+  },
+  "Scoring": {
+    "suggestions": {
+      "bio": "Profiline kısa bir açıklama ekle.",
+      "website": "Profiline portfolyo bağlantısı ekle.",
+      "profileReadme": "Profil README’sine kendini tanıtan içerik ekle.",
+      "description": "{repo} projesine kısa bir açıklama ekle.",
+      "topics": "{repo} projesine ilgili bir topic ekle.",
+      "demo": "{repo} projesinin demo bağlantısını açıkça işaretle veya ekle.",
+      "image": "{repo} README’sindeki görseli Markdown referansı olarak düzenle veya ekle.",
+      "readme": "{repo} için bir README yaz.",
+      "purpose": "{repo} README’sinde amaç açıklamasını Amaç başlığı altında ekle veya düzenle.",
+      "install": "{repo} README’sinde komutları Kurulum başlığı altında ekle veya düzenle.",
+      "usage": "{repo} README’sinde çalıştırma adımlarını Kullanım başlığı altında ekle veya düzenle.",
+      "technology": "{repo} README’sinde teknoloji listesini Teknolojiler başlığı altında ekle veya düzenle.",
+      "features": "{repo} README’sinde özellikleri Özellikler başlığı altında ekle veya düzenle."
+    },
+    "evidence": {
+      "bio": {
+        "pass": "Profil açıklaması boş değil.",
+        "fail": "Profil açıklaması boş."
+      },
+      "website": {
+        "pass": "Profil website alanında geçerli bir HTTP(S) bağlantısı var. Erişilebilirliği kontrol edilmedi.",
+        "fail": "Profil website alanında geçerli bir HTTP(S) bağlantısı bulunamadı."
+      },
+      "profileReadme": {
+        "pass": "Profil README içeriği boş değil.",
+        "fail": "Profil README içeriği yok veya boş.",
+        "unknown": "Profil README içeriği doğrulanamadı."
+      },
+      "description": {
+        "pass": "Repo açıklaması boş değil.",
+        "fail": "Repo açıklaması boş."
+      },
+      "topics": {
+        "pass": "En az bir topic var.",
+        "fail": "Topic bulunamadı."
+      },
+      "homepage": {
+        "pass": "Homepage alanında geçerli HTTP(S) proje sitesi bağlantısı var. Çalıştığı doğrulanmadı.",
+        "fail": "Homepage alanında geçerli HTTP(S) proje sitesi bağlantısı bulunamadı."
+      },
+      "demo": {
+        "pass": "README içinde demo etiketi veya bölümünde geçerli HTTP(S) bağlantısı var. Çalıştığı doğrulanmadı.",
+        "fail": "Bu tarama, README içinde tanınan demo etiketi veya bölümünde geçerli HTTP(S) bağlantısı eşleştiremedi. Bağlantı farklı biçimde sunulmuş olabilir.",
+        "unknown": "README demo bağlantısı kontrolü tamamlanamadı."
+      },
+      "image": {
+        "pass": "Markdown içinde bir görsel referansı var. Yüklendiği veya ekran görüntüsü olduğu doğrulanmadı.",
+        "fail": "Bu tarama, README içinde desteklenen Markdown görsel referansı eşleştiremedi. Görsel başka biçimde sunulmuş olabilir.",
+        "unknown": "README görsel kontrolü tamamlanamadı."
+      },
+      "readme": {
+        "found": "README dosyası okundu; bu bilgi içeriğin dolu olduğunu tek başına göstermez.",
+        "missing": "Public README dosyasının yokluğu doğrulandı; bu kaynaktan içerik puanı alınamaz.",
+        "unknown": "README verisi tamamlanamadı; yok sayılmadı.",
+        "pass": "README içeriği boş değil.",
+        "fail": "README içeriği yok veya boş.",
+        "empty": "README dosyası okundu ve içeriği boş; bu kaynaktan içerik puanı alınamaz."
+      },
+      "purpose": {
+        "pass": "Amaç bölümünde açıklayıcı paragraf bulundu.",
+        "fail": "Bu tarama, tanınan bir amaç başlığı altında açıklayıcı paragraf eşleştiremedi. Açıklama başka bir başlıkta bulunabilir.",
+        "unknown": "README amaç kontrolü tamamlanamadı."
+      },
+      "install": {
+        "pass": "Kurulum bölümünde komut veya kod bloğu bulundu. Komut çalıştırılmadı.",
+        "fail": "Bu tarama, tanınan bir kurulum başlığının kendi bölümünde komut veya kod bloğu eşleştiremedi. Komutlar başka bir bölümde bulunabilir.",
+        "unknown": "README kurulum kontrolü tamamlanamadı."
+      },
+      "usage": {
+        "pass": "Kullanım bölümünde açıklama veya komut bulundu.",
+        "fail": "Bu tarama, tanınan bir kullanım başlığının kendi bölümünde açıklama veya komut eşleştiremedi. Adımlar başka bir bölümde bulunabilir.",
+        "unknown": "README kullanım kontrolü tamamlanamadı."
+      },
+      "technology": {
+        "pass": "Teknoloji bölümünde liste veya açıklama bulundu.",
+        "fail": "Bu tarama, tanınan bir teknoloji başlığı altında liste veya açıklama eşleştiremedi. İçerik başka bir başlıkta bulunabilir.",
+        "unknown": "README teknoloji kontrolü tamamlanamadı."
+      },
+      "features": {
+        "pass": "Özellikler bölümünde liste veya açıklama bulundu.",
+        "fail": "Bu tarama, tanınan bir özellikler başlığı altında liste veya açıklama eşleştiremedi. İçerik başka bir başlıkta bulunabilir.",
+        "unknown": "README özellik kontrolü tamamlanamadı."
+      }
+    }
   }
 }

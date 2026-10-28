@@ -4,9 +4,216 @@ Son güncelleme: 28 Ekim 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**D021 Developer ID — ilk tasarım dilimine kullanıcı görsel kabulü verildi.** Kullanıcı açılış animasyonunu da kontrol ettiğini ve sürekli hareket olmadığını bildirdi. Bu kayıt kullanıcı incelemesidir. İstenen tek küçük düzeltme TR/EN placeholder kısaltmasıdır; profil URL desteği alan etiketinde korunur. Yeni tasarımın uzak CI sonucu henüz doğrulanmadı; c3aa1fe başarısı önceki kullanıcı bildirimidir. A3/puanlama ve sonraki aşamalara geçilmedi.
+**A3 — genel başlık/numara tespiti ve bulgu dili revizyonu yerel kontroller ve tekrarlanan gerçek smoke ile tamamlandı; arayüz bağlantısı açık.** HEAD hâlâ 7025b91; motor commitlenmemiş durumda, revizyon aynı A3 paketine dahildir. Önceki çalışma alanı korunur, index boş. 7025b91 CI başarısı önceki tasarım commit'i için kullanıcı bildirimidir; yeni motor/revizyon için uzak CI sonucu yoktur. A3'ün bütünü tamamlanmış sayılmaz.
 
-## Kullanıcı kabulü ve placeholder düzeltmesi — 28 Ekim 2026
+## A3 yanlış negatif revizyonu — 28 Ekim 2026, 21:07 +03
+
+### Dar değişiklikler
+
+- Proje Özeti / Proje Amacı, genel EN karşılıkları, açık genel amaç soruları ve backend/frontend kurulum / uygulamayı çalıştır alias'ları eklendi. Nokta/parantez + boşlukla ayrılan sınırlı numaralı başlık önekleri eşleştirmeden önce temizlenir. Tam liste ve sınırlar SCORING, gerekçe D024 içindedir.
+- Bölümün aynı/üst düzey başlıkta bitmesi korunur; komşu ilgisiz bölümden içerik toplanmaz. Proje adına özel alias veya keyfi X Neden Var? kalıbı yoktur.
+- Dolu dosyadaki yapısal fail mesajı kesin içerik yokluğu söylemez. Eylemler mevcut içeriği uygun başlıkta ekleme/düzenlemeyi kapsar. Gerçek dosya yokluğu ve bilinen boşluk readme.missing/readme.empty ile ayrı anlatılır; missing/unknown/check durumları ve puan katkıları korunur.
+- Küçük sentetik regresyonlar eklendi; gerçek repoların tam README'leri fixture'a kopyalanmadı. Yeni bağımlılık, AI, ağla içerik analizi, UI/adapter/fixture veya ağırlık değişikliği yoktur.
+
+### Kontroller
+
+| Kontrol | Gerçek sonuç |
+| --- | --- |
+| npm test | **8 dosyada 228 test başarılı**; önceki 197'ye 31 sentetik başlık/numara/komşu bölüm ve mesaj ayrımı regresyonu eklendi. |
+| npm run lint | Başarılı, max-warnings=0. |
+| npm run typecheck | Başarılı, Next tip üretimi ve strict TypeScript. |
+| npm run build | Başarılı, aynı route'lar; yeni endpoint yok. |
+| Diff / koruma | git diff --check başarılı. Yeni TS dosyalarının LF/son satır/boşluk kontrolü yapıldı. Önceki A3 dosyaları ve kullanıcı değişiklikleri korunur; bu tur yalnız D024'teki 10 dosya değişti. |
+| Gerçek smoke | Yerel kontrollerden sonra tek GitHubClient ile aynı üç repo alındı. Aynı normalize girdi eski ve yeni gerçek scoreAnalysis'a verildi; native fetch kullanıldı, Vitest/mock/setup yüklenmedi. |
+
+### Gerçek smoke ve önce/sonra karşılaştırması
+
+checkedAt **2026-10-28T18:07:00.684Z** (21:07 +03), işlem yaklaşık **10,3 saniye (10 338 ms)**. GetProfile → getPinned → getCandidates ile tam ad/ID ve kapsam → getProfileReadme → getSelected; tek client'ın mevcut 20 saniye/40 istek bütçesi korundu. Başka repo ikame edilmedi. Profil ID 153098597/User; üç repo public, kendi sahibi, archived=false/fork=false. Profil ve üç proje README found; unknown veya servis/yetki/ağ hatası görülmedi.
+
+| Repo | ID | main/README.md Blob SHA |
+| --- | --- | --- |
+| jobfit-tr | 1298347513 | 8e7dd38ca3d6ac503da716b3d7222ce7f689c065 |
+| fixora | 1196372816 | b9f6e3face392fc098cd81084a70270828c57937 |
+| barber-appointment-management-system | 1142364200 | 6eb04df73e8094177bf0cd316206b9e53f12a11d |
+
+Üç SHA da önceki smoke ile aynıdır. Ayrıca eski/yeni motor **bu tur bir kez alınan aynı profile/metadata/README girdisi** üzerinde çalıştırıldığı için fark veri güncellemesine bağlanmadı. Önceki motor, revizyon öncesi yerel kaynakların geçici derlenmiş kopyasıydı; tahmini eski puan kullanılmadı.
+
+| Sonuç | Eski motor | Revizyon |
+| --- | --- | --- |
+| Durum | complete | complete |
+| Profil | 20/20 | 20/20 |
+| Projeler | 23,3/30 | 23,3/30 |
+| README | 30/50 | 46,7/50 |
+| Toplam | 73,3 | **90** |
+| Profil tipi | inProgress / Vitrin Yapımda | hiddenGem / Gizli Cevher |
+
+README ham hesabı artık (jobfit 40 + fixora 50 + barber 50) / 3 = 46,666… → 46,7; toplam 20 + 23,3 + 46,7 = 90. Beş check fail→pass oldu; her biri 10/3 ham kategori etkisi taşır. **Bu artış kodun tespit düzeltmesidir; kullanıcının README düzenlediği veya profilinin geliştiği iddiası değildir.** Ağırlık, yuvarlama ve profil tipi önceliği değişmedi.
+
+| Değişen check | Aynı okunan README kanıtı | Gerekçe |
+| --- | --- | --- |
+| repo:1298347513:purpose | [jobfit satır 7–9](https://github.com/EnessCansever/jobfit-tr/blob/main/README.md#L7-L9), Proje Özeti / paragraf 9 | Genel amaç başlığı artık tanınıyor. |
+| repo:1142364200:purpose | [barber satır 3–6](https://github.com/EnessCansever/barber-appointment-management-system/blob/main/README.md#L3-L6), Proje Amacı / paragraf 5 | Genel amaç başlığı; emoji yanlış negatif nedeni yapılmıyor. |
+| repo:1142364200:install | [barber satır 111–115](https://github.com/EnessCansever/barber-appointment-management-system/blob/main/README.md#L111-L115), 2. Backend Kurulumu / kod bloğu 113 | Numara temizleniyor, backend alias'ı kendi bölümündeki komutla eşleşiyor; önceki Kurulum bölümü uzatılmıyor. |
+| repo:1196372816:usage | [fixora satır 259–265](https://github.com/EnessCansever/fixora/blob/main/README.md#L259-L265), 4) Uygulamayı çalıştır / açıklama 261 | Numara + genel çalıştırma başlığı kendi içeriğiyle eşleşiyor. |
+| repo:1196372816:purpose | [fixora satır 177–179](https://github.com/EnessCansever/fixora/blob/main/README.md#L177-L179), Ne Problemi Çözüyor / paragraf 179 | Genel soru alias'ı; Fixora Neden Var? için özel veya belirsiz isimli kalıp eklenmedi. |
+
+Sınırlı kaynak alıntıları aynı Readme.text üzerinden karşılaştırıldı; tam README loglanmadı. Linkler branch üzerinde olduğundan sonradan değişebilir; inceleme yukarıdaki Blob içeriklerine aittir. Link çalışırlığı, komutun başarısı veya görsel yüklenmesi denenmedi.
+
+Kalan fail'ler: repo:1142364200:topics, demo, image; repo:1298347513:usage. Jobfit'te npm run dev hâlâ Kurulum bölümünde (satır 94); bağımsız tanınan kullanım bölümü olmadığı için başka bölümden ödünç alınmaz. Yeni usage.fail metni “bu tarama eşleştiremedi, başka bölümde bulunabilir” der; yeni görev “Kullanım başlığı altında ekle veya düzenle” seçeneğini kapsar. Bu sınır için zorla pass veya unknown üretilmedi.
+
+Yeni profil tipinin dayanakları: repo:1142364200:description/purpose, repo:1196372816:description/purpose, repo:1298347513:description/purpose ve repo:1142364200:demo fail. Bütün repo açıklaması/amaçları pass ve bir demo fail olduğu için Gizli Cevher; tüm demo'lar pass olmadığından >=80 tek başına Vitrini Hazır üretmez.
+
+Yeni öncelikli görevler:
+
+1. Barber demo bağlantısını açıkça işaretle veya ekle — repo:1142364200:demo; ham 10/3, kategori farkı +3,4.
+2. Jobfit çalıştırma adımlarını Kullanım altında ekle veya düzenle — repo:1298347513:usage; ham 10/3, kategori farkı +3,3.
+3. Barber için ilgili topic ekle — repo:1142364200:topics; ham 5/3, kategori farkı +1,7.
+
+Farklar tek check fail→pass içindir; yuvarlanmış etkiler birlikte toplanıp kesin kazanım vaat edilmez.
+
+### Koruma ve durma noktası
+
+Token yalnız Node --env-file ile runtime'da yüklendi; .env.local görüntülenmedi/değiştirilmedi/loglanmadı. Ham istek/Authorization/token veya tam README yazdırılmadı. Public debug endpointi, normal test/CI ağ smoke adımı veya kalıcı snapshot eklenmedi. Geçici çalıştırıcı ve revizyon öncesi kaynak kopyaları kaldırıldı. Önceki bekleyen değişiklikler korunur; stage/commit/push/yayın yapılmadı.
+
+Motor/revizyon yerel kontroller ve gerçek karşılaştırmayla commit incelemesine hazır. Bu **aynı A3 motor paketi**dir; yalnız belge commit'i önerilmez. Öneri `feat: add deterministic portfolio scoring engine`; kapsam önceki motorun AGENTS/README/package/lockfile, scoring kaynakları/testleri/TR-EN mesajları ve SCORING/ARCHITECTURE/DECISIONS/STATUS/TASKS belgeleridir. Sabit demo fixture değişmedi. Yeni uzak CI ve kullanıcı incelemesi beklenir; gerçek sonuç UI bağlantısı açık kalır. Sonraki bölüme kullanıcı mesajı olmadan geçilmez.
+
+## Önceki kayıt — A3 gerçek motor smoke — 28 Ekim 2026, 20:02 +03
+
+### Gerçek işlem ve kapsam
+
+Tek yeni GitHubClient ile getProfile → getPinned → getCandidates → tam adları/gerçek ID'leri doğrulama → getProfileReadme → getSelected çağrıldı. Üç repo bulunup sahibine ait User/public/arşivlenmemiş/fork olmayan kapsam doğrulandı; başka repo ikame edilmedi. Aynı client'ın mevcut 20 saniye/40 istek koruması değişmedi. Veri alma ve gerçek scoreAnalysis çağrısı toplam yaklaşık **11,9 saniye (11 927 ms)** sürdü; süre/istek bütçesi hatası görülmedi. Gerçek istek sayısı ayrıca ölçülmedi; 40 sınırı transport içinde korundu.
+
+| Repo | Gerçek GitHub ID | Kapsam |
+| --- | --- | --- |
+| jobfit-tr | 1298347513 | Public, owner ID 153098597/User, archived=false, fork=false |
+| fixora | 1196372816 | Public, owner ID 153098597/User, archived=false, fork=false |
+| barber-appointment-management-system | 1142364200 | Public, owner ID 153098597/User, archived=false, fork=false |
+
+Profil ID 153098597, login EnessCansever. Profil README'si ve üç proje README'si found; unknown/missing veya yapılandırma/auth/ağ/rate-limit hatası oluşmadı. found, dosya erişimidir; profil README'sinin GitHub'da görsel gösterimi ayrıca doğrulanmadı.
+
+Normalize edilmiş gerçek veriler `scoreAnalysis({rulesVersion: "1.0.0", profile, profileReadme, repos, checkedAt})` içine verildi. checkedAt gerçek işlemden dışarıda sağlandı: **2026-10-28T17:02:31.409Z**. Fixture veya test setup/mock fetch yüklenmedi; adapter doğrudan fetch ile atlanmadı.
+
+### Motor sonucu
+
+**status=complete; Profil 20/20, Projeler 23,3/30, README 30/50; toplam 73,3/100.**
+
+- Profil bio/website/profileReadme kontrolleri pass: 5 + 5 + 10 = 20.
+- Projeler ham: (jobfit-tr 30 + fixora 30 + barber 10) / 3 = 23,333… → 23,3.
+- README: (30 + 30 + 30) / 3 = 30; toplam gösterilen kategorilerden 20 + 23,3 + 30 = 73,3.
+- Profil tipi **inProgress / Vitrin Yapımda**. Ready için skor/kurulum/demo koşulları, hiddenGem için bütün amaç kontrolleri geçmedi; en az bir demo sinyali olduğundan noDemo değil.
+
+Tipin ürettiği gerçek checkIds:
+
+- repo:1142364200:topics
+- repo:1142364200:demo
+- repo:1142364200:image
+- repo:1142364200:purpose
+- repo:1142364200:install
+- repo:1196372816:purpose
+- repo:1196372816:usage
+- repo:1298347513:purpose
+- repo:1298347513:usage
+
+Motorun ilk üç önerisi (içerik karşılaştırması sınırlamaları aşağıda ayrıca belirtilir):
+
+| Sıra | Check / hedef | Öneri anahtarı | Ham kazanım | Gösterilen kategori farkı |
+| --- | --- | --- | --- | --- |
+| 1 | repo:1142364200:demo / barber | demo | 10/3 = 3,333… | +3,4 (23,3 → 26,7) |
+| 2 | repo:1142364200:purpose / barber | purpose | 10/3 = 3,333… | +3,3 (30 → 33,3) |
+| 3 | repo:1196372816:purpose / fixora | purpose | 10/3 = 3,333… | +3,3 (30 → 33,3) |
+
+Bu etkiler ayrı ayrı o check'in fail→pass değişimi içindir; yuvarlanmış farklar birlikte toplanıp garanti kazanım gibi sunulmaz. İkinci/üçüncü görev, amaç metninin gerçekten olmadığı anlamına gelmez; alias kaynaklı kaçırma gözlendi.
+
+| README kontrolü | jobfit-tr | fixora | barber-appointment-management-system |
+| --- | --- | --- | --- |
+| Boş olmayan README | pass | pass | pass |
+| Amaç | fail | fail | fail |
+| Kurulum | pass | pass | fail |
+| Kullanım | fail | fail | pass |
+| Teknoloji | pass | pass | pass |
+| Özellikler | pass | pass | pass |
+
+Repo sunumunda jobfit-tr/fixora description/topics/demo/image pass. Barber description pass; topics/demo/image fail. Jobfit demo check'i homepage pozitif kanıtıyla pass, README demo alt kanıtı fail; bu iki kaynak birbirine karıştırılmadı. Link çalışırlığı veya görsel yüklenmesi denenmedi.
+
+### Aynı okunan README üzerinden manuel karşılaştırma
+
+İnceleme canlıdan tekrar fetch edilen başka bir sürümle değil, motora verilen aynı Readme.text nesnelerinin bellekte tutulan sınırlı satır aralıklarıyla yapıldı. README'lerin tamamı loglanmadı. Üç zorunlu örnek doğrulandı:
+
+| Bulgu | Gözlenen aynı kaynak | Motor / değerlendirme |
+| --- | --- | --- |
+| Demo | [fixora README.md:15–17](https://github.com/EnessCansever/fixora/blob/main/README.md#L15-L17): Canlı Demo başlığı altında HTTPS frontend linki. | repo:1196372816:demo pass; README kanıt satırı 17. Sinyal doğru; site açılmadı. |
+| Kurulum | [jobfit-tr README.md:88–95](https://github.com/EnessCansever/jobfit-tr/blob/main/README.md#L88-L95): Kurulum başlığının kendi bölümünde bash fence, clone/cd/npm install/npm run dev komutları. | repo:1298347513:install pass; AST satırı 90. Komut varlığı doğru; komutlar çalıştırılmadı. |
+| Teknoloji | [jobfit-tr README.md:48–54](https://github.com/EnessCansever/jobfit-tr/blob/main/README.md#L48-L54): Kullanılan Teknolojiler başlığı altında React, TypeScript, Vite vb. liste. | repo:1298347513:technology pass; AST liste satırı 50. Başlık/liste tespiti doğru. |
+
+Ek gözlenen içerik ile motorun fail sonucunun ayrımı:
+
+- jobfit-tr [satır 7–11](https://github.com/EnessCansever/jobfit-tr/blob/main/README.md#L7-L11): Proje Özeti başlığı ve açıklayıcı amaç metni mevcut. Motor purpose=fail; Proje Özeti alias listesinde yok. Aynı dosyada çalıştırma komutu satır 94'te Kurulum içinde, kullanım akışı satır 11'de Proje Özeti içinde. usage=fail, ayrı tanınan kullanım bölümüne bağlı koşulun sonucu. İçerik gerçekten yok iddiası değildir.
+- fixora [satır 57–63](https://github.com/EnessCansever/fixora/blob/main/README.md#L57-L63): Fixora Neden Var? altında amaç/problem anlatımı mevcut. purpose=fail; başlık alias değil. [Satır 259–270](https://github.com/EnessCansever/fixora/blob/main/README.md#L259-L270): numaralı Uygulamayı çalıştır alt başlığı, açıklama ve npm run dev mevcut. usage=fail; bu başlık sınırlı kullanım alias'larıyla tam eşleşmiyor ve Kurulum kapsamındaki komutlar kullanım check'ine taşınmıyor.
+- barber [satır 3–8](https://github.com/EnessCansever/barber-appointment-management-system/blob/main/README.md#L3-L8): Proje Amacı ve açıklayıcı içerik mevcut. purpose=fail; emoji kaldırıldıktan sonra da Proje Amacı, listede bulunan Projenin Amacı/Amaç ile tam eşleşmez. Sorun emoji değil alias sınırıdır.
+- barber [satır 102–115](https://github.com/EnessCansever/barber-appointment-management-system/blob/main/README.md#L102-L115): Kurulum bölümü yalnız gereksinim listesi içeriyor; aynı düzeydeki 2. Backend Kurulumu satır 111'de bölümü kapatıyor, gerçek komutlar 113–115'te yeni başlık altında. install=fail, belgelenmiş bölüm sınırı ve alias kuralına uygundur. [Satır 175–178](https://github.com/EnessCansever/barber-appointment-management-system/blob/main/README.md#L175-L178) Kullanım başlığı altındaki açıklayıcı liste usage=pass sonucunu destekliyor.
+
+Bu kaçırmalar **SCORING'de belgelenmiş tespit sınırlamalarıdır**, gözlenen içerik yokluğu değildir; mevcut sözleşmeye aykırı kod hatası saptanmadı. Puan yükseltmek için alias/kural/ağırlık değiştirilmedi, regresyon düzeltmesi gerekmedi. Manuel karşılaştırma örneklenen bulguları kapsar; bütün içeriğin semantik doğruluğu onaylanmış sayılmaz.
+
+Kaydedilen dosya Blob SHA'ları (commit SHA değildir): jobfit-tr `8e7dd38ca3d6ac503da716b3d7222ce7f689c065`; fixora `b9f6e3face392fc098cd81084a70270828c57937`; barber `6eb04df73e8094177bf0cd316206b9e53f12a11d`; profil README `07a22c741967584a405436de81bf29484016204d`. Tümü main/README.md. Yukarıdaki branch linkleri sonradan değişebilir; inceleme bu Blob içeriklerine aittir.
+
+### Koruma, kontroller ve durma noktası
+
+- Token yalnız Node --env-file ile çalışma zamanında yüklendi; .env.local açılmadı/değiştirilmedi/yazdırılmadı. Token, Authorization header'ı veya ham istek/hata loglanmadı. Profil/repolara yazma isteği yapılmadı.
+- Tek seferlik çalıştırıcı mevcut TypeScript derleyicisiyle gerçek kaynakları geçici ESM çıktısına çevirdi; react-server koşulu server-only işaretini normal sunucu ortamında çözdü. Vitest/setup/fixture veya fetch mock'u yüklenmedi. Yeni bağımlılık, public/debug endpointi, npm komutu, test/CI değişikliği yoktur.
+- Geçici çalıştırıcı kaldırıldı. Belge güncellemesinden önce 74 mevcut gizli olmayan dosyanın hash'i başlangıçla aynıydı; önceki A3 dosyaları korundu. Bu tur yalnız STATUS/TASKS değişti.
+- Uygulama kodu değişmediği için npm test/lint/typecheck/build gereksiz yere yeniden çalıştırılmadı; önceki 197 test ve build kayıtları tarihsel sonuçtur. git diff --check ve dosya koruma/index kontrolleri yapıldı. Yeni uzak CI sonucu yok.
+- A3 gerçek sonuç arayüz bağlantısı açık; MongoDB/paylaşım/PNG/yayın eklenmedi. Sıradaki somut adım kullanıcı incelemesi/commit ve yeni açık çalışma mesajıdır. Stage/commit/push/yayın yapılmadı; sonraki bölüme geçilmez.
+
+Bu turun belge kapsamı docs/STATUS.md ve docs/TASKS.md, öneri `docs: record live scoring smoke verification`. Önceki A3 uygulama değişiklikleri ayrıca çalışma alanında korunur; birleşik motor commit önerisi `feat: add deterministic portfolio scoring engine` olarak kalır. Kaydedilen tespit sınırlamaları kullanıcı incelemesinde değerlendirilmelidir; yeni kural yetkisi varsayılmaz.
+
+## Önceki kayıt — A3 motor dilimi — 28 Ekim 2026
+
+### Uygulananlar
+
+- Normalize Profile / Readme / 1–3 `{repo, readme}` girdisi alan saf `scoreAnalysis`; rulesVersion 1.0.0, sabit check ID/scope, kanıt, kategori, profil tipi ve en fazla üç görev. Ağ/DB/env/AI/saat/rastgelelik/locale hesaplamaya girmez; girdi değişmez ve repo sırası sonucu değiştirmez.
+- Profil 20 / Projeler 30 / README 50; repo ortalaması ve gösterilen kategorilerden toplam. Repo sayısı/sosyal metrik bonusu yoktur. Geçersiz/yinelenen scope, sıfır repo ve desteklenmeyen sürüm sayısal rapor üretilmeden reddedilir.
+- unified 11.0.5 + remark-parse 11.0.0 ile AST; tam TR/EN alias'ları, bölüm sınırı/içerik koşulları, referans link/görsel, güvenli protokol ve HTML sınırları SCORING'de belgeli. Ham HTML/script çalıştırılmaz/render edilmez; dış site veya görsel fetch edilmez. Bu sinyaller içerik kalitesi, demo çalışırlığı veya gerçek screenshot onayı değildir.
+- missing/boş found fail olabilir; unknown sıfır sayılmaz. Unknown'dan etkilenen kategori, toplam ve profil tipi null'dır; bilinen metadata bulguları korunur. Homepage pozitif kanıtı varsa demo check'i README unknown olsa da pass olabilir. 256 KiB byte üstü içerik kesilmeden unknown/too_large olur.
+- Görevler yalnız fail'den; ham etki max/N, eşitlikte sabit kontrol/ID sırası. Eksik README'nin aynı köke bağlı bölüm/görsel görevleri yığılmaz; bağımsız metadata/demo görevleri korunur. Kanıt/öneri anahtarları TR/EN Scoring mesaj alanında, hesaplama dil dışındadır. not_applicable tipi korunur fakat 1.0.0'da üretilmez/puan dağıtılmaz.
+
+### Örnek hesaplama ve fixture karşılaştırması
+
+Değiştirilmeyen UI fixture'ının 23 check durumunu üreten ayrı sentetik Markdown girdisiyle:
+
+- Profil: 5 + 0 + 10 = 15.
+- Projeler: (paper-lantern 15 + quiet-orbit 30) / 2 = 22,5.
+- README: (50 + 30) / 2 = 40.
+- Toplam **15 + 22,5 + 40 = 77,5**, profil tipi Gizli Cevher.
+
+Puan/check farkı çıkmadı. Öneri sırası editoryal UI fixture'ından farklıdır: eşit 5 puanlık etkide website → paper-lantern demo → quiet-orbit install. Fixture gerçek README içermediği için test içerikleri sentetiktir; canlı GitHub doğruluğu kanıtı değildir. Fixture'ı motora uydurmak için değiştirme yapılmadı.
+
+### Doğrulama
+
+| Kontrol | Son sonuç |
+| --- | --- |
+| npm test | **8 dosya / 197 test başarılı**; 138 mevcut teste 59 davranış testi eklendi. Gerçek GitHub/token gerekmez. |
+| npm run lint | Başarılı; max-warnings=0. |
+| npm run typecheck | Başarılı; Next tip üretimi ve strict TypeScript. |
+| npm run build | Başarılı; mevcut /, /_not-found, /demo, /demo/select, /demo/states route'ları. Yeni ağ girişi yok. |
+| Değişen kod incelemesi | İngilizce adlar, gereksiz yorum/soyutlama/tekrar ve ölü kod açısından incelendi. force/override/any/ignore/lint kapatma eklenmedi. Yeni test aracı veya hareket bağımlılığı yok. |
+| Koruma / Git | UI, adapter, demo fixture/puanları, kaynak sözleşme, referanslar, font/lisanslar ve CI iş akışı değişmedi. Gerçek env dosyası açılmadı/değiştirilmedi/loglanmadı. git diff --check geçti; index boş. Stage/commit/push/yayın yapılmadı. |
+| Uzak CI | 7025b91 başarısı kullanıcı bildirimi ve önceki tasarım commit'ine aittir; yeni motorun uzak CI sonucu henüz yok. |
+
+İlk test çalıştırmasındaki Vitest yol çözümleme sorunu mevcut göreli import düzenine uyularak düzeltildi. Sonraki typecheck'in yakaladığı test README yardımcısının geniş dönüş tipi found'a daraltıldı; assertion veya hata susturma kullanılmadı. Yukarıdaki sonuçlar bu düzeltmelerden sonraki son koda aittir. Build ortam dosyasını framework runtime'ında yükleyebilir; içeriği okunmadı/yazdırılmadı ve motor bu değişkenleri kullanmaz.
+
+### Açık işler, sınırlar ve durma noktası
+
+- **Gerçek seçim → README/metadata → motor → gerçek sonuç UI bağlantısı yapılmadı.** Mevcut ana sayfa araması ve seçim davranışı, pasif puanlama devamı ve demo ekranları korunur. A3'ün tamamı bitti sayılmaz.
+- Gerçek hesapta motor/kanıt doğruluğu smoke testi, yeni tarayıcı/görsel inceleme bu tur yapılmadı. UI değiştirilmedi; önceki kabul yeni canlı puanlama kabulü değildir.
+- not_applicable kullanımı/aritmetiği ileride gerekirse ayrıca tanımlanmalı; 1.0.0 buna ihtiyaç duymaz. Alias/tespit kuralları sınırlıdır; farklı yazılmış geçerli içerik yakalanmayabilir. Ürün ağırlıklarında veya önceliklerinde engelleyici çelişki bulunmadı; tespit sınırları D023/SCORING'de görünürdür.
+- MongoDB/cache, paylaşım/PNG, dağıtık abuse koruması ve public yayın eklenmedi. Mevcut yayın sınırı ve D011 araç zinciri sınırlaması sürer.
+- Motor dilimi yerel kontrollerle commit incelemesine hazır. Sıradaki somut adım kullanıcı incelemesi ve kullanıcı commit/push/CI bildirimi; yeni açık mesaj olmadan sonraki bölüm yapılmaz.
+
+Öneri: `feat: add deterministic portfolio scoring engine`.
+
+Commit kapsamı: AGENTS.md, README.md, package.json, package-lock.json; src/features/analysis/scoring/{types,markdown,engine}.ts; src/messages/{tr,en}.json; tests/scoring/{fixtures,engine.test,markdown.test,messages.test}.ts; docs/{SCORING,ARCHITECTURE,DECISIONS,STATUS,TASKS}.md.
+
+## Önceki kayıt — kullanıcı kabulü ve placeholder düzeltmesi — 28 Ekim 2026
 
 - Kullanıcı Developer ID'nin ilk tasarım dilimine görsel kabul verdi; açılış animasyonunda sürekli hareket bulunmadığını kendisi kontrol edip bildirdi. Bu tur yeni Codex tarayıcı/animasyon kontrolü yapılmış sayılmaz.
 - Placeholder TR “GitHub kullanıcı adın”, EN “Your GitHub username” olarak kısaltıldı. Mevcut TR/EN alan etiketi profil URL'sinin kabul edildiğini açıklamaya devam eder. Doğrulama, veri akışı ve diğer tasarım kuralları değişmedi.

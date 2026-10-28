@@ -275,5 +275,92 @@
     "fictional": "Fictional profile",
     "categories": "Portfolio score categories",
     "presentation": "Presentation type · Not an endorsement"
+  },
+  "Scoring": {
+    "suggestions": {
+      "bio": "Add a short profile bio.",
+      "website": "Add a portfolio link to your profile.",
+      "profileReadme": "Introduce yourself in your profile README.",
+      "description": "Add a short description to {repo}.",
+      "topics": "Add a relevant topic to {repo}.",
+      "demo": "Label or add the demo link for {repo}.",
+      "image": "Format or add an image as a Markdown reference in the {repo} README.",
+      "readme": "Write a README for {repo}.",
+      "purpose": "Add or organize the purpose description under a Purpose heading in the {repo} README.",
+      "install": "Add or organize commands under an Installation heading in the {repo} README.",
+      "usage": "Add or organize run instructions under a Usage heading in the {repo} README.",
+      "technology": "Add or organize the technology list under a Technologies heading in the {repo} README.",
+      "features": "Add or organize features under a Features heading in the {repo} README."
+    },
+    "evidence": {
+      "bio": {
+        "pass": "The profile bio is not empty.",
+        "fail": "The profile bio is empty."
+      },
+      "website": {
+        "pass": "The profile website field contains a valid HTTP(S) link. Availability was not checked.",
+        "fail": "No valid HTTP(S) link was found in the profile website field."
+      },
+      "profileReadme": {
+        "pass": "The profile README is not empty.",
+        "fail": "The profile README is absent or empty.",
+        "unknown": "The profile README could not be verified."
+      },
+      "description": {
+        "pass": "The repository description is not empty.",
+        "fail": "The repository description is empty."
+      },
+      "topics": {
+        "pass": "At least one topic is present.",
+        "fail": "No topics were found."
+      },
+      "homepage": {
+        "pass": "The homepage field contains a valid HTTP(S) project website link. It was not tested.",
+        "fail": "No valid HTTP(S) project website link was found in the homepage field."
+      },
+      "demo": {
+        "pass": "A valid HTTP(S) link was found with a demo label or in a demo section. It was not tested.",
+        "fail": "This scan did not match a valid HTTP(S) link with a recognized demo label or section in the README. A link may be presented differently.",
+        "unknown": "The README demo check could not be completed."
+      },
+      "image": {
+        "pass": "An image reference was found in Markdown. Neither loading nor screenshot content was verified.",
+        "fail": "This scan did not match a supported Markdown image reference in the README. An image may be presented differently.",
+        "unknown": "The README image check could not be completed."
+      },
+      "readme": {
+        "found": "The README file was read; this alone does not mean its content is nonempty.",
+        "missing": "The absence of a public README file was verified; no content points can be earned from this source.",
+        "unknown": "README data could not be completed and was not treated as absent.",
+        "pass": "The README is not empty.",
+        "fail": "The README is absent or empty.",
+        "empty": "The README file was read and its content is empty; no content points can be earned from this source."
+      },
+      "purpose": {
+        "pass": "An explanatory paragraph was found in the purpose section.",
+        "fail": "This scan did not match an explanatory paragraph under a recognized purpose heading. The description may be under another heading.",
+        "unknown": "The README purpose check could not be completed."
+      },
+      "install": {
+        "pass": "A command or code block was found in the installation section. No command was executed.",
+        "fail": "This scan did not match a command or code block within a recognized installation section. Commands may be in another section.",
+        "unknown": "The README installation check could not be completed."
+      },
+      "usage": {
+        "pass": "An explanation or command was found in the usage section.",
+        "fail": "This scan did not match an explanation or command within a recognized usage section. Instructions may be in another section.",
+        "unknown": "The README usage check could not be completed."
+      },
+      "technology": {
+        "pass": "A list or explanation was found in the technology section.",
+        "fail": "This scan did not match a list or explanation under a recognized technology heading. The content may be under another heading.",
+        "unknown": "The README technology check could not be completed."
+      },
+      "features": {
+        "pass": "A list or explanation was found in the features section.",
+        "fail": "This scan did not match a list or explanation under a recognized features heading. The content may be under another heading.",
+        "unknown": "The README features check could not be completed."
+      }
+    }
   }
 }

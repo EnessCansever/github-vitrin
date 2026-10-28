@@ -224,3 +224,35 @@ ResultSummary sunucu bileşeni aynı fixture ve config'ten iki görünümü üre
 Barlow Condensed 800 / Manrope variable / IBM Plex Mono yerel dosya + SIL OFL lisanslarıyla seçildi; Türkçe glyph doğrulaması yapıldı. Runtime font servisi bağımlılığı ve hareket paketi eklenmez. CSS girişleri tek iterasyon ve transform/opacity ile sınırlıdır; reduced-motion tüm hareketi kaldırır. Native details/summary korunur; yükseklik animasyonu için kırılgan bir alternatif eklenmez. Önemli renk/tipografi/hareket sınırları DESIGN'dadır.
 
 Etkilenen dosyalar: AGENTS.md, README.md, src/app/{globals.css,layout.tsx,fonts/*}, src/components/result-summary.tsx, src/messages/{tr,en}.json, docs/{DESIGN,DECISIONS,STATUS,TASKS}.md. Commit'e kullanıcı eklemesi docs/design/developer-id-concept.png de dahil edilebilir; orijinal görsel değiştirilmedi. A3 veya public yayına geçiş yoktur.
+
+
+### D023 — A3 saf motor, AST sınırları ve deterministik öneriler — 28 Ekim 2026
+
+Kullanıcı Developer ID 7025b91 commit/push ve GitHub Actions başarısını bildirdi; temiz yerel başlangıç ve HEAD doğrulandı. Bu uzak CI kaydı kullanıcı bildirimidir. Yeni yetki yalnız saf puanlama motorudur; çalışan UI/Server Action, adapter, fixture, MongoDB/paylaşım ve yayın kapsamı değişmez. Developer ID için önceki kullanıcı görsel/hareket kabulü korunur.
+
+Motor üç dosyada tipler/Markdown/hesaplama olarak ayrıldı. unified 11.0.5 ve remark-parse 11.0.0 dışında doğrudan bağımlılık eklenmedi; paketler npm/lockfile ile tam sürüme kilitlendi. AST tespiti başlık, bölüm, paragraf, liste, kod ve referans link/görsel üzerinden yürür; HTML çalıştırılmaz/render edilmez ve dış siteler çağrılmaz. Sınırlı alias ve yapısal içerik eşikleri SCORING'e yazıldı. Homepage alanı açık proje sitesi sinyalidir; README'deki sıradan bağlantı ise demo etiketi/bölümü gerektirir. Bu bir çalışırlık/doğruluk garantisi değildir.
+
+Ağırlıklar 20/30/50, repo ortalaması, kategori yuvarlama/toplam ve profil tipi öncelikleri korunur. Profil sunumu fail koşulu üç profil check'inden herhangi birinin fail olmasıdır. not_applicable 1.0.0'da üretilmez; gelecekte kullanımı/aritmetiği ayrı açık karardır. Eksik kategori/tam puan numeric başarıya çevrilmez; unknown toplam/tip null olur. Scope/sürüm hataları puan üretmeden reddedilir.
+
+Görevler yalnız doğrulanmış fail'den, gerçek max/N etkisiyle en çok üç olarak sıralanır. Eşitlikte SCORING kontrol sırası, sonra sabit GitHub ID kullanılır. README yok/boş durumundaki aynı köke bağlı bölüm/görsel görevleri yığılmaz; metadata/homepage üzerinden düzeltilebilen eksikler bağımsız kalır. Mesajlar TR/EN Scoring alanında, hesaplamadan ayrıdır. Bilinen kategori yuvarlama farkı categoryImpact'te; eksik kategoride null'dır.
+
+UI fixture gerçek README içermediğinden ayrı sentetik içerik aynı 23 kontrol durumunu üretir ve 77,5'i doğrular. Fixture'ın editoryal görev sırası değiştirilmez; gerçek motor eşit etkide website → demo → install önerir. Bu fark aritmetiğe veya ürün ağırlıklarına müdahale gerekçesi değildir. Kaynak linkinde branch kullanılır; adapter'ın Blob SHA'sı commit SHA diye sunulmaz. Tespit sınırları ileride değişirse sürüm/karşılaştırma etkisi yeniden değerlendirilmelidir.
+
+Etkilenen dosyalar: AGENTS.md, README.md, package.json/package-lock.json, src/features/analysis/scoring/{types,markdown,engine}.ts, src/messages/{tr,en}.json, tests/scoring/{fixtures,engine.test,markdown.test,messages.test}.ts, docs/{SCORING,ARCHITECTURE,DECISIONS,STATUS,TASKS}.md. Gerçek sonuç arayüz bağlantısı hâlâ açıktır; sonraki işe kullanıcı mesajı olmadan geçilmez.
+
+
+### D024 — Genel başlıklar, numaralandırma ve ölçülü bulgu dili — 28 Ekim 2026
+
+Kullanıcı canlı smoke'taki yanlış negatiflerin A3 arayüz bağlantısından önce dar kapsamda düzeltilmesine açık yetki verdi. HEAD hâlâ 7025b91; A3 motoru henüz commitlenmedi. Bu revizyon ayrı belge teslimi değil, aynı A3 motor paketinin parçasıdır. Önceki D023'teki sınırlı tespit listesi bu kayıtla genişletilir; ürün ağırlıkları, kapsam, kategori aritmetiği ve profil tipi öncelikleri değişmez.
+
+Proje Özeti / Proje Amacı ve Project summary/purpose/overview gibi genel başlıklar desteklenir. Numaralandırma yalnız başlığın başında, nokta/parantez ve boşlukla ayrılan 1–2 haneli sayısal gruplarda ayıklanır. Backend/frontend kurulum ve uygulamayı çalıştır başlıkları sınırlı tam alias listesine eklenir; keyfi substring eşleştirmesi yoktur. Başlık derinliği/sibling sınırı değişmez; her sinyal kendi tanınan bölümünden kanıt alır. Regresyonlar yanlış komşu bölümden pass üretilmediğini de doğrular.
+
+Genel soru listesi Bu proje neden var / Ne problemi çözüyor / Why this project / What problem does it solve ile sınırlıdır; kendi bölümünde açıklayıcı paragraf gerekir. Proje adına özel alias veya `<X> Neden Var?` gibi nesnesi belirsiz genel bir kalıp kurulmadı. Gerçek Fixora purpose check'i başka bir tanınan genel başlık olan Ne Problemi Çözüyor bölümünden geçer; Fixora Neden Var? başlığına ayrıcalık tanınmaz.
+
+Yapısal fail, kesin içerik yokluğu olarak anlatılmaz. Scoring.evidence içindeki fail metinleri eşleşme kurulamamasını/başka bölüm olasılığını, görevler içeriği eklemeyi veya uygun başlık altında düzenlemeyi anlatır. Doğrulanmış yokluk ve bilinen boş dosya readme.missing/readme.empty ortak kanıt mesajlarıyla ayrılır. Unknown yine erişilemeyen/belirsiz veri, null kategori/toplam ve normal tip üretmeme anlamını korur. Yeni puan durumu veya yapay pass eklenmez.
+
+Henüz yayımlanmamış/commitlenmemiş 1.0.0 motoru tamamlanır; önce/sonra motor karşılaştırması profil gelişimi/snapshot iyileşmesi değildir. Aynı canlı veri üzerinde eski motor 73,3, yeni motor 90 üretmiştir: 3 purpose + 1 install + 1 usage tespit düzeltmesi. SHA'lar önceki smoke ile aynı; repo içerikleri değiştirilmedi. Jobfit usage hâlâ fail'dir; Kurulum içindeki komut Kullanım bölümüne taşınmaz. Bu kalıcı sınır yeni kanıt/görev dilinde ölçülü anlatılır.
+
+Yeni bağımlılık, AI/ağ tabanlı içerik analizi, UI/adapter değişikliği veya backend genişlemesi yoktur. Geçici gerçek smoke çalıştırıcısı kaldırılır; normal test/CI gerçek ağa bağlanmaz. Detaylı kontrol ve kaynak kanıtları STATUS'ta, tam alias/numara sınırları SCORING'dedir.
+
+Etkilenen dosyalar: src/features/analysis/scoring/{markdown,engine}.ts, src/messages/{tr,en}.json, tests/scoring/{markdown,messages}.test.ts, docs/{SCORING,DECISIONS,STATUS,TASKS}.md. A3 arayüz bağlantısı için yetki yoktur; stage/commit/push/yayın yapılmaz.

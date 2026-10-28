@@ -183,15 +183,33 @@ A2 kaynak sözleşme §11 teknik kabul incelemesi: public adapter/normalizasyon/
 - [x] Kullanıcı Developer ID ilk tasarım dilimine görsel kabul verdi; açılış animasyonunu kontrol ettiğini ve sürekli hareket olmadığını bildirdi (kullanıcı incelemesi, 28 Ekim 2026).
 - [x] Kullanıcı isteğiyle yalnız TR/EN placeholder kısaltıldı: “GitHub kullanıcı adın” / “Your GitHub username”. Profil URL desteği mevcut etiketlerde korunur.
 - [x] Placeholder düzeltmesi sonrası npm run lint ve npm run typecheck geçti; bu tur başka tasarım değişikliği yapılmadı.
-- [ ] Tasarım değişikliklerinin kullanıcı commit/push ve yeni uzak CI doğrulaması; uzak CI henüz doğrulanmadı.
-- [ ] Açık kullanıcı mesajı olmadan kapsamı genişletme/A3'e geçme.
+- [x] Kullanıcı Developer ID değişikliklerini 7025b91 ile commit edip gönderdiğini ve GitHub Actions başarısını bildirdi; kaynak kullanıcı bildirimi, bu tur bağımsız uzak sorgu yapılmadı.
+- [x] Kullanıcı yeni açık mesajıyla yalnız A3 puanlama motoruna geçiş yetkisi verdi; tasarım/kapsam genişletilmedi.
 
 Bu dilim yalnız ana sayfa ve ortak demo üst kimliğidir; tüm uygulama yeniden tasarlanmış sayılmaz. Ürün/puanlama/backend sözleşmeleri ve gerçek seçim tasarımı korunur. Yeni public yayın veya paylaşım PNG üretimi yapılmadı.
 
-### A3 Puanlama:
+### A3 Puanlama — motor dilimi; gerçek sonuç arayüz bağlantısı açık
 
-- [ ] Saf kurallar + fixture testleri; her bulgunun kanıtı; kategori aritmetiği.
-- [ ] Unknown ve dil bağımsızlığı, repo sayısı, eksik README, boş hesap, GraphQL partial testleri.
+- [x] Saf kurallar + sentetik fixture testleri; her check için ID/scope/sürüm/durum/earned/max/kanıt/öneri anahtarı; 20/30/50 kategori aritmetiği ve yuvarlama.
+- [x] Unknown/dil bağımsızlığı, 1/3 eşdeğer repo, kesirli ortalama, missing/boş/unknown README, sıfır/uygunsuz/yinelenen repo ve GraphQL partial kökenli unknown davranışı.
+- [x] unified/remark-parse AST; sınırlı TR/EN alias'ları, bölüm sınırları, içerik koşulları, referans link/görsel ve güvenilmeyen HTML/protokol sınırları SCORING'de belgeli.
+- [x] Yalnız tam analizde öncelikli profil tipi, >=80 eşiği ve check referansları; en fazla üç benzersiz doğrulanmış görev, max/N etkisi ve sabit eşitlik sırası.
+- [x] UI demo fixture'ı değiştirmeden 23 check ve 15 + 22,5 + 40 = 77,5 doğrulaması; editoryal öneri sırası farkı kaydedildi.
+- [x] Saflık, aynı sonuç, donmuş girdinin korunması, ağ/saat/rastgelelik kullanmama ve TR/EN mesaj anahtarları testleri.
+- [x] A3 motor ve dar revizyon: 8 dosya/228 test (ilk motor 197 + 31 yeni regresyon); lint, typecheck, production build ve diff kontrolleri başarılı. Sonuçlar STATUS'ta kayıtlı.
+- [ ] Gerçek seçim → adapter README/metadata → motor → sonuç ekranı bağlantısı; bu tur yetkilendirilmedi/uygulanmadı. Mevcut UI puanlama devamı pasif kalır.
+- [x] İlk gerçek smoke: EnessCansever/jobfit-tr/fixora/barber gerçek ID ve kapsamı adapter üzerinden doğrulandı; tek client bütçesinde complete, 20 + 23,3 + 30 = 73,3, Vitrin Yapımda. Profil/üç proje README found; bu önceki motor sonucudur.
+- [x] Aynı okunan README metninde fixora demo, jobfit kurulum/teknoloji ve ek amaç/kullanım/bölüm sınırı örnekleri satır ve Blob SHA ile karşılaştırıldı; ayrıntılar STATUS'ta. Amaç/kullanım kaçırmaları belgelenmiş alias/bölüm sınırıdır; içerik gerçekten yok sayılmadı, puan/kural değiştirilmedi.
+- [x] İlk smoke çalıştırıcısı kaldırıldı; normal test/CI ve UI değişmedi. Yalnız ilk belge smoke turunda kod değişmediğinden geniş kontroller tekrarlanmadı; sonraki kod revizyonunun kontrolleri ayrıca yapıldı.
+- [x] Kullanıcı yanlış negatifler için dar revizyon yetkisi verdi; genel TR/EN amaç başlıkları, sınırlı numara önekleri, backend/frontend kurulum ve çalıştırma alias'ları eklendi. Bölüm sınırları, ağırlıklar, tip öncelikleri ve demo fixture korundu; proje adına özel kalıp yok.
+- [x] TR/EN kanıt metinleri yapısal eşleşme başarısızlığını kesin içerik yokluğundan ayırıyor; görevler mevcut içeriği ekle/düzenle seçeneğini kapsıyor. readme.missing/empty ile doğrulanmış veri durumu ayrı; unknown ve null aritmetiği değişmedi.
+- [x] Genel başlık/numara için olumlu ve ilgisiz başlık/komşu bölüm için olumsuz sentetik regresyonlar; gerçek README'ler fixture'a kopyalanmadı, yeni bağımlılık eklenmedi.
+- [x] Yerel kontroller sonrası aynı üç repo tek client ile yeniden alındı; aynı normalize girdide eski/yeni gerçek motor karşılaştırması: complete 73,3 → 90, README 30 → 46,7; 5 fail→pass. SHA'lar önceki smoke ile de aynı. Değişim tespit düzeltmesi, profil gelişimi değildir.
+- [x] Jobfit usage fail sınırı korundu; Kurulum komutu komşu Kullanım bölümüne taşınmadı. Kalan sınır ve yeni ölçülü görev metni STATUS'ta. Geçici çalıştırıcı ve önceki kaynak kopyaları kaldırıldı.
+- [ ] Dar revizyonu içeren aynı A3 motor paketinin kullanıcı incelemesi; henüz commitlenmedi, ayrı belge commit'i kapsamı gibi sunulmaz.
+- [ ] Bu motor diliminin kullanıcı commit/push ve yeni uzak CI doğrulaması. 7025b91 önceki tasarım commit'idir; yeni motorun CI kanıtı değildir.
+
+A3'ün tamamı bitti sayılmaz. 1.0.0'da not_applicable kullanılmaz; ileride kullanımı/aritmetiği tanımlanmadan payda değiştirilemez. MongoDB/karşılaştırma A4, paylaşım A5 kapsamındadır.
 
 ### A4 Depolama/karşılaştırma:
 

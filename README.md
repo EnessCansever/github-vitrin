@@ -1,6 +1,6 @@
 # RepoVitrin
 
-Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. Ana sayfa kullanıcı adı veya desteklenen GitHub profil URL'siyle gerçek public profili ve uygun repo adaylarını getirir; 1–3 proje seçilebilir. **Puanlama ve gerçek sonuç üretimi henüz açık değildir.** `/demo`, `/demo/select`, `/demo/states` kurmaca örnekler olarak ayrıdır; gerçek seçim sabit demo puanına yönlendirilmez. A2.2 akışı kullanıcı tarafından kabul edildi. Ana sayfa ve demo kimlik kartının Developer ID görsel revizyonu kullanıcı incelemesini bekliyor.
+Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. Ana sayfa kullanıcı adı veya desteklenen GitHub profil URL'siyle gerçek public profili ve uygun repo adaylarını getirir; 1–3 proje seçilebilir. **Puanlama ve gerçek sonuç üretimi henüz açık değildir.** `/demo`, `/demo/select`, `/demo/states` kurmaca örnekler olarak ayrıdır; gerçek seçim sabit demo puanına yönlendirilmez. A2.2 akışı kullanıcı tarafından kabul edildi. Developer ID ana sayfa/demo tasarımı kullanıcı tarafından görsel ve hareket açısından kabul edildi. A3 saf puanlama motoru ve Markdown incelemesi bağımsız modül olarak eklendi; gerçek seçim/sonuç arayüzüne henüz bağlanmadı.
 
 ## Gereksinimler ve kurulum
 
@@ -33,7 +33,7 @@ npm run build
 npm start
 ```
 
-`typecheck`, temiz kurulumda önce `next typegen` ile Next.js tiplerini üretir, sonra TypeScript kontrolünü çalıştırır. `lint` ESLint CLI kullanır. `build` lint yerine geçmez. `npm test`, Vitest ile girdi, kapsam, sayfalama, README, hata ve bütçe davranışlarını sahte HTTP yanıtlarıyla doğrular; gerçek GitHub isteği veya token gerektirmez. UI/Playwright test altyapısı kurulmadı.
+`typecheck`, temiz kurulumda önce `next typegen` ile Next.js tiplerini üretir, sonra TypeScript kontrolünü çalıştırır. `lint` ESLint CLI kullanır. `build` lint yerine geçmez. `npm test`, Vitest ile girdi, kapsam, sayfalama, README, hata ve bütçe davranışlarını sahte HTTP yanıtlarıyla doğrular; gerçek GitHub isteği veya token gerektirmez. Ayrıca saf puanlama, Markdown AST, unknown ve öneri davranışları ağsız test edilir. UI/Playwright test altyapısı kurulmadı.
 
 GitHub Actions, push ve pull request üzerinde `npm ci`, test, lint, typecheck ve build çalıştıracak şekilde tanımlıdır; uygulama secret'ı gerektirmez. Yerel kontrol sonuçları uzak CI sonucu değildir; güncel doğrulama durumu [STATUS](docs/STATUS.md) içindedir.
 
@@ -43,8 +43,9 @@ GitHub Actions, push ve pull request üzerinde `npm ci`, test, lint, typecheck v
 - `src/components`: ortak marka, dil seçimi ve geliştirici imzası.
 - `src/i18n`, `src/messages`: next-intl istek/dil ayarları ve TR/EN metinleri.
 - `src/features/analysis/demo.ts`: sabit kurmaca örnek; puanlama motoru değildir.
-- `src/lib/github`: server-only public adapter, Zod doğrulama, normalize edilmiş veri ve tipli hatalar. Arayüze bağlı değildir.
-- `tests/github`: ağ kullanmayan adapter ve girdi testleri.
+- `src/features/analysis/scoring`: arayüze bağlı olmayan saf puanlama motoru; rulesVersion 1.0.0, Markdown AST ve kanıt/öneri çıktısı. Kurallar ve tespit sınırları [SCORING](docs/SCORING.md) içinde.
+- `src/lib/github`: server-only public adapter, Zod doğrulama, normalize edilmiş veri ve tipli hatalar; mevcut Server Action profil/aday erişimini kullanır.
+- `tests/github`, `tests/scoring`: ağ kullanmayan adapter/girdi ve saf motor testleri.
 - `src/config/site.ts`: çalışma markası ve geliştirici bağlantı bilgileri. Bilinmeyen Instagram adresi boştur.
 - `docs`: ürün, mimari, puanlama, tasarım ve aşama kayıtları.
 

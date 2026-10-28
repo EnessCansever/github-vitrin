@@ -176,3 +176,18 @@ ProfileSearch aynı pending gönderimi ref ile eşzamanlı engeller. Alan deği�
 Bu bir public ağ girişidir fakat kalıcı/dağıtık abuse koruması değildir: 256 byte girdi, 8 KiB body ve işlem budget'ı tek başına anonim ölçekli korunma sağlamaz. A4 throttle/cache/lock yoktur. Public deployment yetkisi/hazırlığı verilmedi; bu akış yerelde incelenir.
 
 Resmi referanslar: [Server Actions ve programatik form çağrısı](https://nextjs.org/docs/app/guides/forms), [Server Action body/origin yapılandırması](https://nextjs.org/docs/app/api-reference/config/next-config-js/serverActions). Kurulu Next 16.4.3 config tipleri ve action-handler body parser'ı da kontrol edildi. Yerel aşırı body denemesinde limit doğrulandı; geliştirme sunucusu dahili 413 body-limit hatasını HTTP 500 Server Action yanıtı içinde taşıdı. Bu statü özel bir JSON API sözleşmesi olarak sunulmaz.
+
+
+## A3 — saf puanlama motoru (arayüze bağlı değil)
+
+- `src/features/analysis/scoring/types.ts`: adapter ile uyumlu normalize girdi, check/evidence, kategori, öneri ve tip çıktısı.
+- `markdown.ts`: unified 11.0.5 / remark-parse 11.0.0 AST incelemesi; açık TR/EN alias'ları ve bölüm sınırları. HTML render/çalıştırma ve URL fetch yoktur. Başlıklar tek geçişte bölüm kapsamına ayrılır; iç içe kapsam en fazla Markdown başlık derinliğidir.
+- `engine.ts`: `scoreAnalysis(input)`; 1–3 uygun repo, sabit sürüm, puan/ortalama/yuvarlama, unknown, profil tipi ve en çok üç görev. Genel workflow/kural motoru yoktur.
+- Adapter'ın Readme/Profile/Repository/ErrorCode tipleri type-only import edilir; yalnız saf login/repo adı Zod şemaları runtime import edilir. Transport, server-only client, env, DB, saat veya AI puanlama modülüne yüklenmez. Saat ve locale bağımlılığı yoktur; checkedAt opsiyonel girdidir. Çıktı yeni nesnelerle oluşturulur, girdi değiştirilmez; repo ID sırası sonucu sabitler.
+- `GitHubClient.getSelected` çıktısındaki `{repo, readme}[]`, profile ve profileReadme ile doğrudan girdi olabilir; bu tur çağrıları birleştiren yeni Server Action/Route Handler oluşturulmadı. Mevcut getRepos yalnız profil/adayları getirmeye devam eder, seçimi bekleyen client yaşam süresi uzatılmaz.
+- Eksik data kategorisi ve toplam null'dır; bilinen metadata/check bulguları korunur. README yokluğu yalnız adapter'ın doğrulanmış missing durumu veya bilinen boş found metindir. Büyük found metin ikinci savunma olarak unknown/too_large olur; kesilmez.
+- Evidence, varsa Blob SHA'yı dosya kimliği olarak taşır; branch ile kaynak linkini ayrı tutar. Sağlanmayan commit SHA veya zaman damgası uydurulmaz. Güvenli errorCode dışında Error/transport nesnesi döndürülmez.
+- `src/messages/{tr,en}.json` içindeki yeni Scoring alanı hesaplama dışındaki metinleri tutar. Önceki mesajlar ve UI bileşenleri korunur. Motor/demolar henüz birleştirilmez; 77,5 fixture değişmez.
+- `tests/scoring`: ağ/saat/rastgelelik olmadan davranış, Markdown, scope, eksik veri, öneriler, profil tipi ve iki dilde mesaj anahtarları. Mevcut Vitest/CI kullanılmaya devam eder; yeni test aracı veya canlı GitHub testi yoktur.
+
+Tam tespit sınırları ve aritmetik [SCORING](SCORING.md) içindedir. Gerçek kullanıcı sonuç akışı, kalıcı cache/MongoDB ve paylaşım bu dilimde yoktur; public deployment sınırlamaları sürer.
