@@ -4,14 +4,15 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Check, Pin } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { RepoOption } from "./selection-demo";
+import type { RepoOption } from "./selection";
 
 type Props = {
   repos: RepoOption[];
   initialSelectedIds: string[];
+  mode?: "demo" | "live";
 };
 
-export function RepoPicker({ repos, initialSelectedIds }: Props) {
+export function RepoPicker({ repos, initialSelectedIds, mode = "demo" }: Props) {
   const t = useTranslations("Select");
   const [selectedIds, setSelectedIds] = useState(initialSelectedIds);
   const atLimit = selectedIds.length === 3;
@@ -27,7 +28,7 @@ export function RepoPicker({ repos, initialSelectedIds }: Props) {
   return (
     <section className="repo-picker" aria-labelledby="selection-title">
       <div className="selection-toolbar">
-        <h2 id="selection-title">{t("projects")}</h2>
+        <h2 id="selection-title">{t(mode === "live" ? "liveProjects" : "projects")}</h2>
         <p className="selection-count" role="status" aria-atomic="true">
           {t("count", { count: selectedIds.length })}
         </p>
@@ -36,7 +37,7 @@ export function RepoPicker({ repos, initialSelectedIds }: Props) {
         {t(atLimit ? "limitReached" : "limit")}
       </p>
       <fieldset className="repo-options" aria-describedby="selection-limit">
-        <legend className="sr-only">{t("legend")}</legend>
+        <legend className="sr-only">{t(mode === "live" ? "liveLegend" : "legend")}</legend>
         {repos.map((repo) => {
           const selected = selectedIds.includes(repo.id);
           const disabled = !selected && atLimit;
@@ -57,10 +58,10 @@ export function RepoPicker({ repos, initialSelectedIds }: Props) {
                   {selected && <span className="repo-selected"><Check size={14} aria-hidden="true" />{t("selected")}</span>}
                 </span>
                 <span className="repo-description" id={`${repo.id}-description`}>
-                  {t(`descriptions.${repo.descriptionKey}`)}
+                  {repo.description || t("noDescription")}
                 </span>
                 <span className="repo-meta">
-                  <span>{repo.language}</span>
+                  <span>{repo.language || t("noLanguage")}</span>
                   {repo.pinned && <span><Pin size={13} aria-hidden="true" />{t("pinned")}</span>}
                 </span>
               </span>
@@ -69,8 +70,12 @@ export function RepoPicker({ repos, initialSelectedIds }: Props) {
         })}
       </fieldset>
       <div className="selection-next">
-        <p id="selection-next-help">{t(empty ? "empty" : "nextHint")}</p>
-        {empty ? (
+        <p id="selection-next-help">{t(mode === "live" ? (empty ? "liveEmpty" : "scoringPending") : (empty ? "empty" : "nextHint"))}</p>
+        {mode === "live" ? (
+          <button type="button" disabled className="button button-disabled" aria-describedby="selection-next-help">
+            {t("scoringPending")}
+          </button>
+        ) : empty ? (
           <button type="button" disabled className="button button-disabled" aria-describedby="selection-next-help">
             {t("continue")}
           </button>

@@ -22,7 +22,7 @@
     "intro": "Sunumdaki eksikleri gör. Nereden başlayacağını kanıtlarıyla öğren.",
     "label": "GitHub kullanıcı adı veya profil URL’si",
     "placeholder": "kullanici veya github.com/kullanici",
-    "inputHint": "Analiz henüz açık değil. Aşağıdaki eylem sabit örnek profili açar.",
+    "inputHint": "Public profilini ve uygun projelerini getir. Puanlama geliştirme aşamasında.",
     "demoAction": "Örnek analizi keşfet",
     "howTitle": "İyi bir ilk izlenim, küçük adımlarla.",
     "discoverTitle": "Keşfet",
@@ -167,7 +167,13 @@
       "orbit": "Günlük işleri küçük adımlara ayıran kişisel görev planlayıcı.",
       "weather": "Hava durumunu tek bakışta gösteren, mobil öncelikli bir arayüz.",
       "journal": "Okuma notlarını ve ilerlemeyi takip etmek için hazırlanmış, uzun açıklamaları ve farklı ekran boyutlarını da düşünen erişilebilir bir günlük arayüzü."
-    }
+    },
+    "liveProjects": "Projeler",
+    "liveLegend": "İncelenecek projeler",
+    "noDescription": "Açıklama eklenmemiş.",
+    "noLanguage": "Dil belirtilmemiş",
+    "scoringPending": "Puanlama geliştirme aşamasında",
+    "liveEmpty": "En az bir proje seç. Puanlama henüz açık değil."
   },
   "States": {
     "back": "Repo seçimi örneğine dön",
@@ -229,5 +235,39 @@
     "report": "Örnek rapor",
     "select": "Proje seçimi",
     "states": "Analiz durumları"
+  },
+  "Search": {
+    "submit": "Projelerimi getir",
+    "pending": "Profil ve projeler getiriliyor",
+    "loading": "GitHub’dan public profil ve uygun projeler alınıyor.",
+    "invalid": "Bir GitHub kullanıcı adı veya github.com/kullanici profil adresi gir.",
+    "region": "Profil ve proje seçimi",
+    "title": "İncelenmesini istediğin 1–3 projeyi seç.",
+    "scope": "Bu profile ait {count} public, arşivlenmemiş ve fork olmayan proje listelendi.",
+    "pinnedUnknown": "Sabitlenmiş projeler alınamadı. Son güncellenen uygun projelerle devam edebilirsin.",
+    "limited": "İlk 100 uygun aday gösteriliyor. Seçimin yalnız bu listedeki projeleri kapsar.",
+    "retry": "Yeniden dene",
+    "errors": {
+      "notFound": {
+        "title": "Bu kullanıcı bulunamadı",
+        "description": "Kullanıcı adını kontrol et veya başka bir profil dene."
+      },
+      "empty": {
+        "title": "Uygun public proje bulunamadı",
+        "description": "Yalnız public, profilin sahibine ait, arşivlenmemiş ve fork olmayan projeler listelenir. Başka bir profil deneyebilirsin."
+      },
+      "network": {
+        "title": "Projelere şu an ulaşılamıyor",
+        "description": "Bağlantı veya hizmet sorunu oluştu. Yeniden deneyebilir ya da başka bir profil arayabilirsin."
+      },
+      "rateLimit": {
+        "title": "Şimdilik istek sınırına ulaşıldı",
+        "description": "GitHub erişimine ara vermek gerekiyor. Daha sonra yeniden deneyebilirsin."
+      },
+      "configuration": {
+        "title": "GitHub bağlantısı şu an kullanılamıyor",
+        "description": "Sunucu bağlantısının yapılandırılması veya erişim izninin kontrol edilmesi gerekiyor. Daha sonra yeniden dene."
+      }
+    }
   }
 }

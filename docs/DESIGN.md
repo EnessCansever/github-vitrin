@@ -83,3 +83,11 @@ Bağlantı hiyerarşisi:
 Bu üç renk mevcut mavi palette merkezi token olarak tanımlıdır; linklere ayrı renk verilmez. Mint gezinme veya dil seçimi focus'unda kullanılmaz. Paylaşım/yeniden analiz disabled kalır. Sayfa değiştiren tüm eylemler gerçek anchor/Next Link olarak korunur. `/demo` altındaki seçim geçişi belirgin ikincil eylemdir; üst gezinme aynı geçişi sayfa sonuna inmeden sunar. Gereksiz eski min-height tekrarları ilgili link kurallarından kaldırıldı; yeni bağımlılık/client state eklenmedi.
 
 Temiz Chrome'da TR/EN 390px ve masaüstü ekranları alınıp incelendi; 320px'de üç link ve sayfa taşması yok. Geçişler, geri dönüş, dil, klavye/hover/focus doğrulandı. İkincil açık metin kontrastı normal zeminde 13,79:1, hover'da 10,74:1; çerçeve/zemin 3,26:1. **Bu revizyon için kullanıcı görsel kabulü henüz verilmedi.**
+
+## A2.2 — gerçek form ve seçim — 28 Ekim 2026
+
+Kabul edilmiş hero/örnek kart kimliği korunarak ana eylem “Projelerimi getir” oldu; ayrı mavi ikincil demo linki görünür kalır. Form etiket/hint/alan hatası ve disabled pending taşır. Gerçek seçim aynı sayfada, mevcut monogram, repo kartları ve native checkbox stiliyle açılır. Sonuç/hata başlığına programatik klavye focus verilir; tüm uzun listeye dekoratif çerçeve çizilmez. Seçim başına scroll, kesme/sabit yükseklik olmadan başlığı görünür kılar. Gerçek akışın alanları demo/sabit puanla birleştirilmez.
+
+Tek ortak RepoPicker/StatePanel kullanılır; TR/EN görünen metinler mesaj dosyalarındadır. 1–3 sınırı, pinned-unknown ve 100 aday uyarıları, sıfır seçim ve pasif puanlama açıklaması vardır. Profil linki gerçek kullanıcı adına gider; avatar için dış istek yerine monogram seçildi.
+
+Temiz Chrome ile TR/EN 390×844 ve 1440×900 ekranları görüntülendi; 320/390/768/1440 ve uzun metinde yatay taşma yok. Native Enter, checkbox Space, görünür focus ve dil değişiminde ID korunumu kontrol edildi. Ana CTA masaüstü ilk ekranda kalır. Bu yeni A2.2 bölümüne kullanıcı görsel kabulü henüz verilmedi; önceki A1 kabulü kapsamı değişmez.

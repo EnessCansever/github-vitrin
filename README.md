@@ -1,6 +1,6 @@
 # RepoVitrin
 
-Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. TR/EN ana sayfa ve açıkça kurmaca `/demo`, `/demo/select`, `/demo/states` ekranları kullanıcı görsel kabulünü aldı. A2’nin ilk bölümünde sunucu GitHub adapter’ı ve testleri eklendi; arayüze bağlı gerçek analiz, puanlama motoru, veri saklama ve paylaşım henüz yok.
+Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. Ana sayfa kullanıcı adı veya desteklenen GitHub profil URL'siyle gerçek public profili ve uygun repo adaylarını getirir; 1–3 proje seçilebilir. **Puanlama ve gerçek sonuç üretimi henüz açık değildir.** `/demo`, `/demo/select`, `/demo/states` kurmaca örnekler olarak ayrıdır; gerçek seçim sabit demo puanına yönlendirilmez. A2.2 kullanıcı incelemesini bekliyor.
 
 ## Gereksinimler ve kurulum
 
@@ -19,7 +19,7 @@ Repo seçimi örneği: http://localhost:3000/demo/select
 
 Durum örnekleri: http://localhost:3000/demo/states
 
-TR/EN seçimi aynı sayfada kalır ve dil tercihi cookie’de saklanır. Repo seçimi bu dil değişiminde korunur; devam eylemi yalnız durum örneklerini açar, yeni analiz veya puan üretmez. Kullanıcı adı alanı analiz başlatmaz; demo eylemi her zaman aynı kurmaca profile gider.
+TR/EN aynı sayfada kalır ve dil cookie'de tutulur. Gerçek seçim aynı ana sayfada açılır; dil değişimi yeni GitHub isteği göndermez ve seçimleri korur. Yeni aramada eski profil/seçimler temizlenir; geç eski yanıt yeni aramayı ezmez. Seçim devamı puanlama geliştirilmekte olduğu için pasiftir. Demo eylemi her zaman bağımsız kurmaca profile gider. Sayfa yenilemede canlı seçim belleği sıfırlanır; kalıcı cache veya geçmiş yoktur.
 
 Demo ekranları, testler ve build için secret gerekmez. `.env.example`, `GITHUB_TOKEN`, `MONGODB_URI` ve `SIGNING_SECRET` isimlerini boş değerlerle belgeler. Yalnız GitHub adapter’ı çağrıldığında sunucuda `GITHUB_TOKEN` okunur. Diğer iki değişken henüz kullanılmaz. Gerçek değerleri Git’e veya `NEXT_PUBLIC_` değişkenlerine eklemeyin.
 
@@ -52,11 +52,11 @@ Tam paket sürümleri `package.json` ve `package-lock.json` içinde kilitlidir. 
 
 ## GitHub bağlantısını hazırlama
 
-Bu bölüm henüz arayüzden tetiklenmez; public API veya debug endpointi yoktur. EnessCansever için mevcut adapter ile gerçek public bağlantı smoke kontrolü yapıldı; güvenli sonuçlar [STATUS](docs/STATUS.md) içinde.
+Gerçek profil/aday erişimi ana sayfadaki “Projelerimi getir” eylemiyle tek Server Action üzerinden tetiklenir; aynı iş için Route Handler veya debug endpointi yoktur. EnessCansever için mevcut adapter ile gerçek public bağlantı smoke kontrolü yapıldı; güvenli sonuçlar [STATUS](docs/STATUS.md) içinde.
 
 GitHub Settings → Developer settings → Personal access tokens → Fine-grained tokens altında süreli bir token oluşturun. Yalnız public veri için **Public repositories** erişimini seçin; ek hesap, yazma veya özel repo izinleri vermeyin. Fine-grained tokenlar public repolara okuma erişimi içerir. Classic tokenın `public_repo` kapsamı yerine bu dar erişimi tercih edin. [Resmi token oluşturma rehberi](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens), [GraphQL yetkilendirmesi](https://docs.github.com/en/graphql/guides/forming-calls-with-graphql) ve [public README erişimi](https://docs.github.com/en/rest/repos/contents#get-a-repository-readme).
 
-Tokenı kendiniz ignore edilen `.env.local` içindeki `GITHUB_TOKEN` değişkenine ekleyebilirsiniz; paylaşmayın. Adapter modülü import edilirken token okunmaz. Çağrı anında boş/biçimi bozuk token veya GitHub 401 yanıtı `configuration`, diğer yetki sorunları `auth` olur. Build ve deterministik testler bu değeri gerektirmez. Token eklemek mevcut kullanıcı adı alanını gerçek analize bağlamaz.
+Tokenı kendiniz ignore edilen `.env.local` içindeki `GITHUB_TOKEN` değişkenine ekleyebilirsiniz; paylaşmayın. Adapter modülü import edilirken token okunmaz. Çağrı anında boş/biçimi bozuk token veya GitHub 401 yanıtı `configuration`, diğer yetki sorunları `auth` olur. Build ve deterministik testler bu değeri gerektirmez. Token, ana sayfadan public profil/aday erişimini açar; README analizi veya puanlama başlatmaz.
 
 Bir sunucu işlemi için yeni bir `GitHubClient` oluşturulur; **global singleton olarak saklanmaz**. `getProfile`, `getPinned`, `getCandidates`, `getProfileReadme`, `getSelected` aynı 20 saniye / 40 istek bütçesini paylaşır. En fazla 100 uygun aday tutulur; bu sınırdaki `limited` bayrağı kesilmeyi ihtiyatlı biçimde bildirir. README en fazla 256 KiB, HTTP JSON gövdesi en fazla 1 MiB; içerik kesilmez.
 
@@ -64,4 +64,12 @@ Profil README'si proje adaylarından bağımsızdır: aynı adlı public repoda,
 
 REST/core ve GraphQL primary limitleri ayrı kaydedilir. Yalnız kısıtlanan kaynak durur; secondary veya kaynağı belirsiz limit iki API'yi de durdurur. Header yokluğu önceki bilinen primary bilgiyi silmez. Gerçek reset geçmişse eski bakiye engeli kaldırılır; reset bilinmiyorsa zaman uydurulmaz. GraphQL HTTP 200 rate-limit hataları da kayda işlenir. Pinned GraphQL primary limiti REST aday erişimini engellemez; secondary limiti başka API üzerinden aşmaya çalışan fallback yoktur. [GitHub API limit kaynakları](https://docs.github.com/en/rest/rate-limit/rate-limit), [secondary limitler](https://docs.github.com/en/graphql/overview/rate-limits-and-query-limits-for-the-graphql-api).
 
-EnessCansever üzerinde profil/pinned/adaylar/profil ve proje README erişimi gerçek adapter ile doğrulandı. Bu opt-in smoke kontrolü npm test/CI içinde çalışmaz; geçici çalıştırıcı kaldırıldı. Gerçek kullanıcı akışı henüz arayüze bağlanmadı. Güncel kapsam ve kontrol sonuçları [STATUS](docs/STATUS.md) içinde.
+EnessCansever üzerinde profil/pinned/adaylar/profil ve proje README erişimi gerçek adapter ile doğrulandı. Bu opt-in smoke kontrolü npm test/CI içinde çalışmaz; geçici çalıştırıcı kaldırıldı. Ana sayfa gerçek profil ve repo seçimine bağlıdır; sonraki analiz adımı henüz açık değildir. Güncel kapsam ve kontrol sonuçları [STATUS](docs/STATUS.md) içinde.
+
+## A2.2 yerel akış ve yayın sınırı
+
+Ana sayfada kullanıcı adı veya desteklenen URL'yi girip Enter/“Projelerimi getir” ile gönderin. Alan hatası ve gerçek pending gösterilir; aynı pending işlem için çift gönderim engellenir. Profil güvenli monogramla gösterilir; uygun pinler, sonra son güncellenen adaylar üçe kadar ön seçilir. Pinned unknown bilgisi gizlenmez; 100 aday sınırı bildirilir. Hatalarda “Yeniden dene” gerçek işlemi tekrarlar. Kullanıcıya ham API/Error veya token bilgisi verilmez.
+
+Server Action girdisi en fazla 256 UTF-8 byte; Next Server Action body sınırı 8 KiB'dir. İşlem başına yeni client 20 saniye/40 istek sınırını korur ve kullanıcı seçim yaparken tutulmaz. Eski arama yanıtı istemcide atılır; başlamış sunucu isteğinin iptal edildiği garanti edilmez. Kalıcı/dağıtık abuse, throttle ve cache henüz yoktur. **Bu akış yalnız yerel geliştirme/inceleme içindir; public deployment'a hazır değildir ve yayın yapılmadı.**
+
+Kontroller: `npm test` gerçek GitHub/token gerektirmez. Gerçek form kontrolü açık opt-in yerel tarayıcı incelemesidir; CI otomatik canlı istek yapmaz. Güncel yerel/uzak sonuç ayrımı STATUS'tadır.

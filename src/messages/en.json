@@ -22,7 +22,7 @@
     "intro": "See the gaps in your presentation. Find a clear first step, backed by evidence.",
     "label": "GitHub username or profile URL",
     "placeholder": "username or github.com/username",
-    "inputHint": "Analysis is not available yet. The action below opens a fixed sample profile.",
+    "inputHint": "Fetch your public profile and eligible projects. Scoring is in development.",
     "demoAction": "Explore a sample analysis",
     "howTitle": "A better first impression, one step at a time.",
     "discoverTitle": "Discover",
@@ -167,7 +167,13 @@
       "orbit": "A personal planner that breaks daily tasks into small steps.",
       "weather": "A mobile-first interface for checking the weather at a glance.",
       "journal": "An accessible journal interface for reading notes and progress, designed to handle longer descriptions and a range of screen sizes."
-    }
+    },
+    "liveProjects": "Projects",
+    "liveLegend": "Projects to review",
+    "noDescription": "No description provided.",
+    "noLanguage": "Language not specified",
+    "scoringPending": "Scoring is in development",
+    "liveEmpty": "Select at least one project. Scoring is not available yet."
   },
   "States": {
     "back": "Back to sample repository selection",
@@ -229,5 +235,39 @@
     "report": "Sample report",
     "select": "Project selection",
     "states": "Analysis states"
+  },
+  "Search": {
+    "submit": "Fetch my projects",
+    "pending": "Fetching profile and projects",
+    "loading": "Fetching the public profile and eligible projects from GitHub.",
+    "invalid": "Enter a GitHub username or a github.com/username profile URL.",
+    "region": "Profile and project selection",
+    "title": "Choose 1–3 projects to review.",
+    "scope": "{count} public, owned, non-archived, non-fork projects listed.",
+    "pinnedUnknown": "Pinned projects could not be fetched. You can continue with recently updated eligible projects.",
+    "limited": "The first 100 eligible candidates are shown. Your selection is limited to this list.",
+    "retry": "Try again",
+    "errors": {
+      "notFound": {
+        "title": "This user could not be found",
+        "description": "Check the username or try another profile."
+      },
+      "empty": {
+        "title": "No eligible public projects found",
+        "description": "Only public, owned, non-archived, non-fork projects are listed. You can try another profile."
+      },
+      "network": {
+        "title": "Projects are unavailable right now",
+        "description": "A connection or service problem occurred. Try again or search for another profile."
+      },
+      "rateLimit": {
+        "title": "The request limit has been reached",
+        "description": "GitHub access needs a pause. You can try again later."
+      },
+      "configuration": {
+        "title": "The GitHub connection is unavailable",
+        "description": "The server connection configuration or access permission needs to be checked. Try again later."
+      }
+    }
   }
 }

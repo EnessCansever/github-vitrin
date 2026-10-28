@@ -190,3 +190,27 @@ Profil için proje eligible filtresi/genel README araması kaldırıldı. Hatas�
 REST/core ve GraphQL primary limitleri ayrıldı. Secondary/kaynağı belirsiz kısıt ortak kalır; başka API üzerinden aşılmaz. GraphQL HTTP 200 RATE_LIMITED sonraki çağrıları etkiler. Eksik header önceki primary bilgiyi silmez; gerçek reset geçince eski blok kaldırılır. Süre uydurulmaz; tek işlem için 20 saniye/40 istek korunur. Client global singleton değildir. Güncel kaynaklar ve ayrıntılar ARCHITECTURE/README'dedir. Gerçek GitHub smoke testi yapılmadı.
 
 Etkilenen dosyalar: src/lib/github/{client,schemas,errors,transport}.ts, tests/github/{client.test,fixtures,profile-readme.test,rate-limit.test}.ts, README.md, docs/{ARCHITECTURE,STATUS,TASKS,DECISIONS}.md. Arayüz, fixture puanı, bağımlılıklar ve CI bu düzeltmede değiştirilmedi.
+
+### D020 — A2.2 Server Action ve sayfada geçici seçim — 28 Ekim 2026
+
+590f4c7 commit/push ve uzak CI başarısı kullanıcı tarafından bildirildi; yerel HEAD/temiz başlangıç doğrulandı. Kullanıcı yalnız gerçek profil/repo seçimine yetki verdi; puanlama/sonuç veya yayın yoktur.
+
+Aynı iş için tek Server Action seçildi; ek Route Handler/store/cache gerekmedi. Aynı sayfadaki client state, locale re-render'ında yeni GitHub çağrısı olmadan seçimleri korur. İstek kimliği eski yanıtı reddeder; input değişimi/eski sonuç temizliği başka hesabın seçimlerini karıştırmaz. Sunucu bütçesi her yeni işlemde client kurularak başlar, kullanıcı seçimine yayılmaz. Dış avatar fetch yerine monogram ve yalnız gerekli DTO alanları seçildi. Ortak RepoPicker ve StatePanel gerçek/demoda aynı tasarımı taşır; fixture, skor ve gerçek veri ayrı kalır.
+
+Zod istemci/sunucu doğrulaması, 256 UTF-8 byte ham girdi ve 8 KiB framework body sınırı eklendi; bunlar dağıtık abuse koruması değildir. Pinned alt isteği timeout olursa aynı client'ın kalan bütçesinde aday erişimine izin verilir; timeout'u bütçe sıfırlamak için yeni client ile aşmak yoktur. Bu, önceki D018/D019 notlarındaki tüm timeout'ları fallback dışında tutan ayrımı daraltır: ortak deadline hâlâ kesin sınırdır. Bu davranış mock saat/fetch ile test edildi. State ve byte sınırları metadata getirme içindir; yeni bağımlılık/puanlama/README analizi veya public deployment eklenmedi.
+
+Etkilenen dosyalar: AGENTS.md, README.md, next.config.ts, src/app/{page.tsx,globals.css,demo/select/page.tsx}, src/features/analysis/{actions,selection,profile-search,repo-picker,analysis-states}, src/lib/github/client.ts, src/messages/{tr,en}.json, tests/github/actions.test.ts, docs/{ARCHITECTURE,DESIGN,STATUS,TASKS,DECISIONS}.md.
+
+### D021 — A / Developer ID tasarım yönü — 28 Ekim 2026
+
+Kullanıcı **A / Developer ID** yönünü seçti. Gerekçe: kullanıcının açık tasarım tercihi; bu kayıt tasarımı şimdi uygulama yetkisi değildir.
+
+- Yeni tasarım mevcut çalışan gerçek profil ve repo seçimi veri akışını koruyacak.
+- Konsept görselindeki kategori isimleri ve puanlar ürün kuralı değildir.
+- SCORING.md'deki puanlama sözleşmesi değişmeyecek; görsel değerlerden yeni kural/ağırlık türetilmeyecek.
+- Tasarım uygulaması ayrı bir aşamada yapılacak; henüz başlamadı.
+- Mevcut A2.2 akışına kullanıcı kabulü verildi; bu kabul yeni tasarımın uygulanmış olduğu anlamına gelmez.
+
+Bu tur yalnız karar ve STATUS/TASKS kabul kayıtları güncellendi. Uygulama kodu, mevcut tasarım, kaynak referans ve puanlama değiştirilmedi; sonraki aşamaya geçilmedi.
+
+Etkilenen dosyalar: docs/DECISIONS.md, docs/STATUS.md, docs/TASKS.md. Gelecekteki tasarım uygulamasının dosya kapsamı bu kayıtla yetkilendirilmez.

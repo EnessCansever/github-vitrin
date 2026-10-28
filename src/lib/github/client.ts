@@ -110,7 +110,7 @@ export class GitHubClient {
 
   async getCandidates(profile: Profile, pinned: Pinned) {
     if (pinned.status === "unknown" &&
-      ["configuration", "auth", "timeout", "request_budget"].includes(pinned.error.code)) {
+      ["configuration", "auth", "request_budget"].includes(pinned.error.code)) {
       throw pinned.error;
     }
     const repos: Repository[] = [];

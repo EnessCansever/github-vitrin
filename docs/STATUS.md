@@ -4,9 +4,73 @@ Son güncelleme: 28 Ekim 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A2.1 — veri katmanı ve EnessCansever canlı public bağlantı smoke kontrolü doğrulandı.** Beş adım aynı GitHubClient işlemiyle geçti. A1 kabulü korunuyor; HEAD 3912059, önceki A2 dosyaları hâlâ commit edilmemiş durumda. Yeni uzak CI sonucu yok. A2'nin bütünü veya sonraki aşamalar tamamlandı sayılmaz; kullanıcı incelemesi/commit ve açık devam mesajı bekleniyor.
+**A2.2 — mevcut gerçek profil ve repo seçimi akışı kullanıcı tarafından kabul edildi.** A2'nin kaynak sözleşmedeki teknik kabul kriterleri önceki doğrulama kayıtlarıyla karşılandı. Yeni A2.2 commit/push ve uzak CI doğrulaması bekleniyor; HEAD için son bildirilen CI başarısı 590f4c7'ye ait. A / Developer ID tasarım yönü seçildi, uygulaması başlamadı. Puanlama/sonraki aşamaya geçiş yetkisi verilmedi.
 
-## A2.1 gerçek bağlantı smoke sonucu — 28 Ekim 2026, 15:44 +03
+## A2.2 kullanıcı kabulü ve tasarım yönü kaydı — 28 Ekim 2026
+
+Kullanıcı **mevcut A2.2 gerçek profil ve repo seçimi akışına kabul verdi**. Bu kayıt kullanıcı bildirimidir; bu tur yeni tarayıcı incelemesi, uygulama testi veya uzak CI kontrolü yapılmadı. Kabul mevcut çalışan veri akışını kapsar; ilerideki A / Developer ID tasarımının uygulanmış veya kabul edilmiş olduğu anlamına gelmez.
+
+Kaynak sözleşme §11 A2 ve TASKS kabul maddeleri yeniden karşılaştırıldı:
+
+| A2 kabul kriteri | Kanıt ve durum |
+| --- | --- |
+| Public adapter, normalizasyon, aday seçimi, pinned fallback, timeout/rate-limit/unknown | Önceki A2.1/A2.2 uygulama ve deterministik test kayıtlarıyla karşılandı. Mevcut form/seçim akışı ayrıca kullanıcı tarafından kabul edildi. |
+| Gerçek public profil smoke ve eksik token halinde açık kurulum hatası | EnessCansever gerçek adapter/form kontrolleri ve eksik token için deterministik configuration testiyle karşılandı. |
+
+**Karşılanmamış A2 ürün/teknik kabul maddesi tespit edilmedi.** Commit/push ve bu yeni değişikliklerin uzak CI sonucu açık süreç maddeleri olarak TASKS'ta korunur; 590f4c7 başarısı yeni A2.2 CI sonucu gibi kullanılmaz. Dağıtık abuse koruması ve yayın A4/ilgili yayın aşamasına, puanlama A3'e aittir; A2 kabulü bunları tamamlanmış saymaz.
+
+A / Developer ID seçimi D021'e kaydedildi: çalışan veri akışı korunacak; konsept görselindeki kategori isimleri/puanlar ürün kuralı değildir; SCORING sözleşmesi değişmeyecek. Tasarım ayrı bir aşamada uygulanacak ve henüz başlamadı. Sonraki aşamaya geçilmez.
+
+Bu tur yalnız docs/STATUS.md, docs/TASKS.md ve docs/DECISIONS.md güncellendi. Önceki commit edilmemiş dosyalar korundu; uygulama kodu, stil, mesajlar, fixture ve puanlar değiştirilmedi. Belge tutarlılığı/diff ve diğer dosyaların korunması kontrol edildi; uygulama kontrolleri gereksiz yere tekrarlanmadı. Stage/commit/push yapılmadı.
+
+Mevcut A2.2 paketi kayıtlı yerel kontroller ve kullanıcı kabulüyle commit incelemesine hazır. Önceki birleşik öneri korunur: `feat: connect profile form to live repository selection`; bu tur eklenen belge kapsamı STATUS/TASKS/DECISIONS'tır. Kullanıcının commit ve açık devam mesajı bekleniyor.
+
+
+## Önceki kayıt — A2.2 sonuçları — 28 Ekim 2026
+
+### Tamamlananlar ve kararlar
+
+- Home formu username/desteklenen profil URL'siyle çalışır; etiket, yerel Zod hatası, Enter, gerçek pending ve ref guard ile aynı pending gönderimin tekrarı engellenir. Ana eylem “Projelerimi getir”; ayrı ikincil demo linki ve açık örnek 77,5 önizlemesi korunur.
+- Tek getRepos Server Action getProfile/getPinned/getCandidates çağırır. İstemcide ve sunucuda mevcut profileInput kullanılır; ham girdi <=256 UTF-8 byte, framework body <=8 KiB. Her işlemde yeni client, ortak 20 saniye/40 istek; kullanıcı seçim süresine yayılmaz. Next'in aynı-origin kontrolü korunur. Secret/ham API/Error istemciye gönderilmez; yalnız küçük public DTO ve güvenli hata kodları.
+- Gerçek seçim aynı sayfada ayrı bölgede açılır. Güvenli monogram/profil linki, pinned + recent ilk üç ID, 1–3/sıfır sınırı, unknown pinned ve 100 aday kapsam notları vardır. Gerçek devam pasif puanlama bilgisidir; kullanıcı sabit örnek puana yönlendirilmez. Demo fixture'ları/puanları değişmedi.
+- Dil değişimi mevcut client state'ini korur ve yeni GitHub çağrısı başlatmaz. Alan değişimi eski sonucu/seçimi temizler; istek kimliği geç eski yanıtı reddeder. Backend çağrısının iptali vaat edilmez. Sonuç/hata başlığı focus alır ve bölge başına kaydırılır.
+- Ortak RepoPicker/StatePanel kullanıldı; demo description çevirisi server page'de çözülür, gerçek açıklamalar data'dır. Yeni bağımlılık/store/workflow/cache yoktur. Pinned alt isteği timeout olursa aynı client'ın kalan bütçesinde aday erişimi yapılabilir; global deadline, auth, budget ve secondary/belirsiz rate-limit sınırları korunur.
+- README analizi, profil README getirme, puanlama, sonuç/snapshot, MongoDB, paylaşım veya Route Handler eklenmedi. Server Action yeni ağ girişidir; dağıtık abuse koruması değildir. Public deployment yapılmadı ve bu akış henüz public yayına hazır sayılmaz.
+
+### Gerçek doğrulama sonuçları
+
+| Kontrol | Sonuç |
+| --- | --- |
+| npm test | 5 dosyada 138 test geçti; 20 yeni Server Action davranış testi. Mock fetch; CI token/GitHub erişimi istemez. |
+| npm run lint / typecheck | İkisi de son kodla geçti; strict ve max-warnings=0. |
+| npm run build | Son kodla geçti; beş route korundu, ek Route Handler yok. Turbopack için izinli ortam kullanıldı. |
+| Client sınırı | Production static JS içinde GITHUB_TOKEN adı ve adapter pinned sorgusu yok; server-only adapter istemciye taşınmadı. Gerçek .env.local dosyası açılmadı/değiştirilmedi/loglanmadı. |
+| Gerçek form | Temiz ayrı Chrome profilinde EnessCansever username ve HTTPS URL + Enter; 14 public aday, üç pinned ön seçim. Bekleme gerçek, aynı pending'e iki ek submit denemesi yalnız bir arama POST'u üretti. |
+| Seçim/klavye | Üçte seçilmemişler disabled; seçili kaldırılabiliyor; sıfırda açıklama ve disabled devam. Space/focus kontrolü geçti. Sonuç başlığı focus ve y=20px ile görünür. |
+| Dil / yeniden render | TR↔EN aynı sayfa, seçilen ID'ler korundu; locale POST'u dışında yeni arama POST'u yok. |
+| Yeni kullanıcı / yarış | octocat araması eski profil/seçimleri temizledi. EnessCansever yanıtı CDP'de kontrollü geciktirilip yeni octocat araması başlatıldı; geç eski profil hiç gösterilmedi. |
+| Gerçek retry | Tarayıcıda ilk yerel action isteği kontrollü ağ hatasına düşürüldü; network yüzeyi açıldı. Retry yeni gerçek POST/GitHub adapter çağrısıyla EnessCansever seçimini getirdi. Bu kontrollü tarayıcı ağ kesintisidir; gerçek GitHub servis arızası iddiası değildir. |
+| Body sınırı | 9 KiB deneme action POST'u reddedildi; yanıtta yalnız boolean olarak 8kb body-limit nedeni doğrulandı. Geliştirme Next Server Action yanıtı HTTP 500, dahili hata 413; özel API statüsü veya başarı gibi sunulmadı. |
+| Görsel / taşma | TR/EN 390×844 ve 1440×900 görüntüleri alınıp incelendi. 320/390/768/1440 ve yapay uzatılmış isim/açıklamada taşma yok. Masaüstü ana CTA ilk 900px'de. Yeni tasarım kullanıcı tarafından henüz kabul edilmedi. |
+| Demo regresyonu | /demo/select dört repo/iki ilk seçim ve /demo/states linki; /demo/states altı seçenek geçti. Fikstür, skor, ana demo raporu korunuyor. |
+| Runtime / koruma | Son temiz tarayıcı kontrollerinde 0 console/runtime hatası. git diff --check geçti; index boş. Paket/lockfile, gerçek env, kaynak sözleşme/görsel, PRODUCT/SCORING ve fixture'lar değişmedi. |
+| Uzak CI | 590f4c7 başarısı kullanıcı bildirimi; yeni A2.2 kodu GitHub Actions üzerinde henüz çalıştırılmadı. |
+
+Tarayıcı: kurulu Chrome, ayrı /tmp/repovitrin-a22-chrome profili ve CDP; mevcut localhost:3000 kullanıcı sunucusu kullanıldı/kapatılmadı. Ekran ve güvenli ölçümler /tmp/repovitrin-a22-review içinde. Geçici CDP scriptleri kaldırıldı, test altyapısına yeni araç eklenmedi; kendi Chrome işlemi kapatıldı.
+
+### Kalanlar ve durma noktası
+
+- A2 kaynak sözleşmesinin iki teknik kriteri (public adapter/normalize/aday/pinned fallback/timeout-rate-limit-unknown; gerçek public smoke + açık eksik-token hatası) A2.1+A2.2 kanıtlarıyla karşılandı. Yeni A2.2 kullanıcı akışı/görsel kabulü ve yeni push CI doğrulaması hâlâ beklenir; A2'nin bütünü kullanıcı kabulü almış sayılmaz.
+- Pinned-unknown uyarısı, 100 aday ve gerçek auth/rate-limit/boş repo durumları mock testlerle doğrulandı; bu özel servis yanıtları canlı hesapta zorla üretilmiş sayılmaz. Gerçek olumlu arama ve kontrollü tarayıcı bağlantı hatası/retry doğrulandı.
+- Kalıcı/dağıtık throttle/cache/lock ve public yayın korumaları A4/ilgili yayın aşamasına kalır. Bu tur yayın yok; mevcut işlem/girdi sınırları bunların yerine geçmez. Sürmekte olan eski sunucu isteği client state'inden silinse de otomatik iptal edilmiş sayılmaz.
+- Yeni puanlama/README analizine veya başka aşamaya kullanıcı mesajı olmadan geçilmez. Kullanıcı incelemesi ve commit bekleniyor.
+
+Bu A2.2 değişikliği yerel kontrollerle commit incelemesine hazır; görsel/akış kabulü kullanıcıdan bekleniyor. Önerilen commit: `feat: connect profile form to live repository selection`.
+
+Commit kapsamı: AGENTS.md, README.md, next.config.ts; src/app/{page.tsx,globals.css,demo/select/page.tsx}; src/features/analysis/{actions.ts,selection.ts,profile-search.tsx,repo-picker.tsx,analysis-states.tsx}; src/lib/github/client.ts; src/messages/{tr,en}.json; tests/github/actions.test.ts; docs/{ARCHITECTURE,DESIGN,DECISIONS,STATUS,TASKS}.md. Stage/commit/push/yayın yapılmadı. Yerelde `npm run dev`, inceleme http://localhost:3000/; demo yolları bağımsızdır.
+
+
+## Önceki kayıt — A2.1 gerçek bağlantı smoke sonucu — 28 Ekim 2026, 15:44 +03
 
 Kullanıcının yetkisiyle, `.env.local` değeri yalnız Node runtime'da `--env-file=.env.local` üzerinden yüklendi. Dosya görüntülenmedi/değiştirilmedi; token, Authorization header, ham istek/hata veya README içeriği yazdırılmadı. `git check-ignore .env.local` çıktısı `.env.local`; ignore kontrolü geçti.
 

@@ -27,7 +27,7 @@ export default async function SelectPage() {
         <p>{t("intro")}</p>
       </div>
       <NextIntlClientProvider messages={{ Select: messages.Select }}>
-        <RepoPicker repos={demoRepos} initialSelectedIds={initialRepoIds} />
+        <RepoPicker repos={demoRepos.map(repo => ({id: repo.id, name: repo.name, description: t(`descriptions.${repo.descriptionKey}`), language: repo.language, pinned: repo.pinned}))} initialSelectedIds={initialRepoIds} />
       </NextIntlClientProvider>
     </main>
   );

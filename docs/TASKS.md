@@ -120,7 +120,7 @@ Bu revizyon yalnız gezinme/sunum içindir; fixture, puan ve analiz davranışı
 
 A1 kabul incelemesi: iki ana kriter de karşılandı; tamamlanmamış A1 tasarım kabul maddesi kalmadı. 3912059 commit/push ve CI başarısı kullanıcı bildirimi olarak kaydedildi; yalnız A2.1 yetkilendirildi. ESLint 9 takip işi A0 araç sınırlaması olarak açık kalır; A1 tasarım kriteri değildir.
 
-### A2 GitHub — yalnız ilk veri katmanı bölümü
+### A2 GitHub — A2.1 veri katmanı ve A2.2 gerçek seçim
 
 - [x] AGENTS/belgeler, temiz Git durumu ve HEAD 3912059 kontrolü; A1 kabul incelemesi ve kullanıcı CI bildirimi.
 - [x] Zod ile kişisel kullanıcı adı/HTTPS veya şemasız github.com profil URL normalizasyonu; desteklenmeyen path/host/credential reddi; sunucuda zorunlu kullanım.
@@ -133,8 +133,8 @@ A1 kabul incelemesi: iki ana kriter de karşılandı; tamamlanmamış A1 tasarı
 - [x] Vitest davranış testleri, npm test ve secretsız CI adımı; README/env/mimari/karar güncellemesi.
 - [x] Temiz npm ci, npm test, lint, typecheck ve production build; kod ve koruma/diff incelemesi (sonuçlar STATUS'ta).
 - [x] Mevcut adapter ile EnessCansever üzerinde gerçek public smoke: profil başarılı, pinned available/6, 14 uygun aday, profil README found, seçilen jobfit-tr metadata başarılı ve README found. Tek GitHubClient/ortak bütçe; gerçek env yalnız runtime'da yüklendi. Gerçek hata yanıtları bu smoke'ta üretilmedi; hata ayrımı önceki deterministik testlerde doğrulandı.
-- [ ] Gerçek kullanıcı/repoya ilişkin kalan A2 akışını ayrı yetkilendirilmiş bölümde değerlendir. Bu tur arayüze bağlantı/API endpointi ve puanlama yok; A2'nin bütünü tamamlanmış sayılmaz.
-- [ ] Kullanıcı incelemesi/commit ve açık devam mesajı olmadan sonraki bölüme geçme.
+- [x] Kullanıcı 590f4c7 A2.1 commit/push ve uzak CI başarısını bildirdi; yalnız aşağıdaki A2.2 gerçek profil/seçim akışını yetkilendirdi.
+- [x] A2.1 kullanıcı commit/devam kapısı 590f4c7 ve açık A2.2 talimatıyla geçildi; sonraki kapı A2.2 altında açık.
 
 Profil README yokluğu aşağıdaki revizyonla hatasız nullable GraphQL verisi üzerinden doğrulanır; belirsiz REST 404/errors/partial unknown kalır. EnessCansever olumlu public akışı smoke testiyle doğrulandı; diğer hesap/hata senaryoları canlı denenmiş sayılmaz. A4 dağıtık limit/cache ve A3 puanlama bu bölümün kabul kapsamı değildir.
 
@@ -147,7 +147,26 @@ Profil README yokluğu aşağıdaki revizyonla hatasız nullable GraphQL verisi 
 - [x] GraphQL HTTP 200 RATE_LIMITED kaydı; secondary/belirsiz kısıt her iki API'de korunur; ortak 20 saniye/40 istek değişmez.
 - [x] Hatalı eski test beklentilerini düzelt; yeni profil/limit davranış testleri, npm test, lint, typecheck ve production build (sonuçlar STATUS'ta).
 - [x] Gerçek GitHub smoke kontrolü yapıldı (28 Ekim 2026): beş adım tek client ile başarılı, yalnız güvenli özet kaydedildi. Geçici çalıştırıcı kaldırıldı; uygulama kodu değişmedi, normal npm test/CI gerçek ağı çalıştırmaz.
-- [ ] Kullanıcı incelemesi/commit ve açık devam mesajını bekle; arayüz/sonraki aşamaya geçme.
+- [x] A2.1 inceleme/commit sonrası 590f4c7 ve A2.2 kullanıcı mesajı alındı; kapsam yalnız profil/seçim olarak genişledi.
+
+### A2.2 — ana sayfa formu ve gerçek repo seçimi
+
+- [x] AGENTS/belgeler ve temiz Git başlangıcı; HEAD 590f4c7, son uzak CI başarısı kullanıcı bildirimi olarak kaydedildi.
+- [x] Gerçek form: mevcut profileInput, username/URL, Enter, etiket/hata/pending, aynı pending için çift gönderim engeli ve ayrı görünür demo linki.
+- [x] Tek Server Action; sunucuda Zod + 256 UTF-8 byte girdi, Next 8 KiB body, işlem başına yeni client ve 20 saniye/40 istek sınırı. Error/raw API/token istemciye gitmez.
+- [x] Public profil/link/monogram; uygun pinlerden ve sonra en güncel adaylardan üçe kadar ön seçim; unknown pinned ve 100 aday kapsam bilgisi.
+- [x] Ortak RepoPicker gerçek veriye bağlandı; ID dizisiyle 1–3/sıfır sınırı, pasif puanlama ve gerçek/demo ayrımı. README analizi/puanlama/sonuç yok.
+- [x] Aynı sayfada TR/EN ve seçim korunumu; locale/re-render yeni GitHub isteği üretmiyor. Yeni aramada eski state temizleniyor; gecikmiş eski yanıt atılıyor.
+- [x] Ortak StatePanel ile gerçek loading/notFound/empty/network/rateLimit/configuration ve gerçek yeniden deneme. Demo fallback/sahte ilerleme yok.
+- [x] Sunucu akışı mock HTTP ile test edildi: geçersiz/oversize, başarı/ön seçim/DTO, boş kapsam, güvenli hata eşlemesi, pinned unknown/alt istek timeout'u, yeni client ömrü ve 100 aday.
+- [x] Toplam 138 deterministik test, lint, typecheck, production build; client bundle sunucu sınırı ve diff/koruma kontrolü.
+- [x] Temiz Chrome'da gerçek EnessCansever username/URL, 14 aday; üç/sıfır/kaldırma/Space/focus, duplicate submit, dilde state ve çağrı sayısı, ikinci kullanıcı octocat, gecikmeli yanıt ve hata sonrası gerçek retry.
+- [x] TR/EN 390×844 ve 1440×900 görüntüleri incelendi; 320/390/768/1440 ve uzun ad taşması, demo seçimi/durumları kontrol edildi. 9 KiB body denemesi 8 KiB limitinde reddedildi (geliştirme Server Action HTTP 500 içinde dahili body-limit hatası).
+- [x] Kullanıcı mevcut A2.2 gerçek profil ve repo seçimi akışını kabul etti (28 Ekim 2026, kullanıcı bildirimi). Yeni A / Developer ID tasarım uygulaması bu kabulün parçası değildir; henüz başlamadı.
+- [ ] Yeni commit/push ve uzak CI sonucu; bu tur stage/commit/push/yayın yapılmadı.
+- [ ] Kullanıcı açık devam mesajı vermeden puanlama/sonraki aşamaya geçme.
+
+A2 kaynak sözleşme §11 teknik kabul incelemesi: public adapter/normalizasyon/aday-pinned fallback/timeout-rate-limit-unknown ve gerçek public profil smoke + açık token yapılandırma hatası kriterleri karşılandı. Mevcut A2.2 gerçek profil/seçim akışının kullanıcı kabulü alındı. Karşılanmamış A2 ürün/teknik kabul maddesi tespit edilmedi; yeni commit/push, uzak CI ve sonraki aşama için açık devam mesajı süreç maddeleri olarak açık kalır. A / Developer ID yönü D021'de kayıtlıdır; tasarım uygulaması başlamadı ve puanlama sözleşmesi değişmez. Puanlama A3, dağıtık abuse/cache A4 ve public deployment bu turun işi değildir.
 
 ### A3 Puanlama:
 

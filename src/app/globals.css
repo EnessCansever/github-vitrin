@@ -1388,3 +1388,45 @@ summary::-webkit-details-marker {
     padding-inline: 14px;
   }
 }
+
+.search-demo {
+  margin-top: 12px;
+}
+
+.field-error {
+  color: var(--color-paper);
+  border-left: 3px solid var(--color-link);
+  padding-left: 10px;
+  margin-top: 10px;
+}
+
+.search-result:empty {
+  display: none;
+}
+
+.search-result {
+  margin-bottom: 32px;
+  min-width: 0;
+  scroll-margin-top: 20px;
+}
+
+.search-result h2:focus-visible {
+  outline: 3px solid var(--color-link);
+  outline-offset: 8px;
+}
+
+.search-result .prototype-heading h2 {
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  margin-top: 18px;
+}
+
+.selection-notice {
+  border-left: 2px solid var(--color-link);
+  padding-left: 12px;
+}
+
+.profile-entry .button:disabled {
+  background: var(--color-secondary);
+  border-color: var(--color-secondary-border);
+  color: var(--color-muted);
+}
