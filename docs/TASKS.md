@@ -163,10 +163,30 @@ Profil README yokluğu aşağıdaki revizyonla hatasız nullable GraphQL verisi 
 - [x] Temiz Chrome'da gerçek EnessCansever username/URL, 14 aday; üç/sıfır/kaldırma/Space/focus, duplicate submit, dilde state ve çağrı sayısı, ikinci kullanıcı octocat, gecikmeli yanıt ve hata sonrası gerçek retry.
 - [x] TR/EN 390×844 ve 1440×900 görüntüleri incelendi; 320/390/768/1440 ve uzun ad taşması, demo seçimi/durumları kontrol edildi. 9 KiB body denemesi 8 KiB limitinde reddedildi (geliştirme Server Action HTTP 500 içinde dahili body-limit hatası).
 - [x] Kullanıcı mevcut A2.2 gerçek profil ve repo seçimi akışını kabul etti (28 Ekim 2026, kullanıcı bildirimi). Yeni A / Developer ID tasarım uygulaması bu kabulün parçası değildir; henüz başlamadı.
-- [ ] Yeni commit/push ve uzak CI sonucu; bu tur stage/commit/push/yayın yapılmadı.
-- [ ] Kullanıcı açık devam mesajı vermeden puanlama/sonraki aşamaya geçme.
+- [x] A2.2 c3aa1fe commit/push ve uzak CI başarısı kullanıcı tarafından bildirildi; yeni tasarım diliminin CI sonucu değildir.
+- [x] Kullanıcı D021 ilk tasarım dilimine açık yetki verdi; A3 puanlamaya veya başka işe geçiş yetkisi verilmedi.
 
-A2 kaynak sözleşme §11 teknik kabul incelemesi: public adapter/normalizasyon/aday-pinned fallback/timeout-rate-limit-unknown ve gerçek public profil smoke + açık token yapılandırma hatası kriterleri karşılandı. Mevcut A2.2 gerçek profil/seçim akışının kullanıcı kabulü alındı. Karşılanmamış A2 ürün/teknik kabul maddesi tespit edilmedi; yeni commit/push, uzak CI ve sonraki aşama için açık devam mesajı süreç maddeleri olarak açık kalır. A / Developer ID yönü D021'de kayıtlıdır; tasarım uygulaması başlamadı ve puanlama sözleşmesi değişmez. Puanlama A3, dağıtık abuse/cache A4 ve public deployment bu turun işi değildir.
+A2 kaynak sözleşme §11 teknik kabul incelemesi: public adapter/normalizasyon/aday-pinned fallback/timeout-rate-limit-unknown ve gerçek public profil smoke + açık token yapılandırma hatası kriterleri karşılandı. Mevcut A2.2 gerçek profil/seçim akışının kullanıcı kabulü alındı. Karşılanmamış A2 ürün/teknik kabul maddesi tespit edilmedi; A2.2 commit/push ve uzak CI c3aa1fe için kullanıcı tarafından bildirildi. A / Developer ID yönü D021'de kayıtlıdır; aşağıdaki ilk uygulama dilimi yetkilendirildi, puanlama sözleşmesi değişmez. Puanlama A3, dağıtık abuse/cache A4 ve public deployment bu turun işi değildir.
+
+### D021 — Developer ID ilk tasarım dilimi (kullanıcı görsel kabulü verildi)
+
+- [x] AGENTS/DESIGN/DECISIONS/STATUS/TASKS ve ilgili kapsamı oku; HEAD c3aa1fe ve beklenen kullanıcı referans eklemesini doğrula.
+- [x] docs/design/developer-id-concept.png gerçek görselini incele; bu dilimde görsel önceliğini kaydet, eski referansı koru.
+- [x] Ana sayfa TR/EN başlık, form ve örnek rapor bağlantısını yeni grafik dile taşı; gerçek form/seçim davranışını koru.
+- [x] Ortak ResultSummary: sıcak kâğıt kimliği, fixture kimliği/tipi/77,5 ve Profil 15/20, Projeler 22,5/30, README 40/50; /demo düz, hero masaüstünde kontrollü açılı/askılı.
+- [x] Merkezi tokenlar/yerel lisanslı TR fontları ve küçük lime tip mührü; rastgele seri/meslek/başarı/doğrulanmışlık yok; eski kart stilleri değiştirildi.
+- [x] Tek iterasyon CSS girişleri, hover/press, native accordion + hafif içerik geçişi; reduced-motion altında kaldırma; hareket bağımlılığı yok.
+- [x] npm test 138, lint, typecheck ve production build; Türkçe cmap glyph ve yerel font/kontrast kontrolü.
+- [x] Gerçek EnessCansever formu 14 aday, üç sınırı/kaldırma, TR/EN ID korunumu, disabled gerçek puanlama ve demo navigasyonu.
+- [x] TR/EN 390×844 ve 1440×900 görüntüleri; diğer demo görselleri; dört sayfada 320/390/768/1000/1440 taşma, uzun ad, focus, native Space/Enter ve üç kategori/kanıt kontrolleri.
+- [x] Reduced-motion, tek iterasyon/locale'de tekrar etmeme, soğuk font yüklemesinde home/1440 yerel layout shift 0; console/runtime hatası yok.
+- [x] Kullanıcı Developer ID ilk tasarım dilimine görsel kabul verdi; açılış animasyonunu kontrol ettiğini ve sürekli hareket olmadığını bildirdi (kullanıcı incelemesi, 28 Ekim 2026).
+- [x] Kullanıcı isteğiyle yalnız TR/EN placeholder kısaltıldı: “GitHub kullanıcı adın” / “Your GitHub username”. Profil URL desteği mevcut etiketlerde korunur.
+- [x] Placeholder düzeltmesi sonrası npm run lint ve npm run typecheck geçti; bu tur başka tasarım değişikliği yapılmadı.
+- [ ] Tasarım değişikliklerinin kullanıcı commit/push ve yeni uzak CI doğrulaması; uzak CI henüz doğrulanmadı.
+- [ ] Açık kullanıcı mesajı olmadan kapsamı genişletme/A3'e geçme.
+
+Bu dilim yalnız ana sayfa ve ortak demo üst kimliğidir; tüm uygulama yeniden tasarlanmış sayılmaz. Ürün/puanlama/backend sözleşmeleri ve gerçek seçim tasarımı korunur. Yeni public yayın veya paylaşım PNG üretimi yapılmadı.
 
 ### A3 Puanlama:
 

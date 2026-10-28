@@ -17,14 +17,14 @@
     "notQuality": "This score measures portfolio presentation, not code quality, developer skill or hiring prospects."
   },
   "Home": {
-    "eyebrow": "A FRESH LOOK AT YOUR GITHUB PORTFOLIO",
-    "title": "Your projects are good. Does your <accent>profile</accent> show it?",
-    "intro": "See the gaps in your presentation. Find a clear first step, backed by evidence.",
+    "eyebrow": "YOUR GITHUB PORTFOLIO · DEVELOPER ID",
+    "title": "Write code. <accent>Leave a mark.</accent>",
+    "intro": "Bring your public GitHub profile and projects together. See your portfolio with fresh eyes.",
     "label": "GitHub username or profile URL",
-    "placeholder": "username or github.com/username",
+    "placeholder": "Your GitHub username",
     "inputHint": "Fetch your public profile and eligible projects. Scoring is in development.",
     "demoAction": "Explore a sample analysis",
-    "howTitle": "A better first impression, one step at a time.",
+    "howTitle": "From code to first impression.",
     "discoverTitle": "Discover",
     "discover": "See what your profile shows and what it leaves out.",
     "improveTitle": "Improve",
@@ -269,5 +269,11 @@
         "description": "The server connection configuration or access permission needs to be checked. Try again later."
       }
     }
+  },
+  "Identity": {
+    "label": "DEVELOPER ID",
+    "fictional": "Fictional profile",
+    "categories": "Portfolio score categories",
+    "presentation": "Presentation type · Not an endorsement"
   }
 }

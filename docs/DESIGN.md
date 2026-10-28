@@ -3,8 +3,8 @@
 Kaynak: [GitHub Vitrin — Codex Proje Sözleşmesi v1](../RepoVitrin-Codex-Proje-Sozlesmesi.md), 26 Ekim 2026. Aşağıdaki gereksinimler hedef davranıştır; uygulandıkları anlamına gelmez.
 
 ## Tasarım kuralları
-Onaylanan son konsept pano görseli docs/design/reference.png olarak kullanıcı tarafından repoya eklenir; yoksa placeholder ile tasarım onaylandı sayılmaz. Bu belge görselin işlevsel eksiklerinde otoritedir.
-Koyu ink #0B1020; elektrik mavi #4169FF; kırık beyaz; mint yalnız olumlu değişim/eylem vurgusu.
+Bu tasarım diliminin görsel yönü [Developer ID konsepti](design/developer-id-concept.png)'dir; kullanıcı tarafından eklenen gerçek dosya açılıp incelendi. Bu tur ana sayfa ve ortak kimlik kartı için eski [referans panonun](design/reference.png) önündedir. İki görsel de korunur. Ürün davranışı için PRODUCT/ana sözleşme, kategori ve puanlar için SCORING geçerlidir; görseldeki alternatif kategoriler ürün kuralı değildir.
+Güncel palet: neredeyse siyah ink #090E14, kobalt #1845F5, sıcak metin #F4EEE2; kimlik kâğıdı #EFE8D8 ve baskı mürekkebi #111C32. Lime #D4EB52 yalnız küçük profil tipi mühründedir. Mevcut mint olumlu görev/focus kullanımında kalır; yeni lime gezinmeye veya genel zemine yayılmaz.
 Tasarım tokenları tek yerde. Marka adı ve Enes bağlantıları tek config.
 Mobil önce: 360/390/768/1440 genişlikleri; 320'de yatay taşma yok.
 Metin kontrastı normalde >=4.5:1; büyük yazıda >=3:1; görünür focus, klavye, semantic HTML, reduced-motion.
@@ -91,3 +91,21 @@ Kabul edilmiş hero/örnek kart kimliği korunarak ana eylem “Projelerimi geti
 Tek ortak RepoPicker/StatePanel kullanılır; TR/EN görünen metinler mesaj dosyalarındadır. 1–3 sınırı, pinned-unknown ve 100 aday uyarıları, sıfır seçim ve pasif puanlama açıklaması vardır. Profil linki gerçek kullanıcı adına gider; avatar için dış istek yerine monogram seçildi.
 
 Temiz Chrome ile TR/EN 390×844 ve 1440×900 ekranları görüntülendi; 320/390/768/1440 ve uzun metinde yatay taşma yok. Native Enter, checkbox Space, görünür focus ve dil değişiminde ID korunumu kontrol edildi. Ana CTA masaüstü ilk ekranda kalır. Bu yeni A2.2 bölümüne kullanıcı görsel kabulü henüz verilmedi; önceki A1 kabulü kapsamı değişmez.
+
+## Developer ID ilk uygulama — 28 Ekim 2026, kullanıcı kabulü bekleniyor
+
+Yeni görsel pano gerçekten incelendi: koyu geniş alan, güçlü dar başlık, kobalt form eylemi, sıcak basılı kimlik, küçük lime mühür ve hero askı/klipsi bu dilimin yönüdür. Görseldeki açık kaynak katkısı, proje çeşitliliği, meslek, kişi adı, seri numarası ve başarı iddiaları aktarılmadı. Ana sayfa TR “Kodun var. İz bırak.”, EN “Write code. Leave a mark.” başlığıyla gerçek formu korur. Keşfet/Düzelt/Paylaş mevcut basit ol/ikon yapısıyla ince ayırıcılar ve mono adım numaraları taşır; yeni dashboard/kart yığını yoktur.
+
+Tokenlar mevcut merkezi globals.css içinde güncellendi. Yardımcı metin #AAB5C5, kart yardımcı metni #4B5160, link #A7BAFF, surface #111A26, border #334157. İkincil eylemler aynı koyu mavi aileyi kullanır. Kontrol edilen metin çiftleri en az 6,50:1; beyaz/kobalt ana eylem 6,54:1, kart mürekkebi/kâğıt 13,92:1, mühür 12,79:1, seçili repo metni 13,05:1, pasif metin 8,44:1. Dekoratif kâğıt çizgileri veri/etkileşim ayrımının tek işareti değildir.
+
+Tipografi yerel next/font/local ile: Barlow Condensed ExtraBold 800 başlık ve büyük skor; Manrope variable 200–800 gövde; IBM Plex Mono 400 kullanıcı adı/metadata. Dosyalar değiştirilmemiş Google Fonts kaynaklarıdır; SIL OFL 1.1 lisansları src/app/fonts içinde korunur, kaynaklar README.md'de listelenir. Her üç fontun cmap tablosunda ÇçĞğİıÖöŞşÜü doğrulandı. Kart küçük metinleri >=12px'dir; form/gövde boyutları aşırı küçültülmedi. Fontlar yerel servis edilir; runtime/build Google Fonts isteği yoktur.
+
+ResultSummary aynı demo fixture'ını ana sayfa ve /demo için kullanır. Her ikisinde demo etiketi, mira-sample/monogram, Gizli Cevher, 77,5 ve Profil 15/20, Projeler 22,5/30, README 40/50 vardır. Metin/puan/barlar HTML/CSS; ikonlar SVG'dir, konsept görseli UI yerine yerleştirilmez. Kâğıt dokusu ince statik CSS gradyanları, baskı hissi çizgi/renk/çok hafif gölgeyle kurulur. Lime mühür yalnız profil tipidir; yanında onay olmadığı yazılır, doğrulanmışlık/meslek/seri numarası yoktur. /demo kartı düzdür ve native gerekçe açılımını korur. Gerçek profile skor veya PNG/paylaşım çıktısı üretilmez.
+
+Hero kartı yalnız >=1000px'de 5 derece açılır ve CSS askı/klips gösterir; küçük ekranda düzleşir, detaylar kapanır. Formun/metnin önüne taşmaz. Ana buton 390×844 ve 1440×900 ilk ekranında erişilebildi. Kesme/sabit içerik yüksekliği/global overflow gizleme yoktur. Repo seçim kartları baştan tasarlanmadı; ortak font/token uyumu kontrol edildi. Eski summary/preview/score CSS kuralları yerlerine yeni kart kuralları yazılarak kaldırıldı; üst üste override yığını bırakılmadı.
+
+Hareket: başlık 420ms, hero kartı 500ms, tek iterasyon; başlangıç opacity .75/.8 ile içerik ilk andan okunur. Yalnız transform/opacity, süreklilik/sallama/sonsuz parıltı yoktur. Buton hover/press 140ms geri bildirim verir. Accordion yüksekliği native kalır; chevron 150ms ve açık içerik 160ms hafif belirme kullanır. prefers-reduced-motion altında animasyon, transition ve hareketli buton transformları kaldırılır. CSS/SSR kullanılır; rastgele veya hydration'a bağlı pozisyon yoktur. Dil değişiminde giriş animasyonu yeniden çalışmadı; ayrı soğuk-font testinde yerel home/1440 ölçülen layout shift 0.
+
+Tarayıcı incelemesi: TR/EN 390×844 ve 1440×900 ana sayfa/demo; diğer demo seçim/durum sayfalarının görüntüleri de incelendi. /, /demo, /demo/select, /demo/states için 320/390/768/1000/1440 taşması yok. Input focus, native Space/Enter accordion, üç kategori ve kanıt açılımı, disabled eylem, uzun kullanıcı adı ve reduced-motion doğrulandı. Yeni tasarım kullanıcı kabulü henüz verilmedi; önceki A2.2 işlev kabulü korunur.
+
+Font kaynakları: [Barlow Condensed](https://github.com/google/fonts/tree/main/ofl/barlowcondensed), [Manrope](https://github.com/google/fonts/tree/main/ofl/manrope), [IBM Plex Mono](https://github.com/google/fonts/tree/main/ofl/ibmplexmono). Yerel lisans/kaynak dizini: [fonts](../src/app/fonts/README.md).

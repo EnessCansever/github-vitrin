@@ -1,6 +1,6 @@
 # RepoVitrin
 
-Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. Ana sayfa kullanıcı adı veya desteklenen GitHub profil URL'siyle gerçek public profili ve uygun repo adaylarını getirir; 1–3 proje seçilebilir. **Puanlama ve gerçek sonuç üretimi henüz açık değildir.** `/demo`, `/demo/select`, `/demo/states` kurmaca örnekler olarak ayrıdır; gerçek seçim sabit demo puanına yönlendirilmez. A2.2 kullanıcı incelemesini bekliyor.
+Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. Ana sayfa kullanıcı adı veya desteklenen GitHub profil URL'siyle gerçek public profili ve uygun repo adaylarını getirir; 1–3 proje seçilebilir. **Puanlama ve gerçek sonuç üretimi henüz açık değildir.** `/demo`, `/demo/select`, `/demo/states` kurmaca örnekler olarak ayrıdır; gerçek seçim sabit demo puanına yönlendirilmez. A2.2 akışı kullanıcı tarafından kabul edildi. Ana sayfa ve demo kimlik kartının Developer ID görsel revizyonu kullanıcı incelemesini bekliyor.
 
 ## Gereksinimler ve kurulum
 
@@ -73,3 +73,7 @@ Ana sayfada kullanıcı adı veya desteklenen URL'yi girip Enter/“Projelerimi 
 Server Action girdisi en fazla 256 UTF-8 byte; Next Server Action body sınırı 8 KiB'dir. İşlem başına yeni client 20 saniye/40 istek sınırını korur ve kullanıcı seçim yaparken tutulmaz. Eski arama yanıtı istemcide atılır; başlamış sunucu isteğinin iptal edildiği garanti edilmez. Kalıcı/dağıtık abuse, throttle ve cache henüz yoktur. **Bu akış yalnız yerel geliştirme/inceleme içindir; public deployment'a hazır değildir ve yayın yapılmadı.**
 
 Kontroller: `npm test` gerçek GitHub/token gerektirmez. Gerçek form kontrolü açık opt-in yerel tarayıcı incelemesidir; CI otomatik canlı istek yapmaz. Güncel yerel/uzak sonuç ayrımı STATUS'tadır.
+
+## Developer ID görünümü
+
+Ana sayfa ve ortak demo kimlik kartı, docs/design/developer-id-concept.png yönünü izler. Kategoriler/puanlama değişmedi; gerçek profile henüz skor verilmez. Barlow Condensed, Manrope ve IBM Plex Mono yerel next/font/local ile kullanılır; Türkçe glyph desteği kontrol edildi, SIL OFL lisansları [font dizininde](src/app/fonts/README.md) tutulur. Font servisi veya hareket bağımlılığı eklenmedi. CSS hareketleri reduced-motion tercihinde kaldırılır. Güncel görsel kurallar ve kullanıcı kabul durumu DESIGN/STATUS içindedir.

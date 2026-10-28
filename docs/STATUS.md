@@ -4,9 +4,58 @@ Son güncelleme: 28 Ekim 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A2.2 — mevcut gerçek profil ve repo seçimi akışı kullanıcı tarafından kabul edildi.** A2'nin kaynak sözleşmedeki teknik kabul kriterleri önceki doğrulama kayıtlarıyla karşılandı. Yeni A2.2 commit/push ve uzak CI doğrulaması bekleniyor; HEAD için son bildirilen CI başarısı 590f4c7'ye ait. A / Developer ID tasarım yönü seçildi, uygulaması başlamadı. Puanlama/sonraki aşamaya geçiş yetkisi verilmedi.
+**D021 Developer ID — ilk tasarım dilimine kullanıcı görsel kabulü verildi.** Kullanıcı açılış animasyonunu da kontrol ettiğini ve sürekli hareket olmadığını bildirdi. Bu kayıt kullanıcı incelemesidir. İstenen tek küçük düzeltme TR/EN placeholder kısaltmasıdır; profil URL desteği alan etiketinde korunur. Yeni tasarımın uzak CI sonucu henüz doğrulanmadı; c3aa1fe başarısı önceki kullanıcı bildirimidir. A3/puanlama ve sonraki aşamalara geçilmedi.
 
-## A2.2 kullanıcı kabulü ve tasarım yönü kaydı — 28 Ekim 2026
+## Kullanıcı kabulü ve placeholder düzeltmesi — 28 Ekim 2026
+
+- Kullanıcı Developer ID'nin ilk tasarım dilimine görsel kabul verdi; açılış animasyonunda sürekli hareket bulunmadığını kendisi kontrol edip bildirdi. Bu tur yeni Codex tarayıcı/animasyon kontrolü yapılmış sayılmaz.
+- Placeholder TR “GitHub kullanıcı adın”, EN “Your GitHub username” olarak kısaltıldı. Mevcut TR/EN alan etiketi profil URL'sinin kabul edildiğini açıklamaya devam eder. Doğrulama, veri akışı ve diğer tasarım kuralları değişmedi.
+- Bu turun kapsamı yalnız iki mesaj dosyası ve STATUS/TASKS kabul kayıtlarıdır. Önceki bekleyen dosyalar korunur. Yeni uzak CI doğrulanmadı olarak açık kalır; yeni commit/push veya A3 geçişi yapılmış sayılmaz.
+- Bu tur npm run lint (max-warnings=0) ve npm run typecheck (Next tip üretimi dahil) başarılı. git diff --check geçti; index boş. Yalnız metin değişikliği için test/build veya canlı GitHub kontrolleri yeniden çalıştırılmadı. Stage/commit/push yapılmadı.
+
+
+
+## Önceki kayıt — Developer ID ilk tasarım dilimi — 28 Ekim 2026
+
+### Uygulananlar
+
+- Yeni referans gerçek dosyası açılıp incelendi; bu tur görsel yönde önceki referansın önüne geçti. İki dosya da korundu. Konseptteki farklı kategori/puan, meslek, seri numarası ve başarı iddiaları ürün arayüzüne taşınmadı.
+- Ana sayfa TR “Kodun var. İz bırak.” / EN “Write code. Leave a mark.”; neredeyse siyah zemin, kobalt gerçek form eylemi, sade üç adım ve ayrı görünür demo linki. Gerçek arama/seçim bileşeni veya Server Action değiştirilmedi.
+- ResultSummary aynı demo fixture/config üzerinden sıcak kâğıt kartı üretir: kurmaca mira-sample, Gizli Cevher, 77,5; Profil 15/20, Projeler 22,5/30, README 40/50. Mühür küçük lime profil tipidir, onay değildir. HTML/CSS/SVG kullanılır; konsept resmi arayüz yerine kullanılmaz. /demo düz ve native gerekçe/kanıt/kategori ayrıntılarına uyumludur; hero yalnız masaüstünde 5 derece açı ve CSS askı/klips taşır. Mobilde düzleşir.
+- Merkezi tokenlar güncellendi; eski summary/score/preview CSS yerini yeni kimlik kurallarına bıraktı. Barlow Condensed 800, Manrope variable ve IBM Plex Mono 400, yerel font dosyaları ve SIL OFL lisanslarıyla eklendi. Yeni npm bağımlılığı yoktur.
+- CSS başlık 420ms/kart 500ms tek giriş, kısa buton hover/press ve hafif details içerik/chevron geri bildirimi. Native açılma yüksekliği korunur. Reduced-motion bütün animasyon/transition ve hareketli buton transformunu kaldırır; içerik baştan okunur. SSR/rastgele state eklenmedi.
+
+### Kontroller
+
+| Kontrol | Gerçek sonuç |
+| --- | --- |
+| npm test | 5 dosyada 138 mevcut deterministik test başarılı; tasarım için test sayısı artırılmadı. |
+| npm run lint / typecheck | Başarılı; strict ve max-warnings=0 korunuyor. |
+| npm run build | Son uygulama koduyla başarılı; aynı beş route, yerel fontlar, yeni endpoint/adapter/puanlama yok. |
+| Gerçek form / seçim | Temiz Chrome'da EnessCansever 14 aday; üç seçim sınırı ve kaldırma geçti. Dil değişiminde seçili ID'ler korundu; yalnız locale POST'u, yeni arama POST'u yok. Gerçek puanlama devamı pasif. |
+| Görseller | TR/EN ana sayfa/demo 390×844 ve 1440×900 görüntüleri alındı ve incelendi. /demo/select ve /demo/states görüntüleri de görsel olarak incelendi. Ana form mobil ve masaüstünde ilk ekranda erişilebilir. |
+| Taşma | /, /demo, /demo/select, /demo/states × 320/390/768/1000/1440: yatay taşma yok. Uzatılmış kullanıcı adı da taşmadı. Demo kartı transform=none. |
+| Klavye / detaylar | Input focus 3px; kart gerekçesi native Space ile açılıp Enter ile kapandı, summary focus 3px. Üç kategori ve repo kanıtı açıldı; pasif paylaşım/yeniden analiz pasif kaldı. İlk CDP Enter ölçümü doğrulanmadı; ek native Space/Enter kontrolüyle doğrulandı (focus.json). Uyarı/erişilebilirlik gizleme eklenmedi. |
+| Hareket | Hero başlık/kart iterasyon=1, kart süresi .5s. Locale değişiminde giriş yeniden başlama sayısı 0. Reduced-motion altında animasyon/transition yok. Ayrı soğuk-font home/1440 testinde ölçülen layout shift 0; bütün ağ/cihazlar için garanti değildir. |
+| Tipografi / kontrast | Üç TTF cmap tablosunda ÇçĞğİıÖöŞşÜü var. Font servisine 0 harici istek. Kontrol edilen metin kontrastları en düşük 6,50:1; ana eylem 6,54, kart 13,92, mühür 12,79, seçili repo 13,05, disabled 8,44. |
+| Runtime / koruma | Son tarayıcı kontrollerinde 0 console/runtime hatası. Backend, fixture, kategori/puan, paket/lockfile ve kaynak sözleşme değişmedi. git diff --check geçti; index boş. Gerçek env dosyası görüntülenmedi/değiştirilmedi. |
+| Uzak CI | c3aa1fe başarısı kullanıcı bildirimi; yeni tasarım kodu GitHub Actions üzerinde henüz doğrulanmadı. |
+
+Tarayıcı, kurulu Chrome'un ayrı /tmp/repovitrin-developer-id-chrome profilinde CDP ile kullanıldı. Kullanıcının mevcut localhost:3000 sunucusu korunuyor; yalnız kontrol için açılan Chrome kapatıldı. Geçici kontrol scriptleri repoya eklenmedi ve kaldırıldı. Görüntüler/ölçümler /tmp/repovitrin-id-review içinde; birleşik son kayıt final-checks.json'dur. Rapora eklenen ana sayfa ve mobil demo görüntüleri bu gerçek ekranlardır; paylaşım PNG sistemi değildir.
+
+### Açık kalanlar ve durma noktası
+
+- **Yeni Developer ID tasarımı için kullanıcı kabulü bekleniyor.** Önceki A2.2 işlev kabulü veya referans yön seçimi bu uygulamanın görsel kabulü sayılmaz. Bu dilim tüm uygulamayı yeniden yazmaz; seçim ekranları yalnız ortak token/font uyumu açısından kontrol edildi.
+- Kullanıcının yeni commit/push ve yeni uzak CI sonucu beklenir. Stage/commit/push/yayın yapılmadı.
+- A3 puanlama, README analizi, MongoDB/kalıcı cache, gerçek paylaşım/PNG ve public yayın kapsam dışı kaldı. Mevcut yerel kullanım/public yayın sınırlamaları sürer.
+- Değişen kod sade isim/yorum/tekrar/soyutlama açısından incelendi; hareket bağımlılığı, generic altyapı veya backend refactor yoktur. Görsel inceleme sonrası açık kullanıcı mesajı olmadan başka işe geçilmez.
+
+Yerel kontrollerle commit incelemesine hazır; görsel kabul kullanıcıya aittir. Öneri: `feat: introduce Developer ID visual identity`.
+
+Commit kapsamı: AGENTS.md, README.md, docs/{DESIGN,DECISIONS,STATUS,TASKS}.md; kullanıcı eklemesi docs/design/developer-id-concept.png; src/app/{globals.css,layout.tsx,fonts/*}; src/components/result-summary.tsx; src/messages/{tr,en}.json. Eski referans, fixture/puanlama ve gerçek veri akışı dosyaları korunur. İnceleme: npm run dev → http://localhost:3000/ ve /demo. Kullanıcı kabulü için duruldu.
+
+
+## Önceki kayıt — A2.2 kullanıcı kabulü ve tasarım yönü kaydı — 28 Ekim 2026
 
 Kullanıcı **mevcut A2.2 gerçek profil ve repo seçimi akışına kabul verdi**. Bu kayıt kullanıcı bildirimidir; bu tur yeni tarayıcı incelemesi, uygulama testi veya uzak CI kontrolü yapılmadı. Kabul mevcut çalışan veri akışını kapsar; ilerideki A / Developer ID tasarımının uygulanmış veya kabul edilmiş olduğu anlamına gelmez.
 

@@ -17,14 +17,14 @@
     "notQuality": "Bu puan yalnız portfolyo sunumunu ölçer; kod kalitesini, geliştirici seviyesini veya işe alınma ihtimalini değil."
   },
   "Home": {
-    "eyebrow": "GITHUB PORTFOLYONA BİR DE BURADAN BAK",
-    "title": "Projelerin iyi. Peki <accent>profilin</accent> bunu gösteriyor mu?",
-    "intro": "Sunumdaki eksikleri gör. Nereden başlayacağını kanıtlarıyla öğren.",
+    "eyebrow": "GITHUB PORTFOLYON · DEVELOPER ID",
+    "title": "Kodun var. <accent>İz bırak.</accent>",
+    "intro": "Public GitHub profilini ve projelerini tek yerde gör. Portfolyona yeni bir gözle bak.",
     "label": "GitHub kullanıcı adı veya profil URL’si",
-    "placeholder": "kullanici veya github.com/kullanici",
+    "placeholder": "GitHub kullanıcı adın",
     "inputHint": "Public profilini ve uygun projelerini getir. Puanlama geliştirme aşamasında.",
     "demoAction": "Örnek analizi keşfet",
-    "howTitle": "İyi bir ilk izlenim, küçük adımlarla.",
+    "howTitle": "Koddan ilk izlenime.",
     "discoverTitle": "Keşfet",
     "discover": "Profilindeki güçlü ve eksik noktaları gör.",
     "improveTitle": "Düzelt",
@@ -269,5 +269,11 @@
         "description": "Sunucu bağlantısının yapılandırılması veya erişim izninin kontrol edilmesi gerekiyor. Daha sonra yeniden dene."
       }
     }
+  },
+  "Identity": {
+    "label": "DEVELOPER ID",
+    "fictional": "Kurmaca profil",
+    "categories": "Vitrin puanı kategorileri",
+    "presentation": "Sunum profili · Onay rozeti değildir"
   }
 }

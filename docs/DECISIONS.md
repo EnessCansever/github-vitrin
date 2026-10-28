@@ -214,3 +214,13 @@ Kullanıcı **A / Developer ID** yönünü seçti. Gerekçe: kullanıcının aç
 Bu tur yalnız karar ve STATUS/TASKS kabul kayıtları güncellendi. Uygulama kodu, mevcut tasarım, kaynak referans ve puanlama değiştirilmedi; sonraki aşamaya geçilmedi.
 
 Etkilenen dosyalar: docs/DECISIONS.md, docs/STATUS.md, docs/TASKS.md. Gelecekteki tasarım uygulamasının dosya kapsamı bu kayıtla yetkilendirilmez.
+
+### D022 — Developer ID ilk uygulama yetkisi, yerel font ve CSS hareket — 28 Ekim 2026
+
+Kullanıcı c3aa1fe A2.2 commit/push ve uzak CI başarısını bildirdi; yerel HEAD doğrulandı. Başlangıçtaki tek ek dosya beklenen docs/design/developer-id-concept.png idi; görsel açılıp incelendi ve korunuyor. D021'de seçilen yön bu yeni kullanıcı yetkisiyle yalnız ana sayfa ve ortak /demo kimlik kartında uygulanmaya başlandı. Eski reference.png silinmez; görsel yön bu dilimde yeni referansa, davranış ve puanlama mevcut sözleşmelere bağlıdır. Yeni tasarımın kullanıcı kabulü henüz verilmedi.
+
+ResultSummary sunucu bileşeni aynı fixture ve config'ten iki görünümü üretir: hero açılı/askılı, demo düz. Kategori/puanlar aynen korunur. Mühür yalnız profil tipi, onay değildir. Gerçek skor, sahte seri/meslek/başarı veya paylaşım PNG'si eklenmez. Mevcut gerçek arama/seçim kodu ve backend sözleşmeleri değiştirilmez.
+
+Barlow Condensed 800 / Manrope variable / IBM Plex Mono yerel dosya + SIL OFL lisanslarıyla seçildi; Türkçe glyph doğrulaması yapıldı. Runtime font servisi bağımlılığı ve hareket paketi eklenmez. CSS girişleri tek iterasyon ve transform/opacity ile sınırlıdır; reduced-motion tüm hareketi kaldırır. Native details/summary korunur; yükseklik animasyonu için kırılgan bir alternatif eklenmez. Önemli renk/tipografi/hareket sınırları DESIGN'dadır.
+
+Etkilenen dosyalar: AGENTS.md, README.md, src/app/{globals.css,layout.tsx,fonts/*}, src/components/result-summary.tsx, src/messages/{tr,en}.json, docs/{DESIGN,DECISIONS,STATUS,TASKS}.md. Commit'e kullanıcı eklemesi docs/design/developer-id-concept.png de dahil edilebilir; orijinal görsel değiştirilmedi. A3 veya public yayına geçiş yoktur.
