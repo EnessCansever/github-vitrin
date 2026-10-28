@@ -4,9 +4,100 @@ Son güncelleme: 28 Ekim 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A1 tasarım kabul kriterleri karşılandı.** Ana sayfa/demo için önceki kullanıcı kabulüne ek olarak repo seçimi, analiz durumları ve demo gezinmesi görsel kabulü alındı; native durum menüsünün klavye kontrolü kullanıcı bildirimiyle doğrulandı. A2 başlamadı; commit/push ve “commit attım, devam” mesajı bekleniyor.
+**A2.1 — veri katmanı ve EnessCansever canlı public bağlantı smoke kontrolü doğrulandı.** Beş adım aynı GitHubClient işlemiyle geçti. A1 kabulü korunuyor; HEAD 3912059, önceki A2 dosyaları hâlâ commit edilmemiş durumda. Yeni uzak CI sonucu yok. A2'nin bütünü veya sonraki aşamalar tamamlandı sayılmaz; kullanıcı incelemesi/commit ve açık devam mesajı bekleniyor.
 
-## A1 son kullanıcı kabulü ve kriter incelemesi — 28 Ekim 2026
+## A2.1 gerçek bağlantı smoke sonucu — 28 Ekim 2026, 15:44 +03
+
+Kullanıcının yetkisiyle, `.env.local` değeri yalnız Node runtime'da `--env-file=.env.local` üzerinden yüklendi. Dosya görüntülenmedi/değiştirilmedi; token, Authorization header, ham istek/hata veya README içeriği yazdırılmadı. `git check-ignore .env.local` çıktısı `.env.local`; ignore kontrolü geçti.
+
+| Adım | Güvenli gerçek sonuç |
+| --- | --- |
+| Profil — getProfile | EnessCansever, başarılı |
+| Pinned — getPinned | available; 6 uygun pinned repo |
+| Adaylar — getCandidates | 14 uygun public aday; limited=false |
+| Profil README — getProfileReadme | found |
+| Seçilen repo — getSelected | jobfit-tr; metadata başarılı; README found |
+
+Tüm gerçek çağrılar tek GitHubClient örneğinde yapıldı; mevcut ortak 20 saniye/40 istek bütçesi değiştirilmedi. Fetch doğrudan çağrılıp adapter atlanmadı. Deterministik testlerin setup/mock fetch kodları, Vitest veya fixture'ları yüklenmedi. Mevcut TypeScript derleyicisi yalnız geçici runtime yüklemesi için kullanıldı; Node react-server koşulu server-only işaretini gerçek sunucu bağlamında çözdü. Yeni bağımlılık, uygulama kodu, public/debug endpointi, npm komutu veya CI adımı eklenmedi. Profilde/repoda değişiklik yapılmadı; salt okunur sorgular kullanıldı.
+
+İlk geçici yükleyici denemesi `runtime_setup / unexpected_runtime` güvenli koduyla GitHub isteği göndermeden durdu. Geçici yükleme mevcut TypeScript derleyicisiyle düzeltildi; adapter koduna müdahale edilmedi. Son gerçek denemede yapılandırma, izin, ağ veya uygulama hatası görülmedi. Geçici çalıştırıcı ve kontrol dosyaları iş sonunda kaldırıldı; normal npm test/CI'a gerçek ağ smoke testi eklenmedi.
+
+Smoke öncesi/sonrası dosya hash kontrolünde uygulama/bağımlılık ve önceki bekleyen dosyalar değişmedi. Bu tur yalnız STATUS/TASKS sonucu ile README'deki eski “smoke yapılmadı” ifadeleri güncellendi. git diff --check geçti, index boş. Kod değişmediğinden npm test/lint/typecheck/build tekrar çalıştırılmadı; önceki 118 deterministik test ve build kayıtları tarihsel sonuç olarak korunuyor.
+
+Bu sonuç yalnız EnessCansever hesabındaki olumlu public erişim akışıdır. Gerçek auth/rate-limit/eksik veri hata yanıtları bu smoke sırasında üretilmedi; bu ayrımlar önceki deterministik testlerde doğrulandı. found, dosyanın okunmasıdır; GitHub profilinde görsel gösterim doğrulanmadı. Arayüz bağlantısı, puanlama ve sonraki aşamalar uygulanmadı. Yeni uzak CI ancak kullanıcı push'undan sonra doğrulanabilir. A2'nin bütünü tamamlanmış sayılmadı.
+
+Mevcut A2.1 paketi bu gerçek smoke sonucu ve önceki yerel kontrollerle commit incelemesine hazır. Birleşik öneri: `feat: add validated public GitHub data adapter`. Bu turun belge kapsamı docs/STATUS.md, docs/TASKS.md ve README.md; önceki A2.1 dosyaları ayrıca korunuyor. Stage/commit/push yapılmadı; sonraki aşamaya geçmeden duruldu.
+
+
+## Önceki kayıt — A2.1 kaynak incelemesi düzeltmesi — 28 Ekim 2026
+
+Başlangıçta önceki A2.1 dosyaları commit edilmemişti; HEAD 3912059 ve index boştu. Bu dosyalar korundu. Yetki yalnız profil README yokluğu/kapsamı ve REST–GraphQL limit ayrımını düzeltmekti. A1 kabulü, arayüz, fixture puanları, bağımlılıklar ve CI davranışı bu revizyonda değiştirilmedi.
+
+### Düzeltilen davranışlar
+
+- Profil README artık proje eligible filtresini veya genel repo README aramasını kullanmıyor. Hatasız nullable GraphQL repo/kök object yokluğu missing; errors/partial, eksik alan, auth/ağ/rate-limit ve belirsiz REST 404 unknown kalıyor. Bilinen private/boş repo public profil README yokluğudur; private README içeriği istenmez. Bu, aday repo listesinin no_repos durumu değildir.
+- Public, aynı adlı repo için yalnız varsayılan dalın sabit commit'indeki kök README.md okunur. Arşiv/fork sınırlaması uygulanmaz. Profil/repo ID, dosya yolu ve Blob SHA doğrulanır; ortak decode fonksiyonu base64, gerçek byte, UTF-8 ve 256 KiB korumalarını taşır. Boş dosya found + boş text olur. GitHub profilinde gösterim doğrulanmış sayılmaz; resmi koşullar README/ARCHITECTURE'de kaynaklıdır.
+- REST/core ve GraphQL primary bakiyeleri/blokları ayrıldı; header kaynağı dikkate alınır. Secondary ve bilinmeyen kısıtlar iki API'yi de durdurur. GraphQL HTTP 200 RATE_LIMITED sonraki istekler için transport'a kaydedilir. Eksik header önceki primary veriyi silmez. Gerçek reset geçince eski blok bırakılır; bilinmeyen reset uydurulmaz. Eski primary reset yeni secondary kısıtı kaldırmaz.
+- Ortak 20 saniye/40 istek ve tek sunucu işlemi ömrü korundu; global singleton yoktur. Aynı işlemde GraphQL primary limitinden bağımsız REST aday erişimi mümkün, secondary/belirsiz limitte mümkün değildir. Kör retry veya API değiştirerek secondary limit aşma yoktur.
+
+### Son kontroller
+
+| Kontrol | Sonuç |
+| --- | --- |
+| npm test | 4 dosyada 118 deterministik test başarılı; gerçek GitHub isteği yapılmadı. |
+| npm run lint | Başarılı; max-warnings=0. |
+| npm run typecheck | Başarılı; Next tip üretimi dahil. |
+| npm run build | Son düzeltmelerle başarılı; Turbopack port ihtiyacı için izinli çalıştırma. Mevcut beş route korundu, yeni endpoint yok. |
+| Kod incelemesi | Yalnız değişen adapter/test kodu; ortak decode ve somut kaynak kayıtları, yeni katman/bağımlılık yok. Gereksiz test-state getter'ı bırakılmadı; testler çağrı/sonuç üzerinden doğrular. |
+| Koruma | git diff --check geçti; index boş. Kaynak sözleşme, referans, arayüz/fixture ve önceki kurulum dosyaları korundu. |
+
+Ek testler: bilinen public yokluk, auth/ağ/partial, kök README yokken docs aramasına geçmeme, arşiv/fork public profil reposu, boş dosya, kapsam/kimlik kaybı, iki yönlü primary bağımsızlığı, HTTP 200 GraphQL limiti, secondary/belirsiz blok, header yokluğu ve gerçek reset/retry-after davranışı. Önceki sürekli unknown beklentisi ve tüm API'leri bloklayan primary beklentisi kaldırıldı.
+
+**Gerçek GitHub smoke testi yapılmadı; gerçek env/token dosyaları açılmadı.** Canlı nullable/error yanıtları, profil/pinned/README erişimi sonraki yetkilendirilmiş smoke kontrolünde doğrulanmalı. Gerçek profil gösterimi iddia edilmez. Yeni uzak CI sonucu yok; 3912059 CI başarısı önceki kullanıcı bildirimidir. A2'nin tamamı, arayüz bağlantısı ve sonraki aşamalar açık kalır.
+
+Bu sınırlı düzeltme ve önceki A2.1 paketi yerel kontrollerle commit incelemesine hazırdır. Revizyon kapsamı: src/lib/github/{client,schemas,errors,transport}.ts, tests/github/{client.test,fixtures,profile-readme.test,rate-limit.test}.ts, README.md ve docs/{ARCHITECTURE,DECISIONS,STATUS,TASKS}.md. Önceki A2.1 kurulum dosyaları commit edilmemiş hâliyle korunur. Birleşik A2.1 önerisi: `feat: add validated public GitHub data adapter`. Stage/commit/push yapılmadı; kullanıcı incelemesi için duruldu.
+
+## Önceki kayıt — A2.1 ilk veri katmanı teslimi
+
+### İlk teslim sonucu — 28 Ekim 2026
+
+### Tamamlananlar
+
+- AGENTS ve proje belgeleri/kaynak A1–A2 kriterleri okundu. Belgelerde açık A1 tasarım kabul maddesi yok; native menü klavye doğrulaması ve görsel kabul kullanıcı bildirimidir. Eski AGENTS/README kapsam ifadeleri bu yeni yetkiye göre güncellendi.
+- Zod girdi normalizasyonu ve sunucuda zorunlu doğrulama; kullanıcı adı, şemasız/HTTPS github.com profil URL'si. Repo yolu, başka domain, credential, port/query/hash, encoded/normalize edilecek path ve geçersiz adlar reddedilir. Normal kişisel hesap adı kapsamı resmi GitHub kaynaklarıyla doğrulandı.
+- Server-only GitHubClient/transport: public profil, profil README, uygun pinned, sayfalı/en fazla 100 uygun aday ve 1–3 benzersiz seçilmiş repo için metadata/README. Pinler önce, sonra güncelleme sırası; ID ile tekrarlar ayıklanır. Owner kimliği/public/archive/fork kontrolü yapılır.
+- Pinned boş/unknown, kullanıcı yok/uygun repo yok, dosya missing/erişim unknown, configuration/auth/rate-limit/network/timeout/service/GraphQL errors/partial ayrı tutulur. GraphQL HTTP 200 errors başarı sayılmaz. README 404 sonrası repo kimliği/kapsamı/default branch yeniden doğrulanır.
+- Ortak 20 saniye/40 istek, istek başına 8 saniye, 1 MiB JSON ve 256 KiB README limitleri. Kesilmiş içerik tam sayılmaz; rate-limit bilgisi gerçek yanıttan gelir, görülen limit aynı transport'ta yeni isteği durdurur. Kör retry, keyfi URL fetch, README render, demo fallback yok.
+- Zod 4.6.7, server-only 0.0.1, Vitest 5.0.5 eklendi; Node 22.13.0 korundu. npm test ve CI test adımı hazır. Fine-grained public read token kurulumu README'de resmi kaynaklarla anlatıldı. Gerçek env dosyası/token açılmadı, yazdırılmadı veya yazılmadı.
+
+### Son doğrulamalar
+
+| Kontrol | Gerçek sonuç |
+| --- | --- |
+| npm ci | Başarılı; audit 0 vulnerability. Önceden bilinen ESLint 9 EOL uyarısı sürüyor. |
+| npm test | 2 dosyada 77 test başarılı; gerçek fetch her testte stub, token test değeri. Gerçek GitHub bağlantısı değildir. |
+| npm run lint | Başarılı; max-warnings=0, kural kapatma yok. |
+| npm run typecheck | Başarılı; Next tip üretimi dahil. İlk test fixture'ındaki readonly tip uyuşmazlığı düzeltilerek tekrar geçti. |
+| npm run build | Son kod ve temiz npm ci sonrasında başarılı. Aynı beş uygulama route'u; yeni endpoint yok. |
+| Build ortam sorunu | İlk sandbox build port izniyle başarısız oldu; izinli deneme de bozuk önbelleği kullandı. Yalnız üretilmiş .next build/cache/server/static temizlenip izinli aynı komutla geçti; .next/dev ve kaynaklar korundu, bundler değiştirilmedi. |
+| Davranış testleri | Girdi reddi/normalizasyonu, sayfalama/kapsam/100 sınırı, pinned boş–hata ve fallback, gerçek README missing/erişim kaybı, auth/rate-limit/ağ, GraphQL errors/partial, timeout/deadline/istek bütçesi, boyut/base64/kesilmiş içerik, sabit endpoint/redirect reddi doğrulandı. |
+| Kod ve koruma | Değişen kodda isimlendirme/tekrar/yorum/soyutlama incelemesi yapıldı; gerekçesiz any/assertion, lint disable, sessiz catch ve kullanılmayan bağımlılık yok. Arayüz, fixture, mesaj, sözleşme ve referans değişmedi. git diff --check geçti; index boş. |
+| Uzak CI | 3912059 başarısı yalnız kullanıcı bildirimi. Bu turdaki test adımı/yeni kod GitHub Actions üzerinde henüz doğrulanmadı. |
+
+### Açık işler ve sınırlar
+
+- Gerçek hesap smoke testi yapılmadı. Kullanıcı kendisi public erişimli fine-grained tokenı ignore edilen .env.local içine ekleyebilir; sonraki yetkilendirilmiş kontrolde profil/pinned/adaylar/profil ve proje README'leri doğrulanmalı. Token eklemek arayüzde gerçek analiz açmaz.
+- Profil reposunun kendisindeki belirsiz 404 de repo_unavailable/unknown kalır. Bu dosyanın yokluğunu kanıtlamaz; özellikle profil reposu bulunmayan hesaplarda gerçek smoke testinde incelenmelidir. Şüpheli veri için puanlanabilir yokluk üretilmedi.
+- Aday taraması ortak bütçeyi tüketirse kısmi aday listesini tam başarı saymaz; request_budget/timeout verir. 100 adayda limited ihtiyatlıdır, gerçek toplam repo sayısı değildir.
+- Ortak bütçe yalnız tek GitHubClient işlemi içindir; deployment-geneli rate-limit/cache/lock A4'ün açık işidir. Kullanıcı akışı/API bağlantısı, puanlama, MongoDB, AI ve paylaşım bu tur eklenmedi. A2'nin bütünü tamamlanmadı.
+- UI değişmediği için bu tur tarayıcı/görsel kontrol tekrarlanmadı. Mevcut kullanıcı dev sunucusu kapatılmadı. Sonraki iş kullanıcı incelemesi ve açık devam mesajına bağlıdır.
+
+Bu bölüm, canlı smoke testi açıkça bekleyen sınırlı kapsamıyla commit incelemesine hazır. Öneri: `feat: add validated public GitHub data adapter`.
+
+Commit kapsamı: AGENTS.md, README.md, .env.example, package.json, package-lock.json, .github/workflows/ci.yml, vitest.config.mjs, src/lib/github/{input,schemas,errors,transport,client}.ts, tests/setup.ts, tests/github/{input.test,client.test,fixtures}.ts, docs/{ARCHITECTURE,DECISIONS,STATUS,TASKS}.md. Gerçek env, node_modules ve .next kapsam dışı. Stage/commit/push yapılmadı; sonraki bölüm için duruldu.
+
+
+## Önceki kayıt — A1 son kullanıcı kabulü ve kriter incelemesi — 28 Ekim 2026
 
 Kullanıcı **repo seçimi, analiz durumları ve demo gezinmesine görsel kabul verdi**. Native durum menüsünü klavyeyle kendisinin kontrol ettiğini ve seçenek değişiminin çalıştığını bildirdi. Bu iki kayıt **kullanıcı incelemesi/bildirimi** olarak tutulur; Codex'in bu tur yaptığı bir tarayıcı testi olarak sunulmaz. Önceki headless native menü doğrulama açığı bu bildirimle kapandı.
 

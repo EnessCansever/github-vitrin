@@ -168,3 +168,25 @@ Seçimler sayıyla değil kimlik dizisiyle React state'te tutulur. Sayfa kapsaml
 Altı durum elle seçilir. Gerçek retry/başarı, sahte süre/yüzde ve reset sayacı yoktur. Eksik veri 0 puana çevrilmez; toplam ve profil tipi gösterilmez. Yeni ekranlarda kullanıcı görsel kabulü ve native select menüsünün gerçek klavye incelemesi beklenir; A1 tamamlandı sayılmaz.
 
 Etkilenen dosyalar: AGENTS.md, src/app/demo/select/page.tsx, src/app/demo/states/page.tsx, src/app/demo/page.tsx, src/features/analysis/{repo-picker,analysis-states,selection-demo,state-demo}, src/messages/*, src/app/globals.css ve ilgili proje belgeleri.
+
+### D018 — A2.1 yetkisi ve güvenilir veri/hata sınırı — 28 Ekim 2026
+
+Kullanıcı 3912059 commit/push ve GitHub Actions başarısını bildirdi; yerel HEAD ve temiz başlangıç doğrulandı. A1 kabul kriterlerinde açık tasarım maddesi kalmadı. Bu CI kaynağı kullanıcı bildirimidir; bu tur uzak API sorgulanmadı. Yeni yetki yalnız GitHub public veri katmanı ve deterministik testlerdir; arayüz entegrasyonu ve A2'nin bütünü tamamlanmış sayılmaz.
+
+Server-only adapter, Zod giriş/dış yanıt doğrulaması ve tek işlemde paylaşılan REST/GraphQL bütçesi kullanıldı: 20 saniye toplam, 8 saniye/istek, 40 istek, 100 uygun aday, 1 MiB JSON ve sözleşmedeki 256 KiB README. Bu sınırlar eksik veriyi başarıya çevirmeden kaynak kullanımını kısıtlar; dağıtık limit veya cache yerine geçmez. Kör retry yoktur. Pinned verisi alınamazsa `unknown` korunur; rate-limit/auth gibi ortak erişim sorunlarında fallback yapılmaz. 100 adayda `limited` ihtiyatlıdır; daha fazla uygun repo kesin var iddiası değildir.
+
+README yokluğu yalnız dosya 404'ü sonrasında repo metadata kimliği/public kapsamı/default branch tekrar doğrulanarak üretilir. Repo erişiminin kendisi 404 ise (profil reposu dahil) dosya yokluğu kanıtlanmış sayılmaz ve unknown kalır. Bu muhafazakâr sınır gerçek smoke testinde ayrıca incelenecek; puanlama kararı eklenmedi. GraphQL partial/error, auth, rate-limit, ağ, timeout ve büyük/kesilmiş içerik aynı yokluk sonucuna indirilmez. Kullanıcı girdisinden keyfi URL fetch veya README render yoktur.
+
+Zod 4.6.7 ve server-only 0.0.1 runtime, Vitest 5.0.5 dev bağımlılığıdır; Node 22.13.0 korundu. Test config `.mjs` ESM yüklenir; package module tipi ve lint kuralları değiştirilmedi. Yalnız adapter davranışları için Node ortamı kullanılır; React Testing Library/Playwright/axe bu tur kurulmaz. `npm test` CI'a eklenir ve token/ağ gerektirmez. Token için public fine-grained read erişimi resmi kaynaklarla README'de açıklanır; gerçek env açılmaz ve gerçek hesap smoke sonucu iddia edilmez.
+
+Etkilenen dosyalar: AGENTS.md, README.md, .env.example, package.json/package-lock.json, .github/workflows/ci.yml, vitest.config.mjs, src/lib/github/*, tests/*, docs/ARCHITECTURE.md, docs/STATUS.md, docs/TASKS.md. Resmi kaynaklar ARCHITECTURE ve README'dedir.
+
+### D019 — Profil README kapsamı ve kaynak başına limit düzeltmesi — 28 Ekim 2026
+
+Kullanıcı kaynak incelemesi sonrasında D018'in profil reposu yokluğunu sürekli unknown yapan yaklaşımının düzeltilmesini istedi. D018'deki profil kapsamı ve tüm API'leri durduran tek limit yaklaşımı bu kayıtla değiştirilir; puanlama sözleşmesi değişmez.
+
+Profil için proje eligible filtresi/genel README araması kaldırıldı. Hatasız GraphQL nullable repo/kök object bilgisi public görünürlüğün bilinen yokluğunu missing olarak ayırır; errors/partial veya REST 404 bunu kanıtlamaz ve unknown kalır. Public aynı adlı repoda arşiv/fork bağımsız kök README.md, sabit commit ve Blob SHA ile okunur. Boş dosya bulunmuş veridir; gerçek profil gösterimi onaylanmış sayılmaz. Private içerik istenmez. Yalnız ortak dosya decode kodu paylaşılır; yeni servis katmanı/bağımlılık eklenmez.
+
+REST/core ve GraphQL primary limitleri ayrıldı. Secondary/kaynağı belirsiz kısıt ortak kalır; başka API üzerinden aşılmaz. GraphQL HTTP 200 RATE_LIMITED sonraki çağrıları etkiler. Eksik header önceki primary bilgiyi silmez; gerçek reset geçince eski blok kaldırılır. Süre uydurulmaz; tek işlem için 20 saniye/40 istek korunur. Client global singleton değildir. Güncel kaynaklar ve ayrıntılar ARCHITECTURE/README'dedir. Gerçek GitHub smoke testi yapılmadı.
+
+Etkilenen dosyalar: src/lib/github/{client,schemas,errors,transport}.ts, tests/github/{client.test,fixtures,profile-readme.test,rate-limit.test}.ts, README.md, docs/{ARCHITECTURE,STATUS,TASKS,DECISIONS}.md. Arayüz, fixture puanı, bağımlılıklar ve CI bu düzeltmede değiştirilmedi.

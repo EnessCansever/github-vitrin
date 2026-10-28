@@ -45,7 +45,7 @@ Kaynak: [başlangıç sözleşmesi](../RepoVitrin-Codex-Proje-Sozlesmesi.md). `[
 
 ## A1 — tasarım kabul kriterleri karşılandı
 
-Ana sözleşme §11’deki A1 kabul kriterleri, önceki doğrulama kayıtları ve son kullanıcı bildirimi birlikte değerlendirilerek karşılandı. Kullanıcı repo seçimi, analiz durumları ve demo gezinmesine görsel kabul verdi; native durum menüsünde klavyeyle seçenek değişimini kontrol edip çalıştığını bildirdi (28 Ekim 2026). Bunlar kullanıcı incelemesi/bildirimidir; bu tur yeni Codex tarayıcı testi yapılmadı. Commit/geçiş kapısı açık; A2–A7 başlamadı.
+Ana sözleşme §11’deki A1 kabul kriterleri, önceki doğrulama kayıtları ve son kullanıcı bildirimi birlikte değerlendirilerek karşılandı. Kullanıcı repo seçimi, analiz durumları ve demo gezinmesine görsel kabul verdi; native durum menüsünde klavyeyle seçenek değişimini kontrol edip çalıştığını bildirdi (28 Ekim 2026). Bunlar kullanıcı incelemesi/bildirimidir; bu tur yeni Codex tarayıcı testi yapılmadı. 3912059 commit/push ve uzak CI başarısı son kullanıcı mesajıyla bildirildi. A2.1 veri katmanı için yetki verildi; A3–A7 başlamadı.
 
 ### A1.1 — ana sayfa + örnek sonuç (kullanıcı kabulü verildi)
 
@@ -95,9 +95,9 @@ Bu A1.1 kabulü kullanıcı incelemesidir. a78abde commit/push ve CI başarısı
 - [x] Yeni ekranların TR/EN mobil/masaüstü görüntülerini alıp incele; mevcut ana sayfa/demo için 360/768 regresyon kontrollerini tamamla.
 - [x] Native durum select menüsünde klavyeyle seçenek değişimi çalışıyor: kullanıcı kendisi kontrol ettiğini bildirdi. Önceki headless CDP doğrulama açığı kullanıcı bildirimiyle kapatıldı; yeni otomatik test sonucu değildir.
 - [x] Kullanıcı repo seçimi ve analiz durumlarına görsel kabul verdi. İşlev kontrolleri önceki kayıtlarda; native menü klavye doğrulaması kullanıcı bildirimidir.
-- [ ] Kullanıcı “commit attım, devam” demeden A2'ye veya başka işe geçme.
+- [x] Kullanıcı 3912059 commit/push ve CI başarısını bildirdi; yalnız A2 ilk veri katmanı bölümü için açık devam yetkisi verdi.
 
-A1.2 uygulaması, önceki yerel kontroller ve kullanıcı görsel kabulü tamam. Native menü klavye kontrolü kullanıcı bildirimiyle doğrulandı; A2 geçişi için kullanıcı mesajı bekleniyor.
+A1.2 uygulaması, önceki yerel kontroller ve kullanıcı görsel kabulü tamam. Native menü klavye kontrolü kullanıcı bildirimiyle doğrulandı; A2.1 geçişi son kullanıcı mesajıyla yetkilendirildi.
 
 ### A1.2 bağlantı hiyerarşisi revizyonu — kullanıcı görsel kabulü verildi
 
@@ -118,12 +118,36 @@ Bu revizyon yalnız gezinme/sunum içindir; fixture, puan ve analiz davranışı
 - [x] /demo altında açık örnek verilerle ana sayfa, repo seçimi, mobil sonuç, kanıt/accordion, tüm durumlar, TR/EN arayüzleri uygulandı; gerçek entegrasyon yok.
 - [x] 360/390/768/1440 screenshot/taşma, checkbox/focus, kontrast ve uzun metin kontrolleri önceki kayıtlarda doğrulandı. Yeni ekranlar ve gezinme kullanıcı tarafından görsel olarak kabul edildi; native menü klavye kontrolü kullanıcı bildirimiyle kapatıldı.
 
-A1 kabul incelemesi: iki ana kriter de karşılandı; tamamlanmamış A1 tasarım kabul maddesi kalmadı. Henüz commit edilmemiş değişikliklerin commit/push işlemi, bunlara ait uzak CI doğrulaması ve A2 için açık kullanıcı geçiş mesajı tamamlanmış sayılmaz. Yukarıdaki geçiş kapısı açık bırakıldı. ESLint 9 takip işi de A0 araç sınırlaması olarak açık kalır; A1 tasarım kriteri değildir.
+A1 kabul incelemesi: iki ana kriter de karşılandı; tamamlanmamış A1 tasarım kabul maddesi kalmadı. 3912059 commit/push ve CI başarısı kullanıcı bildirimi olarak kaydedildi; yalnız A2.1 yetkilendirildi. ESLint 9 takip işi A0 araç sınırlaması olarak açık kalır; A1 tasarım kriteri değildir.
 
-### A2 GitHub:
+### A2 GitHub — yalnız ilk veri katmanı bölümü
 
-- [ ] Public adapter, normalize, aday seçimi, pinned fallback, timeout/rate limit/unknown.
-- [ ] Gerçek public profil smoke testi; eksik token halinde açık kurulum hatası.
+- [x] AGENTS/belgeler, temiz Git durumu ve HEAD 3912059 kontrolü; A1 kabul incelemesi ve kullanıcı CI bildirimi.
+- [x] Zod ile kişisel kullanıcı adı/HTTPS veya şemasız github.com profil URL normalizasyonu; desteklenmeyen path/host/credential reddi; sunucuda zorunlu kullanım.
+- [x] Public profil, ayrı profil README'si, uygun pinned ve güncel repo adayları; owner/public/archive/fork filtreleri, sayfalama ve en fazla 100 aday.
+- [x] Erişilebilir boş pinned listesi ile unknown ayrımı; güncel aday fallback'i ortak hata bilgisini gizlemez.
+- [x] 1–3 benzersiz seçilmiş repo kimliği/adı doğrulaması; güncel metadata ve README erişimi.
+- [x] Proje README missing öncesi metadata yeniden doğrulama; profil yokluğunda hatasız nullable GraphQL alanlarını kontrol et; kapsam/kimlik kaybı, auth/rate-limit/ağ/timeout, GraphQL errors/partial ve büyük/kesilmiş içerik unknown/hata kalır.
+- [x] Sunucu token sınırı; kullanım anında açık configuration hatası; imports/build/demo/testler gerçek token gerektirmez.
+- [x] Ortak 20 saniye/40 istek, istek başına 8 saniye, 1 MiB JSON ve 256 KiB README sınırı; gerçek rate-limit bilgisi ve durdurma; kör retry yok.
+- [x] Vitest davranış testleri, npm test ve secretsız CI adımı; README/env/mimari/karar güncellemesi.
+- [x] Temiz npm ci, npm test, lint, typecheck ve production build; kod ve koruma/diff incelemesi (sonuçlar STATUS'ta).
+- [x] Mevcut adapter ile EnessCansever üzerinde gerçek public smoke: profil başarılı, pinned available/6, 14 uygun aday, profil README found, seçilen jobfit-tr metadata başarılı ve README found. Tek GitHubClient/ortak bütçe; gerçek env yalnız runtime'da yüklendi. Gerçek hata yanıtları bu smoke'ta üretilmedi; hata ayrımı önceki deterministik testlerde doğrulandı.
+- [ ] Gerçek kullanıcı/repoya ilişkin kalan A2 akışını ayrı yetkilendirilmiş bölümde değerlendir. Bu tur arayüze bağlantı/API endpointi ve puanlama yok; A2'nin bütünü tamamlanmış sayılmaz.
+- [ ] Kullanıcı incelemesi/commit ve açık devam mesajı olmadan sonraki bölüme geçme.
+
+Profil README yokluğu aşağıdaki revizyonla hatasız nullable GraphQL verisi üzerinden doğrulanır; belirsiz REST 404/errors/partial unknown kalır. EnessCansever olumlu public akışı smoke testiyle doğrulandı; diğer hesap/hata senaryoları canlı denenmiş sayılmaz. A4 dağıtık limit/cache ve A3 puanlama bu bölümün kabul kapsamı değildir.
+
+### A2.1 kaynak incelemesi düzeltmesi — yalnız README ve rate-limit
+
+- [x] Profil README'sinin bilinen public yokluğunu missing; auth/ağ/partial/belirsiz yanıtı unknown ayır. Hata içeren nullable alanı yokluk sayma.
+- [x] Proje eligible filtresi/genel README araması yerine aynı adlı public repoda kök README.md; arşiv/fork sınırı uygulama; private içerik okuma.
+- [x] Boş dosyayı found + boş text olarak koru; profil gösterimi iddiası üretme. Boyut/kodlama/yol/SHA ve kimlik güvenliklerini koru.
+- [x] REST/core ve GraphQL primary limitlerini ayır; header kaynağı/eksik header/gerçek reset davranışını düzelt.
+- [x] GraphQL HTTP 200 RATE_LIMITED kaydı; secondary/belirsiz kısıt her iki API'de korunur; ortak 20 saniye/40 istek değişmez.
+- [x] Hatalı eski test beklentilerini düzelt; yeni profil/limit davranış testleri, npm test, lint, typecheck ve production build (sonuçlar STATUS'ta).
+- [x] Gerçek GitHub smoke kontrolü yapıldı (28 Ekim 2026): beş adım tek client ile başarılı, yalnız güvenli özet kaydedildi. Geçici çalıştırıcı kaldırıldı; uygulama kodu değişmedi, normal npm test/CI gerçek ağı çalıştırmaz.
+- [ ] Kullanıcı incelemesi/commit ve açık devam mesajını bekle; arayüz/sonraki aşamaya geçme.
 
 ### A3 Puanlama:
 
