@@ -1,23 +1,29 @@
 "use client";
 
 import {useEffect, useRef, useState} from "react";
+import Link from "next/link";
+import {useRouter} from "next/navigation";
 import {ArrowLeft, RotateCcw} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {analyze} from "./actions";
 import {StatePanel} from "./analysis-states";
 import {RepoPicker} from "./repo-picker";
 import {LiveReport} from "./live-report";
-import type {AnalysisResponse} from "./report";
+import type {AnalysisResponse, Report} from "./report";
 import type {SearchResult} from "./selection";
+import {reportHref} from "../reports/link";
 
 type Selection = Extract<SearchResult, {status: "success"}>;
 
 export function LiveAnalysis({selection, onProfile}: {selection: Selection; onProfile: () => void}) {
   const search = useTranslations("Search");
   const t = useTranslations("Report");
+  const saved = useTranslations("SavedReport");
+  const router = useRouter();
   const [view, setView] = useState<"select" | "analysis">("select");
   const [pending, setPending] = useState(false);
   const [response, setResponse] = useState<AnalysisResponse | null>(null);
+  const [unsaved, setUnsaved] = useState<Report | null>(null);
   const requestId = useRef(0);
   const busy = useRef(false);
   const selected = useRef<string[]>(selection.initialSelectedIds);
@@ -40,6 +46,7 @@ export function LiveAnalysis({selection, onProfile}: {selection: Selection; onPr
     busy.current = false;
     setPending(false);
     setResponse(null);
+    setUnsaved(null);
     setView("select");
   }
 
@@ -62,6 +69,13 @@ export function LiveAnalysis({selection, onProfile}: {selection: Selection; onPr
     busy.current = false;
     setPending(false);
     setResponse(next);
+    if (next.status === "success") {
+      if (next.snapshot.status === "saved") {
+        setUnsaved(null);
+        router.push(reportHref(next.snapshot));
+      }
+      else setUnsaved(next.report);
+    }
   }
 
   return (
@@ -92,10 +106,18 @@ export function LiveAnalysis({selection, onProfile}: {selection: Selection; onPr
             <StatePanel state={response.code === "selectionChanged" || response.code === "invalid_input" ? "configuration" : response.code}
               title={t(`errors.${response.code}.title`)} description={t(`errors.${response.code}.description`)} />
           )}
-          {response?.status === "success" && <LiveReport report={response.report} />}
+          {response?.status === "success" && response.snapshot.status === "saved" && (
+            <p role="status" className="selection-notice"><Link className="text-link" href={reportHref(response.snapshot)}>{saved("opening")}</Link></p>
+          )}
+          {unsaved && (
+            <>
+              <p className="selection-notice" role="status">{saved("saveFailed")}</p>
+              <LiveReport key={unsaved.checkedAt} report={unsaved} />
+            </>
+          )}
           {!pending && response && (
             <button type="button" className="button button-secondary report-retry" onClick={() => run(selected.current)}>
-              <RotateCcw size={16} aria-hidden="true" />{t(response.status === "error" || response.report.status === "incomplete" ? "retry" : "reanalyze")}
+              <RotateCcw size={16} aria-hidden="true" />{unsaved ? saved("retrySave") : t(response.status === "error" || response.report.status === "incomplete" ? "retry" : "reanalyze")}
             </button>
           )}
         </div>

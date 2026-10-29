@@ -4,9 +4,72 @@ Son güncelleme: 29 Ekim 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A4.1 — snapshot modeli ve sunucu saklama/okuma katmanı; gerçek Atlas smoke kontrolü başarılı.** HEAD 5ad54fb ve mevcut A4.1 paketi hâlâ commitlenmemiştir; index boş. Kullanıcı tarafından sağlanan 5ad54fb uzak CI ekran görüntüsü önceki A3 koduna aittir; yeni A4.1 CI sonucu yoktur. Önceki eksik MONGODB_DB engeli kullanıcı dosyayı kaydettikten sonra giderildi; gerçek create/read/indeks/erişim/expiry ve test kayıtlarının temizliği doğrulandı. Otomatik fiziksel TTL silinmesi gözlenmedi. A4.1 kullanıcı inceleme/commit ve yeni CI kapısı açık; A4'ün cache/throttle/lock/karşılaştırma bütünü bitmiş sayılmaz.
+**A4.2 — gerçek analiz kaydı ve tokenlı rapor görünümü kullanıcı tarafından kabul edildi.** Başlangıç HEAD f81b46c, çalışma alanı/index temizdi. A4.1 uzak CI başarısı **kullanıcı ekran görüntüsüyle sağlanan doğrulamadır**; önceki model/Atlas kanıtlarıyla A4.1 kapanışı kaydedildi. A4.2 commit/push ve yeni uzak CI doğrulaması hâlâ açık. A4'ün cache/throttle/lock/karşılaştırma bütünü tamamlanmadı; sonraki dilime geçilmez.
 
-## A4.1 gerçek Atlas smoke sonucu — 29 Ekim 2026
+## A4.2 kullanıcı görsel kabulü ve hydration bildirimi — 29 Ekim 2026
+
+- Kullanıcı mevcut A4.2 görünümünü kabul etti. Bu kayıt **kullanıcının görsel incelemesine** dayanır; yeni otomatik tarayıcı testi değildir.
+- Kullanıcı, normal Chrome profilindeki hydration uyarısında tek farkın `data-yd-*` nitelikleri olduğunu ve gizli pencerede aynı uyarının oluşmadığını doğruladı. Bu karşılaştırma **kullanıcı tarafından sağlanan doğrulamadır**; bu tur bağımsız yeniden üretim yapılmadı.
+- Bulgular olası tarayıcı eklentisi/DOM müdahalesiyle uyumludur; kesin kök neden veya eklenti adı doğrulanmadı. Belirli bir eklentiye atıf yapılmaz ve uygulama hatası kesin dışlanmış sayılmaz.
+- Bu tur yalnız STATUS/TASKS kabul kayıtları güncellendi. Uygulama kodu değiştirilmedi; suppressHydrationWarning veya uyarıyı gizleyen bir çözüm eklenmedi. Yalnız belge diff kontrolü yapıldı; test/lint/typecheck/build veya canlı bağlantı kontrolleri tekrarlanmadı.
+- Görsel kabul kapandı; kullanıcı commit/push ve A4.2 uzak CI doğrulaması açık. Commit kapsamı mevcut A4.2 kod/test/yapılandırma/belge paketinin tamamıdır; yalnız bu iki belge için ayrı commit önerilmez. Sonraki dilim yetkilendirilmedi.
+
+## A4.2 gerçek kayıt ve rapor bağlantısı — 29 Ekim 2026
+
+### Uygulanan sınır
+
+- Mevcut analyze Server Action'ı sunucunun adapter/motorla ürettiği Report'u createSnapshot ile kaydeder. Client metadata/puan/rapor/snapshot kabul edilmez; strict seçim/kimlik/kapsam ve GitHub 20s/40 istek bütçesi korunur. Complete/incomplete şeması, token hash ve 30 gün TTL değişmez.
+- Saved sonuç `/reports/[id]#token=…` adresine gider. Fragment HTTP URL/loguna gitmez; genel SSR kabuğundan sonra tek loadReport action'ı id/tokenı sunucuda doğrulayıp snapshot okur. Rapor verisi/erişim tokenı metadata'ya yazılmaz; hash client'a dönmez. JS gerekir. Okuma adapter/motor çağırmaz; refresh ve locale yeni analiz başlatmaz.
+- Kayıt failed ise hesaplanmış rapor client'ta korunur, bağlantı oluşturulamadığı/tam yenilemede kaybolacağı açıklanır. Yeni deneme yalnız seçim kimliklerini yollar, güncel GitHub verisinden yeniden analiz/kayıt yapar. Bekleme ve yeni istek hatasında önceki sonuç korunur; saved yanıtında geçici uyarı temizlenir. Ref guard eski yanıtın state/navigation uygulamasını engeller; server memory cache veya client raporu kabul eden save API yoktur.
+- ReportAccess/CopyLink, mevcut Developer ID LiveReport/IdentityCard ve StatePanel'ı kullanır. UTC veri zamanı + 30 günlük son geçerlilik, erişim notu, gerçek copy sonucu ve label'lı elle kopyalama alanı vardır. Stored modunda geçici oturum notu yoktur. Geçersiz/expired/not-found aynı güvenli missing; DB/configuration/invalid_record ayrı unavailable/retry ekranıdır.
+- /reports için force-dynamic, noindex/nofollow/noarchive, no-referrer ve private/no-store başlıkları. Yeni auth/listeme/username arama/sosyal paylaşım/OG/PNG/cache/karşılaştırma/dağıtık limit/yayın yoktur. Motor/adapter/DB şeması/demo/package/lock korunur. Karar D028, teknik akış ARCHITECTURE, sunum DESIGN'dadır.
+
+### Son kontroller
+
+| Kontrol | Gerçek sonuç |
+| --- | --- |
+| npm test | **14 dosya / 330 test başarılı**: önceki 311 + 19 test. Save kaynağı/başarısızlığı/incomplete/fresh retry ve injected client raporu reddi; load action erişim/DB hata ayrımı/safe DTO/fragment; iki dilde stored complete/incomplete render. CI gerçek GitHub/Atlas veya secret kullanmaz. |
+| npm run lint / typecheck | Başarılı, max-warnings=0 ve strict TS + Next tip üretimi. Kural kapatma/any/ignore eklenmedi. |
+| npm run build | Başarılı; GitHub/Mongo/Signing process env değerleri boş. Yeni /reports/[id] + önceki beş route. Secretsız build gerçek DB açmadı. |
+| Production HTTP | Genel rapor GET'i 200 kabuğunda Referrer-Policy:no-referrer, X-Robots-Tag:noindex,nofollow,noarchive, Cache-Control:private,no-store,max-age=0. HTML metadata genel; gerçek token DOM/metadata çıktısında bulunmadı (elle copy alanı açılmadan kontrol). |
+| Diff / koruma | git diff --check ve index kontrolü başarılı. Motor/adapter/DB katmanı/sözleşme/demo/konsept/font/package/lock/CI için git diff --exit-code başarılı; altı yeni kaynak/test dosyasının whitespace kontrolü de geçti. Son production client chunk'larında GITHUB_TOKEN/MONGODB_URI/MongoClient/scoreAnalysis/parser/API endpoint işaretleri bulunmadı. Değişen kod sade ad/yorum/tekrar/soyutlama açısından incelendi. |
+
+### Gerçek tarayıcı, GitHub ve Atlas
+
+Kullanıcının port 3000 dev sunucusu (PID 4111) korundu. Ayrı port 3001 production sunucusu ve temiz headless Chrome/CDP kullanıldı. Geçici fetch gözlemcisi gerçek çağrıya delege ederek yalnız api.github.com çağrı sayısını kaydetti; URL/header/token/body veya README yazmadı, mock/fallback değildi. Bu ölçüm/çalıştırıcı normal uygulamaya veya CI'a eklenmedi. Gerçek env yalnız runtime'da yüklendi; dosya değiştirilmedi.
+
+| Tarayıcı kontrolü | Kanıt ve sonuç |
+| --- | --- |
+| Analiz → kayıt → rapor | Gerçek EnessCansever formu, 14 aday ve 3 ön seçili repo. İki hızlı native Enter tek analiz oluşturdu. Gerçek sonuç 90; Profil 20 + Projeler 23,3 + README 46,7, Gizli Cevher. Skor sabitlenmedi; demo ayrı 77,5 kaldı. |
+| Full reload / TR↔EN | Aynı adres, rapor DOM'u/puan/veri zamanı korundu. Server GitHub sayacı ilk analiz sonrasında 22 idi; refresh, iki yönlü dil ve salt erişim kontrollerinde 22 kaldı. Locale yalnız cookie/RSC yenilemesidir; yeni analiz/motor çağrısı yoktur. |
+| Copy / fallback | Temiz Chrome'da gerçek clipboard yazımı/okuma eşitliği ve başarı mesajı; clipboard API'si geçici kaldırıldığında hata/elle kopyalama, native Tab ile input'a ulaşma/tam seçim doğrulandı. Gerçek bağlantı veya token çıktı/artifact'e konmadı. |
+| Yanlış token / olmayan kimlik / expiry | Güvenli missing ekranı. Ayrı sentetik incomplete raporda null puan/tip, bilinen kategori ve yalnız bilinen doluluk gösterildi; normal mühür yoktu. |
+| DB error / read retry | Yalnız ayrı test server process'inde MONGODB_DB boş verilerek yapılandırma hatası üretildi. Mevcut kayıtta unavailable gösterildi, missing değildi. Normal process geri getirilip gerçek retry ile aynı rapor okundu; GitHub sayacı 22 kaldı. Atlas kesintisi/yetki değişimi iddia edilmez. |
+| Save error / korunma | Aynı kontrollü process hatasında gerçek GitHub analizi 90 hesaplandı, kayıt failed; sonuç ana sayfada kaldı. Sonraki browser offline retry'da aynı LiveReport DOM'u ve veri zamanı korundu; GitHub sayacı 44 kaldı. |
+| Yeniden kaydetme / immutable | Normal process'e dönüldü, aynı açık client'tan yeniden analiz/kayıt 90 ile yeni UUID oluşturdu. GitHub sayacı 44→57; önceki UUID hâlâ 90 ile okunabildi. Client raporu gönderilmedi; önceki snapshot update edilmedi. Yeni analiz linki normal ana sayfa formuna döndü. |
+| Görsel / taşma / focus | TR 390×844, EN 1440×900 ve uzun sentetik incomplete mobil görüntüleri gerçekten açılıp incelendi. Gerçek raporda 320/390/768/1440 yatay taşma 0; 39 karakter login/129 karakter repo scope'unda 320 taşma 0. Native Space kategori açılımı, 3px focus, hedef y=431/header altı=68 ve uzun scroll'da sticky top=0 doğrulandı. |
+| Hareket | Son normal girişte 5 başlangıç olayı, kart 520ms, ölçülen son giriş ~667ms; locale aynı giriş sayısını korudu. Reduced-motion altında opacity=1/transform=none/animation=none ve 0 yeni olay. Null kategoriler için doluluk span'ı yoktu. Yalnız screenshot'tan hareket doğrulaması yapılmadı; CSS event/timing ölçüldü. |
+| Olağan konsol / demo | Son tarayıcı sayacı runtimeErrors=0, consoleErrors=0. /demo hâlâ 77.5, 390px taşma 0 ve sticky top=0. |
+
+İncelenen yerel görseller: [TR mobil](/tmp/repovitrin-a42-review/report-tr-390.png), [EN masaüstü](/tmp/repovitrin-a42-review/report-en-1440.png), [eksik analiz mobil](/tmp/repovitrin-a42-review/incomplete-390.png), details-en-390.png. Adres çubuğu/token veya elle copy input'u bu artifact'lerde yoktur. Bunlar ürün paylaşım PNG'leri değildir.
+
+### Test kayıtları ve açık kapılar
+
+- Oluşturulan 4 kayıt: gerçek ilk analiz **97e98437-7c2b-4b2d-97d5-b4d283067aca**, sentetik incomplete **f6d98e71-ccfa-4c1b-8bcb-109ec1abc8c2**, sentetik expired **85abff5e-fa33-4c0f-8339-7eb5b7e8204b**, gerçek retry **992e5526-bf06-431b-be12-9a50bc7cd916**. Bunlar token değildir.
+- Üç mevcut test kaydı yalnız UUID + beklenen profil scope'u ile ayrı deleteOne kullanılarak silindi. Expired kayıt temizlikte zaten yoktu (deletedCount=0); onun otomatik TTL silinme anı izlenmedi. Dört UUID'nin tamamı için findOne=null doğrulandı. Başka kayıt/collection/DB değiştirilmedi/silinmedi. Görsel inceleme için saklanan kayıt **yok**; kullanıcı normal formdan kendi yeni raporunu oluşturabilir.
+- Geçici server/Chrome/observer/çalıştırıcı, log/HTML dosyaları ve kontrol Chrome profili kaldırıldı; kullanıcının dev sunucusu korundu. Token, URI/parola/okuma hash'i veya tam kayıt/log çıktısı yoktur. Son kaynak/diff/koruma incelemesi geçti; stage/commit/push/yayın yoktur.
+- **A4.2 kullanıcı görsel kabulü alındı; commit/push ve yeni uzak CI açık.** Geç yanıt guard'ı navigation öncesinde korunur; uygulama turunda yeni saved yanıtı ayrıca CDP ile geciktirilip zorlanmadı (önceki A3 gecikme testi yeni testmiş gibi sunulmaz). JS kapalı erişim, gerçek Atlas kesintisi veya başka ortam/browser ayrıca test edilmedi. Normal Chrome/gizli pencere hydration karşılaştırması yukarıda ayrı kullanıcı doğrulaması olarak kayıtlıdır. Snapshot bağlantısı sosyal shareReports değildir; public deployment yetkisi yoktur.
+- A4'ün cache/atomik throttle/lock/karşılaştırma ve GitHub yenilemesi/cache ayrımı kabul maddeleri açık kalır. Sıradaki somut iş kullanıcının mevcut A4.2 paketini commit/push etmesi ve yeni uzak CI doğrulamasıdır; sonraki dilime açık mesaj olmadan geçilmez.
+
+Commit için yerel kontrollerle hazır; öneri: `feat: persist analyses and add report links`.
+
+Commit kapsamı: AGENTS.md, README.md, next.config.ts; docs/{PRODUCT,ARCHITECTURE,DESIGN,DECISIONS,STATUS,TASKS}.md; src/app/{page.tsx,globals.css,reports/[id]/page.tsx}; src/features/analysis/{actions.ts,report.ts,live-analysis.tsx,live-report.tsx}; src/features/reports/{actions.ts,link.ts,report-access.tsx,copy-link.tsx}; src/messages/{tr,en}.json; tests/github/analysis.test.ts, tests/analysis/{report.test.tsx,saved-report.test.ts}.
+
+## A4.1 kapanışı — kullanıcı doğrulaması — 29 Ekim 2026
+
+f81b46c commit'i başlangıç HEAD olarak doğrulandı; kullanıcı uzak CI başarısını ekran görüntüsüyle sağladı. Önceki 311 deterministik kontrol/yerel build ve gerçek Atlas create/read/token/expiry/temizlik kanıtıyla A4.1 kabul/commit kapısı kapanır. Uzak CI bağımsız sorgulanmadı; bu doğrulama yeni A4.2 koduna ait değildir. A4 bütünü tamamlandı denmez.
+
+## Önceki kayıt — A4.1 gerçek Atlas smoke sonucu — 29 Ekim 2026
 
 Kullanıcı eksik MONGODB_DB satırını proje kökündeki .env.local dosyasına ekleyip kaydettiğini bildirdi. Yeniden Node env yüklemesinde iki değişkenin varlığı ve hedefin repovitrin_dev ile eşleşmesi boolean olarak doğrulandı; çalışma anında DB adı override edilmedi. Gizli dosya içeriği/URI/parola/okuma tokenı/hash veya tam kayıt araç çıktısına alınmadı, env dosyası değiştirilmedi.
 

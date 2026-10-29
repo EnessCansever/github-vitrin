@@ -251,9 +251,28 @@ Kaynak sözleşme §11 A3'ün iki teknik maddesi motor/test paketiyle karşılan
 - [x] Gerçek Atlas smoke: kullanıcı MONGODB_DB satırını kaydettikten sonra mevcut modüllerle repovitrin_dev bağlantısı/indeks/create/read, complete 86,7 ve bütün rapor alanlarının korunması, yanlış token/bulunmayan kimlik null, incomplete toplam/tip null ve bilinen bulgular doğrulandı. Başka DB'ye erişim yok; URI/token/hash yazdırılmadı.
 - [x] Üçüncü sentetik kaydın süresi geçince DB'de mevcutken uygulama okumasının null döndürmesi; expiresAt:1 / expireAfterSeconds:0 ve _id_ indeksi doğrulandı. Fiziksel otomatik TTL silinmesi gözlenmedi; indeks varlığı silinme kanıtı değildir.
 - [x] Yalnız bu çalıştırmada oluşturulan üç kayıt kimlik/scope ile ayrı ayrı silindi ve bulunamadıkları doğrulandı; geçici çalıştırıcı kaldırıldı, dev sunucusu korundu. Kod/test/paket değişmediğinden geniş kontroller tekrarlanmadı; belge diff/index ve başlangıç dosya koruması kontrol edildi. UUID'ler/sonuçlar STATUS'ta.
-- [ ] A4.1 kullanıcı incelemesi, commit/push ve bu yeni paketin uzak CI doğrulaması.
+- [x] A4.1 f81b46c commit'i doğrulandı; uzak CI başarısı kullanıcı ekran görüntüsüyle sağlanan doğrulama olarak kaydedildi. Önceki yerel/Atlas kanıtıyla A4.1 kapandı; A4.2'ye yalnız yeni kullanıcı mesajıyla geçildi.
 
-A4.1 uygulaması A4'ün bütünü değildir. Analiz action'ına yazım, kalıcı rapor sayfası/URL, cache, karşılaştırma, dağıtık atomik throttle/lock ve paylaşım/yayın bu tur yapılmaz. Sonraki dilim yalnız açık kullanıcı mesajıyla başlar.
+A4.1 uygulaması A4'ün bütünü değildir. Action yazımı/rapor adresi aşağıdaki A4.2 kapsamında; cache, karşılaştırma, dağıtık throttle/lock, sosyal paylaşım/yayın açık kalır.
+
+### A4.2 — gerçek analiz kaydı ve tokenlı rapor adresi
+
+- [x] Belgeler/temiz Git/HEAD f81b46c ve kullanıcı ekran görüntüsüyle A4.1 uzak CI kapanışı.
+- [x] Analyze yalnız sunucu adapter/motor çıktısını kaydeder; complete/incomplete/30 gün/token hash sözleşmesi, strict seçim ve kimlik doğrulama korunur. Client raporu/puanı reddedilir.
+- [x] Saved yanıtta token fragment'li /reports/[id] adresi; başarısız kayıtta hesaplanmış sonucu koruma, açık uyarı ve güncel GitHub verisiyle yeni analiz/kayıt. Çift gönderim/ref guard navigation öncesinde sürer; server memory cache eklenmez.
+- [x] Strict id/token loadReport action'ı, hash/ham kayıt dönmeme; missing/expired/invalid ortak güvenli durum, DB/configuration hatasında ayrı unavailable ve gerçek read retry.
+- [x] Mevcut Developer ID kartı/kanıt/görevler; stored notu, UTC veri zamanı ve 30 günlük expiresAt. Refresh/dil yalnız snapshot okur/korur, yeni GitHub/puanlama yok. Yeni analiz eski snapshot'ı değiştirmeden ana forma döner.
+- [x] Clipboard gerçek başarı/hata, API yoksa label'lı elle copy; linki bilen erişimi notu. Fragment URL/token log/metadata'ya eklenmez; force-dynamic/noindex/no-referrer/private no-store gerçek production başlıklarıyla doğrulandı.
+- [x] 19 yeni secretsız test: sunucu kayıt kaynağı/failure/incomplete/fresh retry ve client raporu reddi; okuma erişim/hata/DTO/fragment, iki dil stored render. Toplam 14 dosya/330; lint/typecheck/secretless build başarılı.
+- [x] Gerçek EnessCansever → Atlas kayıt → rapor → full reload/TR↔EN; salt erişimde server GitHub sayacı 22'de kaldı. Yanlış token/nonexistent/expired ve sentetik incomplete durumları.
+- [x] Ayrı production process'inde DB ayarı boş hatası; read missing'e dönüşmedi, gerçek read retry toparlandı. Save failure ve browser offline retry eski raporu korudu; normal sunucuya dönüp yeni analiz/kayıt yaptı. İlk snapshot okunabilir kaldı; token/URI çıktısı yok.
+- [x] TR 390×844/EN 1440×900 ve incomplete mobil görselleri incelendi; 320/390/768/1440, uzun adlar, Tab/Space/focus/sticky ve reduced-motion. Giriş olay/timing ~667ms, dilde tekrar yok.
+- [x] Yalnız bu turun 4 UUID'si için temizlik/yokluk doğrulaması: üç kayıt ayrı silindi, expired zaten yoktu. İnceleme için tutulan kayıt yok. Kullanıcı dev sunucusu korundu; geçici araçlar/profil/loglar kaldırıldı. Son diff/index/koruma kontrolü STATUS'ta.
+- [x] Kullanıcı mevcut A4.2 görünümünü kabul etti (29 Ekim 2026, kullanıcı görsel incelemesi).
+- [x] Kullanıcı normal Chrome profilindeki hydration farkının yalnız data-yd-* nitelikleri olduğunu ve gizli pencerede uyarının oluşmadığını doğruladı. Olası eklenti/DOM müdahalesi; kesin neden ve eklenti adı doğrulanmadı. Bu tur bağımsız tarayıcı testi veya uygulama kodu değişikliği yok; suppressHydrationWarning eklenmedi.
+- [ ] A4.2 kullanıcı commit/push ve yeni uzak CI doğrulaması.
+
+A4.2 yerel/canlı kontrolleri ve kullanıcı görsel kabulü tamam; commit/push ve yeni uzak CI açık. Hydration karşılaştırması kullanıcı bildirimidir; olası eklenti müdahalesi kesin teşhis değildir. Kabul kaydı turunda yalnız belge diff kontrolü yapıldı. Yeni saved yanıtı uygulama turunda özel olarak geciktirilmedi; mevcut ref guard ve önceki A3 kanıtı korunur, yeni gecikme testi gibi sunulmaz. A4'ün cache/atomic throttle/lock/karşılaştırma kabul maddeleri tamamlanmadı. Sonraki dilim açık kullanıcı mesajı bekler; yayın yoktur.
 
 ### A5 Paylaşım:
 

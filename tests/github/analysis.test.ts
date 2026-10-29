@@ -1,9 +1,14 @@
-import {describe, expect, it, vi} from "vitest";
+import {beforeEach, describe, expect, it, vi} from "vitest";
 import {analyze} from "../../src/features/analysis/actions";
+import {createSnapshot} from "../../src/lib/db/snapshots";
 import {english} from "../scoring/fixtures";
 import {json, readme, repository, respond} from "./fixtures";
 
 const selection = {username: "mona", profileId: 7, repos: [{id: 10, name: "project-10"}]};
+vi.mock("../../src/lib/db/snapshots", () => ({createSnapshot: vi.fn()}));
+beforeEach(() => {
+  vi.mocked(createSnapshot).mockReset().mockResolvedValue({id: "11111111-1111-4111-8111-111111111111", readToken: "a".repeat(64)});
+});
 function publicProfile() {
   return json({data: {user: {databaseId: 7, login: "mona", name: "Mona", bio: "Frontend developer",
     websiteUrl: "https://example.org", avatarUrl: "https://avatars.githubusercontent.com/u/7"}}});
@@ -27,6 +32,7 @@ describe("analysis server action", () => {
   ])("rejects malformed, duplicate or injected client data before network access", async value => {
     expect(await analyze(value)).toEqual({status: "error", code: "invalid_input"});
     expect(fetch).not.toHaveBeenCalled();
+    expect(createSnapshot).not.toHaveBeenCalled();
   });
 
   it("normalizes profile input and returns the real engine result with safe serializable evidence", async () => {
@@ -46,6 +52,8 @@ describe("analysis server action", () => {
       expect(serialized).not.toContain(forbidden);
     }
     expect(fetch).toHaveBeenCalledTimes(5);
+    expect(createSnapshot).toHaveBeenCalledExactlyOnceWith(result.report);
+    expect(result.snapshot).toMatchObject({status: "saved", id: "11111111-1111-4111-8111-111111111111"});
   });
 
   it("revalidates profile identity and does not reuse the old user's selection", async () => {
@@ -119,5 +127,33 @@ describe("analysis server action", () => {
     vi.stubEnv("GITHUB_TOKEN", "");
     expect(await analyze(selection)).toEqual({status: "error", code: "configuration"});
     expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("preserves the computed result when persistence fails and only returns a safe save status", async () => {
+    success();
+    vi.mocked(createSnapshot).mockRejectedValueOnce(new Error("sensitive database URI"));
+    const result = await analyze(selection);
+    expect(result).toMatchObject({status: "success", report: {score: 90}, snapshot: {status: "failed"}});
+    expect(JSON.stringify(result)).not.toContain("sensitive database URI");
+    expect(createSnapshot).toHaveBeenCalledTimes(1);
+  });
+
+  it("persists incomplete results without manufacturing a total or type", async () => {
+    respond(publicProfile(), json(repository()), json(repository()), json({}, 503), noProfileReadme());
+    const result = await analyze(selection);
+    expect(result).toMatchObject({status: "success", report: {status: "incomplete", score: null, profileType: null}, snapshot: {status: "saved"}});
+    expect(createSnapshot).toHaveBeenCalledWith(expect.objectContaining({status: "incomplete", score: null}));
+  });
+
+  it("retries by fetching fresh server data, not by accepting the previous client report", async () => {
+    success();
+    vi.mocked(createSnapshot).mockRejectedValueOnce(new Error("database unavailable"));
+    expect(await analyze(selection)).toMatchObject({snapshot: {status: "failed"}});
+    success();
+    expect(await analyze(selection)).toMatchObject({snapshot: {status: "saved"}});
+    expect(fetch).toHaveBeenCalledTimes(10);
+    expect(createSnapshot).toHaveBeenCalledTimes(2);
+    expect(await analyze({...selection, snapshot: {}, report: {score: 100}})).toEqual({status: "error", code: "invalid_input"});
+    expect(createSnapshot).toHaveBeenCalledTimes(2);
   });
 });

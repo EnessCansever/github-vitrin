@@ -302,3 +302,15 @@ TTL createdAt+30 gün olarak somutlaştırıldı; veri alınma zamanı ayrı kor
 Gerçek MongoDB hesabı/secret oluşturulmadı, env içeriği açılmadı; gerçek bağlantı/yetki/BSON/TTL kontrolü açık. Mock testler bunu doğrulamış sayılmaz. Action bağlantısı, rapor sayfası/kalıcı URL, cache, karşılaştırma, dağıtık throttle/lock, paylaşım/PNG ve yayın bu tur dışındadır. A4 bütünü tamamlanmaz.
 
 Etkilenen dosyalar: src/lib/db/{client,errors,snapshot-schema,snapshots}.ts, tests/db/{fixtures,schema.test,snapshots.test,client.test}.ts, package.json/package-lock.json, .env.example, README.md, AGENTS.md, docs/{PRODUCT,ARCHITECTURE,DECISIONS,STATUS,TASKS}.md.
+
+### D028 — A4.2 sunucu rapor kaydı ve fragment ile snapshot erişimi — 29 Ekim 2026
+
+Kullanıcı f81b46c uzak CI başarısını ekran görüntüsüyle doğruladı; temiz HEAD ve A4.1'in önceki yerel/Atlas kanıtlarıyla kapanışı kaydedildi. Bu tur yalnız gerçek raporu kayda/yenilenebilir adrese bağlar; A4 cache/karşılaştırma/dağıtık limit veya A5 sosyal paylaşımı değildir.
+
+Tokenın Next erişim loguna/metadata'ya gitmesini önlemek için `/reports/[id]#token=…` seçildi; path/query tokenı kullanılmaz. Fragment tarayıcıda çözülür; mevcut readSnapshot'a giden tek loadReport Server Action'ı sunucuda doğrular. GET yalnız genel SSR kabuğudur, JavaScript gerekir. Hash istemciye aktarılmaz. Force-dynamic + no-store/no-referrer/noindex başlıkları ve genel metadata uygulanır; token içeren body/URL logu eklenmez. Tarayıcı/copy eylemi capability'yi taşır; linki bilenlerin erişimi kısa notla açıklanır. Süre mevcut 30 gündür; ayrı public shareReports veya süresiz bağlantı oluşturulmaz.
+
+Analyze yalnız kendi GitHub/motor çıktısını createSnapshot'a verir. Kayıt hatasında güvenli failed durumu ve hesaplanmış rapor korunur. Tekrar deneme client raporunu yüklemez; güncel veriyi yeniden alıp yeni immutable kayıt üretir. Tek geçici client raporu ve bounded okuma promise'i yeterlidir; server session cache, imza sistemi veya yeni workflow katmanı kurulmadı. Gerçek DB hatası missing olarak sunulmaz; erişim yokluğu ise varlık bilgisi sızdırmayan ortak ekran kullanır.
+
+Mevcut LiveReport/IdentityCard, locale ve hareket/focus yaklaşımı korunur; stored modu yalnız geçici notu kaldırır. Yeni action/rota testleri secretsızdır. Yerel production sunucusundaki GitHub sayacı gerçek fetch'e delege eden geçici ölçümdür, mock/fallback değildir; CI'a eklenmez. Test/env hata enjeksiyonu yalnız ayrı test process'inde yapılır; kullanıcı env dosyasına veya dev sunucusuna dokunulmaz. Kullanıcı görsel kabulü ve yeni commit sonrası uzak CI açık kalır.
+
+Etkilenen dosyalar: next.config.ts; src/app/{page.tsx,globals.css,reports/[id]/page.tsx}; src/features/analysis/{actions,report,live-analysis,live-report}; src/features/reports/{actions,link,report-access,copy-link}; src/messages/{tr,en}.json; tests/github/analysis.test.ts, tests/analysis/{report.test.tsx,saved-report.test.ts}; AGENTS.md, README.md, docs/{PRODUCT,ARCHITECTURE,DESIGN,DECISIONS,STATUS,TASKS}.md. Motor/adapter/DB şeması/demo/package/lock değişmez.

@@ -135,3 +135,11 @@ Yalnız .live-report kapsamındaki yeni sonuç mount'unda giriş vardır: kimlik
 Mevcut analiz akışı yeni analizde önceki response'u kaldırıp kabul edilen yeni sonuçta LiveReport'u mount eder. TR/EN veya sıradan re-render mevcut DOM'u korur; native accordion açılması giriş selector'larını değiştirmez. Incomplete aynı card/body kapsamındadır; null kategori track'inin doluluk span'ı zaten oluşturulmadığından o alanda sahte 0/100 veya doluluk animasyonu yoktur. Var olan global reduced-motion kuralı bütün hareket/delay/transition'ları kaldırır ve gerçek genişlik/metinleri doğrudan gösterir. Demo fixture/animasyonları ve kart yerleşimi yeniden tasarlanmadı.
 
 Yerel Chrome ölçümleri ve yaklaşık 1,2s mobil / 1,12s masaüstü gerçek ekran kayıtları STATUS'tadır. Hareket yalnız screenshot ile onaylanmış sayılmaz; kare/timestamp ve requestAnimationFrame ölçümleri de incelendi. Yeni sonuç/header için kullanıcı görsel kabulü ve yeni uzak CI açık kalır.
+
+## A4.2 kayıtlı rapor — kullanıcı görsel kabulü bekleniyor
+
+Kayıtlı /reports/[id] ekranı aynı shell/sticky header, Developer ID kartı ve LiveReport kanıt/görev/kategori bileşenlerini kullanır. Kart/puan/öneri yerleşimi yeniden tasarlanmadı. Üstte kısa genel rapor başlığı, ana forma dönen gerçek link, 30 günlük bitiş notu ve ortak mavi ikincil kopyalama eylemi vardır. Mint gezinti rengi yapılmadı; sosyal paylaşım/indirme eylemi yoktur. Gerçek link sadece clipboard veya elle kopyalama alanında görünür; metadata'da yer almaz.
+
+Clipboard geri bildirimi küçük status alanıdır; elle kopyalama label'lı readonly input'tur, focus ile tam seçim yapılır. Aynı TR/EN bileşeni kullanılır. Uzun URL input içinde kaydırılabilir; sayfayı taşırmaz. Erişim notu kopyalama sonrasında da görünür. Geçersiz/expired bağlantı ve DB erişim hatası farklı StatePanel başlıklarıyla anlatılır. Eksik rapor null puan/tip ve bilinen ayrıntıları korur.
+
+Başlık odağı ve main başlangıcına tek kaydırma sticky payını kullanır; genel h1'in kısmen kesilmesi giderildi. Mevcut kart 520ms/çubuk 80+600ms/gövde 140+420ms girişleri kullanılır; locale/accordion aynı DOM'u korur. Reduced-motion animasyon/gecikme kaldırır; null kategoride sahte çubuk yoktur. Yerel mobil/masaüstü, uzun ad, focus, giriş olayı ve reduced-motion gözlemleri STATUS'tadır. Yeni A4.2 görünümü için kullanıcı görsel kabulü açık kalır.

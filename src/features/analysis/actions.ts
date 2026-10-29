@@ -5,8 +5,9 @@ import {GitHubClient} from "../../lib/github/client";
 import {GitHubError} from "../../lib/github/errors";
 import {profileInput} from "../../lib/github/input";
 import {repoName} from "../../lib/github/schemas";
+import {createSnapshot} from "../../lib/db/snapshots";
 import {RULES_VERSION, scoreAnalysis} from "./scoring/engine";
-import type {AnalysisResponse} from "./report";
+import type {AnalysisResponse, Report} from "./report";
 import type {SearchError, SearchResult} from "./selection";
 
 export async function getRepos(input: unknown): Promise<SearchResult> {
@@ -69,14 +70,20 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
     const profileReadme = await client.getProfileReadme(profile);
     const checkedAt = new Date().toISOString();
     const result = scoreAnalysis({rulesVersion: RULES_VERSION, profile, profileReadme, repos, checkedAt});
-    return {status: "success", report: {
+    const report: Report = {
       ...result, profile: {id: profile.id, login: profile.login}, checkedAt, repoCount: repos.length,
       checks: result.checks.map(check => ({...check, evidence: check.evidence.map(evidence => ({
         sourceUrl: evidence.sourceUrl, field: evidence.field, path: evidence.path,
         branch: evidence.branch, sha: evidence.sha, line: evidence.line,
         availability: evidence.availability, detailKey: evidence.detailKey,
       }))})),
-    }};
+    };
+    try {
+      const access = await createSnapshot(report);
+      return {status: "success", report, snapshot: {status: "saved", ...access}};
+    } catch {
+      return {status: "success", report, snapshot: {status: "failed"}};
+    }
   } catch (error) {
     if (error instanceof GitHubError && error.code === "repo_unavailable") {
       return {status: "error", code: "selectionChanged"};

@@ -403,7 +403,7 @@
     "sha": "Dosya SHA: {sha}",
     "scope": "{count} seçili public proje incelendi",
     "checkedAt": "Veri alınma zamanı: {time} UTC",
-    "temporary": "Bu sonuç bu sayfadaki oturumda tutulur; tam yenilemede kaybolur. Kalıcı rapor bağlantısı ve paylaşım henüz yok.",
+    "temporary": "Bu sonuç kaydedilmedi; yalnız bu sayfadaki oturumda tutulur ve tam yenilemede kaybolur.",
     "status": {
       "pass": "Koşul sağlandı",
       "fail": "Koşul eşleşmedi",
@@ -459,5 +459,25 @@
       }
     },
     "partialSummary": "Bilinen bulguları ve kategori ayrıntılarını aşağıda inceleyebilirsin."
+  },
+  "SavedReport": {
+    "title": "Analiz raporu",
+    "opening": "Kaydedilen raporu aç →",
+    "saveFailed": "Sonuç hesaplandı ancak rapor bağlantısı oluşturulamadı. Sonucun burada korunuyor; tam yenilemede kaybolur. Tekrar denemek GitHub verilerini yeniden alır ve yeni bir analiz kaydetmeyi dener.",
+    "retrySave": "Yeniden analiz et ve kaydet",
+    "newAnalysis": "Yeni analiz başlat",
+    "loadingTitle": "Kaydedilen rapor açılıyor",
+    "loadingText": "Rapor kaydı okunuyor. GitHub verileri yeniden alınmıyor ve puan yeniden hesaplanmıyor.",
+    "missingTitle": "Bu rapor bağlantısı açılamıyor",
+    "missingText": "Bağlantı eksik veya geçersiz olabilir; rapor bulunamayabilir ya da 30 günlük süresi dolmuş olabilir. Token bölümünü de içeren tam bağlantıyı kontrol et veya yeni analiz başlat.",
+    "errorTitle": "Rapor şu anda okunamıyor",
+    "errorText": "Rapor saklama hizmetine erişilemedi. Bu durum raporun silindiği anlamına gelmez. Bağlantıyı değiştirmeden yeniden deneyebilirsin.",
+    "retry": "Raporu yeniden aç",
+    "expires": "Bağlantı kayıt tarihinden itibaren 30 gün geçerli. Son geçerlilik: {time} UTC.",
+    "copy": "Rapor bağlantısını kopyala",
+    "accessNote": "Tam bağlantıya sahip kişiler bu raporu açabilir. Bağlantıyı yalnız erişmesini istediğin kişilerle paylaş.",
+    "copied": "Rapor bağlantısı kopyalandı.",
+    "manual": "Otomatik kopyalama yapılamadı. Aşağıdaki bağlantıyı seçip elle kopyalayabilirsin.",
+    "manualLabel": "Tam rapor bağlantısı"
   }
 }

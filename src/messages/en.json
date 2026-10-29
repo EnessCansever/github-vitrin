@@ -403,7 +403,7 @@
     "sha": "File SHA: {sha}",
     "scope": "{count} selected public projects inspected",
     "checkedAt": "Data retrieved: {time} UTC",
-    "temporary": "This result stays in the current page session and is lost on a full reload. Permanent report links and sharing are not available yet.",
+    "temporary": "This result was not saved. It stays in this page session and is lost on a full reload.",
     "status": {
       "pass": "Condition met",
       "fail": "Condition not matched",
@@ -459,5 +459,25 @@
       }
     },
     "partialSummary": "Known findings and category details remain available below."
+  },
+  "SavedReport": {
+    "title": "Analysis report",
+    "opening": "Open the saved report →",
+    "saveFailed": "The result was calculated, but a report link could not be created. Your result stays here until a full reload. Retrying fetches GitHub data again and attempts to save a new analysis.",
+    "retrySave": "Analyze again and save",
+    "newAnalysis": "Start a new analysis",
+    "loadingTitle": "Opening the saved report",
+    "loadingText": "Reading the saved report. GitHub data is not being fetched and the score is not being recalculated.",
+    "missingTitle": "This report link cannot be opened",
+    "missingText": "The link may be incomplete or invalid, the report may not exist, or its 30-day lifetime may have ended. Check the full link including its token, or start a new analysis.",
+    "errorTitle": "The report cannot be read right now",
+    "errorText": "The report storage service could not be reached. This does not mean the report was deleted. Retry without changing the link.",
+    "retry": "Open the report again",
+    "expires": "The link is valid for 30 days from saving. Expires: {time} UTC.",
+    "copy": "Copy report link",
+    "accessNote": "Anyone with the full link can open this report. Share it only with people you want to grant access.",
+    "copied": "Report link copied.",
+    "manual": "Automatic copying failed. Select the link below and copy it manually.",
+    "manualLabel": "Full report link"
   }
 }

@@ -31,7 +31,7 @@ function CheckEvidence({check}: {check: ReportCheck}) {
   );
 }
 
-export function LiveReport({report}: {report: Report}) {
+export function LiveReport({report, stored = false}: {report: Report; stored?: boolean}) {
   const t = useTranslations("Report");
   const scoring = useTranslations("Scoring");
   const labels = useTranslations("Checks");
@@ -131,7 +131,7 @@ export function LiveReport({report}: {report: Report}) {
         </section>
       </div>
       <p className="method-note">{common("notQuality")}</p>
-      <p className="small muted report-session-note">{t("temporary")}</p>
+      {!stored && <p className="small muted report-session-note">{t("temporary")}</p>}
     </article>
   );
 }

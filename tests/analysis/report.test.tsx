@@ -60,3 +60,13 @@ it("displays recommendations in the server-provided order with their supplied po
   expect(html).toContain("+1,7 puan");
   expect(html).toContain("+3,4 puan");
 });
+
+it.each(["tr", "en"] as const)("renders stored complete/incomplete reports in %s without a temporary-session claim", locale => {
+  for (const incomplete of [false, true]) {
+    const value = report(incomplete);
+    const html = renderToStaticMarkup(<NextIntlClientProvider locale={locale} messages={locale === "tr" ? tr : en} timeZone="UTC"><LiveReport report={value} stored /></NextIntlClientProvider>);
+    expect(html).toContain("@live-user");
+    expect(html).not.toContain((locale === "tr" ? tr : en).Report.temporary);
+    expect(html).toContain(incomplete ? '<strong>—</strong>' : '<strong>100</strong>');
+  }
+});

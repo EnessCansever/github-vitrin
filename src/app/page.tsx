@@ -11,7 +11,7 @@ export default async function Home() {
 
   return (
     <main id="main" className="shell home-main">
-      <NextIntlClientProvider messages={{Home: messages.Home, Search: messages.Search, Select: messages.Select, Report: messages.Report, Scoring: messages.Scoring, Checks: messages.Checks, Common: messages.Common, Identity: messages.Identity}}>
+      <NextIntlClientProvider messages={{Home: messages.Home, Search: messages.Search, Select: messages.Select, Report: messages.Report, SavedReport: messages.SavedReport, Scoring: messages.Scoring, Checks: messages.Checks, Common: messages.Common, Identity: messages.Identity}}>
         <ProfileSearch preview={<ResultSummary compact />}>
           <p className="eyebrow"><span className="status-dot" />{t("eyebrow")}</p>
           <h1 id="hero-title">{t.rich("title", { accent: (text) => <span className="brand-accent">{text}</span> })}</h1>

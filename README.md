@@ -1,6 +1,6 @@
 # RepoVitrin
 
-Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. Ana sayfa kullanıcı adı veya desteklenen GitHub profil URL'siyle gerçek public profili ve uygun repo adaylarını getirir; 1–3 proje seçilebilir. Seçimden sonra **Sunumu analiz et** eylemi gerçek profil/README verileriyle puan ve kanıt üretir. `/demo`, `/demo/select`, `/demo/states` kurmaca örnekler olarak ayrıdır; gerçek seçim sabit demo puanına yönlendirilmez. A3 gerçek sonuç görünümü kullanıcı tarafından kabul edildi; 5ad54fb uzak CI başarısı kullanıcı ekran görüntüsüyle doğrulandı. A4.1 yalnız ayrı sunucu snapshot katmanını hazırlar; mevcut akış henüz rapor kaydetmez.
+Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. Ana sayfa kullanıcı adı veya desteklenen GitHub profil URL'siyle gerçek public profili ve uygun repo adaylarını getirir; 1–3 proje seçilebilir. **Sunumu analiz et**, sunucuda puan ve kanıt üretip snapshot kaydeder; başarılı kayıt 30 günlük tokenlı rapor adresinde açılır. `/demo`, `/demo/select`, `/demo/states` kurmaca örnekler olarak ayrıdır. A4.1 f81b46c uzak CI başarısı kullanıcı ekran görüntüsüyle doğrulandı; yeni A4.2 rapor görünümü kullanıcı incelemesini bekler.
 
 ## Gereksinimler ve kurulum
 
@@ -19,9 +19,9 @@ Repo seçimi örneği: http://localhost:3000/demo/select
 
 Durum örnekleri: http://localhost:3000/demo/states
 
-TR/EN aynı sayfada kalır ve dil cookie'de tutulur. Gerçek seçim aynı ana sayfada açılır; dil değişimi yeni GitHub isteği göndermez ve seçimleri korur. Yeni aramada eski profil/seçimler temizlenir; geç eski yanıt yeni aramayı ezmez. Sunumu analiz et, sunucuda kimlik/kapsamı yeniden doğrulayıp README verilerini saf motora verir. Sonuç, seçim ve kanıtlar dil değişiminde korunur; veri zamanı değişmez. Eksik analizde toplam/tip hesaplanmaz, bilinen kategoriler görünür. Geri dönüş ve gerçek yeniden veri alma eylemleri vardır. Demo eylemi her zaman bağımsız kurmaca profile gider. Tam sayfa yenilemede canlı seçim ve sonuç belleği sıfırlanır; kalıcı rapor URL’si/cache/geçmiş yoktur.
+TR/EN aynı sayfada kalır ve dil cookie'de tutulur. Gerçek seçim aynı ana sayfada açılır; dil değişimi yeni GitHub isteği göndermez ve seçimleri korur. Yeni aramada eski profil/seçimler temizlenir; geç eski yanıt yeni aramayı ezmez. Sunucuda kimlik/kapsam yeniden doğrulanır, README verileri saf motora verilir ve rapor kaydedilir. Eksik analizde toplam/tip hesaplanmaz, bilinen kategoriler görünür. Kaydedilen rapor adresinde tam yenileme snapshot'ı okur; GitHub veya puanlama çalışmaz. Kaydedilemeyen sonuç ve henüz tamamlanmamış seçim yalnız mevcut sayfa oturumundadır. Cache/cihaz geçmişi yoktur; demo ayrı kurmaca profile gider.
 
-Demo ekranları, testler ve build için secret gerekmez. `.env.example`, `GITHUB_TOKEN`, `MONGODB_URI`, `MONGODB_DB` ve `SIGNING_SECRET` isimlerini boş değerlerle belgeler. GitHub adapter’ı çağrıldığında sunucuda `GITHUB_TOKEN`, yalnız yeni snapshot modülü çağrıldığında MongoDB değişkenleri okunur. Mevcut arayüz veritabanını kullanmaz; `SIGNING_SECRET` henüz kullanılmaz. Gerçek değerleri Git’e veya `NEXT_PUBLIC_` değişkenlerine eklemeyin.
+Demo ekranları, testler ve build için secret gerekmez. `.env.example`, `GITHUB_TOKEN`, `MONGODB_URI`, `MONGODB_DB` ve `SIGNING_SECRET` isimlerini boş değerlerle belgeler. Gerçek analiz için GitHub tokenı, kayıt/okuma için MongoDB değişkenleri gerekir; yalnız çağrı anında sunucuda okunur. MongoDB yoksa hesaplanmış sonuç korunur ama kayıtlı link oluşturulamaz. `SIGNING_SECRET` henüz kullanılmaz. Gerçek değerleri Git’e veya `NEXT_PUBLIC_` değişkenlerine eklemeyin.
 
 ## Kontroller ve production çalıştırma
 
@@ -45,7 +45,8 @@ GitHub Actions, push ve pull request üzerinde `npm ci`, test, lint, typecheck v
 - `src/features/analysis/demo.ts`: sabit kurmaca örnek; puanlama motoru değildir.
 - `src/features/analysis/scoring`: sunucu analiz akışından çağrılan saf puanlama motoru; rulesVersion 1.0.0, Markdown AST ve kanıt/öneri çıktısı. Kurallar ve tespit sınırları [SCORING](docs/SCORING.md) içinde.
 - `src/lib/github`: server-only public adapter, Zod doğrulama, normalize edilmiş veri ve tipli hatalar; mevcut Server Action profil/aday erişimini kullanır.
-- `src/lib/db`: server-only MongoDB native driver havuzu, snapshot şeması ve ayrı create/read fonksiyonları. Mevcut analiz action'ından çağrılmaz.
+- `src/lib/db`: server-only MongoDB native driver havuzu, snapshot şeması ve create/read fonksiyonları; analyze sunucuda ürettiği raporu bu katmana verir.
+- `src/features/reports`, `src/app/reports/[id]`: tokenlı snapshot okuma action'ı, rapor adresi, kopyalama ve güvenli erişim durumları.
 - `src/features/analysis/{live-analysis,live-report,report}`: geçici analiz state’i, güvenli sonuç DTO’su ve sonuç sunumu.
 - `tests/github`, `tests/scoring`, `tests/analysis`, `tests/db`: ağ kullanmayan adapter/action/motor, sonuç render ve sahte DB ile snapshot/bağlantı davranış testleri. Sahte DB testleri gerçek MongoDB entegrasyon kanıtı değildir.
 - `src/config/site.ts`: çalışma markası ve geliştirici bağlantı bilgileri. Bilinmeyen Instagram adresi boştur.
@@ -67,7 +68,7 @@ Profil README'si proje adaylarından bağımsızdır: aynı adlı public repoda,
 
 REST/core ve GraphQL primary limitleri ayrı kaydedilir. Yalnız kısıtlanan kaynak durur; secondary veya kaynağı belirsiz limit iki API'yi de durdurur. Header yokluğu önceki bilinen primary bilgiyi silmez. Gerçek reset geçmişse eski bakiye engeli kaldırılır; reset bilinmiyorsa zaman uydurulmaz. GraphQL HTTP 200 rate-limit hataları da kayda işlenir. Pinned GraphQL primary limiti REST aday erişimini engellemez; secondary limiti başka API üzerinden aşmaya çalışan fallback yoktur. [GitHub API limit kaynakları](https://docs.github.com/en/rest/rate-limit/rate-limit), [secondary limitler](https://docs.github.com/en/graphql/overview/rate-limits-and-query-limits-for-the-graphql-api).
 
-EnessCansever üzerinde profil/pinned/adaylar/profil ve proje README erişimi gerçek adapter ile doğrulandı. Bu opt-in smoke kontrolü npm test/CI içinde çalışmaz; geçici çalıştırıcı kaldırıldı. Ana sayfa gerçek profil, seçim ve analiz sonucuna bağlıdır; çıktı bu sayfa oturumunda tutulur. Güncel kapsam ve kontrol sonuçları [STATUS](docs/STATUS.md) içinde.
+EnessCansever üzerinde profil/pinned/adaylar/profil ve proje README erişimi gerçek adapter ile doğrulandı. Bu opt-in smoke kontrolü npm test/CI içinde çalışmaz; geçici çalıştırıcı kaldırıldı. Ana sayfa gerçek profil, seçim ve analize bağlıdır; başarılı kayıt tokenlı rapor adresinden açılır, kaydedilemeyen çıktı yalnız sayfa oturumunda kalır. Güncel kapsam ve kontrol sonuçları [STATUS](docs/STATUS.md) içinde.
 
 ## A2.2 yerel akış ve yayın sınırı
 
@@ -90,7 +91,7 @@ Sonuç checkedAt UTC ve rulesVersion içerir. İstemciye yalnız profil ID/login
 
 ## A4.1 snapshot katmanı ve sonraki yerel kurulum
 
-Yalnız sunucudan `createSnapshot(report)` ve `readSnapshot(id, readToken)` kullanılabilir. Bunlar Server Action/public API değildir ve mevcut analize bağlanmadı. Bu nedenle şu an MongoDB olmadan mevcut uygulama, testler ve build çalışır; kalıcı rapor sayfası/bağlantısı henüz yoktur.
+Yalnız sunucudan `createSnapshot(report)` ve `readSnapshot(id, readToken)` kullanılabilir. A4.2 analyze action'ı bunları kullanır; istemciden rapor/puan kabul edilmez. Demo/test/build MongoDB olmadan çalışır. Gerçek analiz kayıt başarısızlığında sonucu geçici olarak gösterir; başarılı kayıt ayrı tokenlı rapor adresine gider.
 
 Sonraki gerçek entegrasyon kontrolü için kullanıcı kendi MongoDB/Atlas geliştirme veritabanını hazırlayıp ignore edilen `.env.local` dosyasına `MONGODB_URI` ve `MONGODB_DB` değerlerini kendisi eklemelidir. URI `mongodb://` veya `mongodb+srv://`, ayrı DB adı 1–63 ASCII harf/rakam/tire/alt çizgi olmalıdır; varsayılan `test` veritabanı seçilmez. Örnekteki değerler bilinçli olarak boştur. Atlas'ta yalnız ilgili veritabanına `readWrite` yetkili bir database user ve yerel bağlantının IP access list izni yeterlidir; geniş yönetici rolü gerekmez. [Database user kurulumu](https://www.mongodb.com/docs/atlas/security-add-mongodb-users/), [readWrite yetkileri](https://www.mongodb.com/docs/manual/reference/built-in-roles/#readwrite), [IP access list](https://www.mongodb.com/docs/atlas/security/ip-access-list/). URI/parolayı paylaşmayın veya loglamayın; gerçek hesap/secret bu dilimde oluşturulmadı/istenmedi.
 
@@ -102,4 +103,12 @@ Yazımda `ignoreUndefined:true`, bulunmayan optional kanıt alanlarının driver
 
 Sözleşme §7'deki **30 gün TTL** uygulanır: expiresAt=createdAt+30 gün, ilk yazım öncesi idempotent `expiresAt` TTL indeksi kurulur; `_id` MongoDB'nin unique indeksidir. [TTL temizliği gecikebilir](https://www.mongodb.com/docs/manual/core/index-ttl/); okuma ayrıca süreyi kontrol eder. Başka silme politikası/indeks, cache, karşılaştırma veya public paylaşım eklenmedi. Complete ve incomplete kayıtlar ayrı durumlarıyla saklanabilir; incomplete toplam/tip null kalır ve karşılaştırılabilir tam analiz sayılmaz.
 
-29 Ekim 2026 opt-in yerel smoke kontrolünde, kullanıcının hazırladığı repovitrin_dev Atlas veritabanında mevcut modüllerle bağlantı/indeks, complete ve incomplete BSON yaz/oku, yanlış token/bulunmayan kimlik ve expiry reddi **gerçekten doğrulandı**. Yalnız o çalıştırmanın üç sentetik kaydı kimlikleriyle temizlendi; geçici çalıştırıcı kaldırıldı. Fiziksel otomatik TTL silinmesi gözlenmedi; indeks tanımı bunun kanıtı sayılmaz. Ayrıntı [STATUS](docs/STATUS.md) içinde. Deterministik testler hâlâ sahte driver/collection kullanır; normal test/CI gerçek DB veya secret gerektirmez. Snapshot yazımı normal analizde otomatik başlamaz; kalıcı rapor URL'si veya public erişim henüz yoktur.
+29 Ekim 2026 A4.1 opt-in smoke kontrolünde repovitrin_dev Atlas bağlantısı/indeks, complete/incomplete BSON yaz/oku, yanlış token/bulunmayan kimlik ve expiry reddi doğrulandı; o turun üç kaydı temizlendi. A4.2 gerçek analiz → kayıt → rapor → yenileme/dil ve hata/retry kontrolleri [STATUS](docs/STATUS.md) içindedir. Deterministik testler hâlâ sahte driver/collection kullanır; normal test/CI gerçek DB veya secret gerektirmez.
+
+## A4.2 rapor adresleri ve gizlilik
+
+Başarılı analiz `/reports/[id]#token=…` adresine gider. Tam bağlantı 30 gün boyunca raporu okumaya yetkilidir; sayfa veri zamanı ve son geçerliliği gösterir. Tokenı/linkin tamamını loglara, issue'lara veya ekran görüntülerine koymayın. Yeni analiz mevcut snapshot'ı değiştirmez. Sosyal OG/PNG, ayrı shareReports, kullanıcı dizini veya username ile rapor arama yoktur.
+
+Fragment sunucuya URL olarak gitmez; tarayıcı JavaScript'i tokenı doğrulayan okuma action'ının gövdesine aktarır. Rapor sayfası genel noindex/no-referrer metadata ve private/no-store HTTP başlıkları taşır; rapor verisi/URL metadata'ya eklenmez. Tam yenileme ve dil değişimi mevcut snapshot'ı okur/korur, GitHub isteği veya yeni skor üretmez. JS kapalıyken bu fragment erişim akışı çalışmaz. [Fragment davranışı](https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Fragment).
+
+“Rapor bağlantısını kopyala” gerçek clipboard sonucunu bildirir; izin/API yoksa readonly alandan elle kopyalama mümkündür. Bağlantıya sahip kişilerin okuyabileceği açıklanır. Geçersiz/eksik/süresi dolmuş erişim ortak güvenli ekran; DB hatası ayrı yeniden deneme ekranıdır. Kayıt başarısızsa hesaplanmış sonuç kaybolmaz; yeniden analiz edip kaydetme yeni GitHub verilerini alır, client raporunu yüklemez. Bu sonuç tam yenilemede kaybolur. Gerçek raporları public deployment'a çıkarma yetkisi/hazırlığı yoktur; dağıtık abuse/cache/lock sonraki kapsamdır.

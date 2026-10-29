@@ -45,3 +45,11 @@ Mevcut raporun profil kimliği/login'i, veri zamanı, seçili repo kapsamı, sü
 ## Belge sınırları
 
 Puanlama SCORING.md, teknik yapı ARCHITECTURE.md, görsel kurallar DESIGN.md içindedir. Paylaşım ve karşılaştırma kapsamı bu belgelerle birlikte uygulanır. Mevcut ilerleme STATUS.md ve TASKS.md ile takip edilir.
+
+## A4.2 — kayıtlı gerçek rapor bağlantısı
+
+A4.1 f81b46c commit'i ve uzak CI başarısı kullanıcı ekran görüntüsüyle sağlanan doğrulamadır. Yeni dilimde gerçek analiz sunucuda üretildikten sonra immutable snapshot kaydedilir; complete/incomplete kuralları değişmez. Başarılı kayıt aynı Developer ID sunumunu kullanan /reports/[id] adresinde açılır. Okuma tokenı tam adresin #token=… bölümüdür; linke sahip kişiler süresi boyunca okuyabilir. Bu, 30 günlük snapshot erişimidir; A5'teki ayrı 90 günlük shareReports/sosyal paylaşım kopyası değildir.
+
+Veri zamanı ve kayıttan itibaren 30 günlük bitiş açık gösterilir. Yenileme/raporu açma/dil değişimi GitHub verisi almaz veya yeniden puanlamaz. Tam bağlantı kopyalama ve clipboard yoksa elle kopyalama vardır; erişim linki token içerdiğinden log/metadata'ya girmez, raporlar indekslenmez/listelenmez. Fragment'i okuyan tarayıcı JavaScript'i gerekir; sunucu tokenı doğrular ve snapshot okur.
+
+Kayıt hatasında hesaplanan sonuç geçici olarak ekranda kalır; kaydedilmediği ve tam yenilemede kaybolacağı açıklanır. Yeniden deneme istemcideki raporu kaydetmez; aynı seçimi sunucuda yeniden doğrulayıp güncel GitHub verilerinden yeni analiz/kayıt yapar. Önceki hesaplanmış sonuç beklerken veya yeni istek hatasında korunur. Yeni analiz eski snapshot'ı değiştirmez. Cache, karşılaştırma, dağıtık limit, paylaşım görseli ve yayın bu dilimde yoktur.

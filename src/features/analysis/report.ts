@@ -10,4 +10,13 @@ export type Report = Omit<AnalysisResult, "checks"> & {
   })[];
 };
 export type AnalysisError = SearchError | "selectionChanged";
-export type AnalysisResponse = {status: "success"; report: Report} | {status: "error"; code: AnalysisError};
+export type SnapshotAccess = {id: string; readToken: string};
+export type AnalysisResponse = {
+  status: "success";
+  report: Report;
+  snapshot: ({status: "saved"} & SnapshotAccess) | {status: "failed"};
+} | {status: "error"; code: AnalysisError};
+
+export type StoredReportResponse = {
+  status: "success"; report: Report; expiresAt: string;
+} | {status: "missing" | "unavailable"};
