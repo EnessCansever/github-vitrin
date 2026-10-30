@@ -370,3 +370,17 @@ Yatayın eski nokta dokusu kaldırılıp aynı yerel JPEG/maskeler PrintTexture 
 Aynı 16 sentetik girdide eski/yeni Story PNG byte eşitliği doğrulandı; motor, adapter, snapshot, puan/sıra, token/expiry/incomplete ve indirme akışı değişmedi. Yatay tam/390px PNG'ler açıldı; yeni teknik kontroller ve çıktılar STATUS'tadır. Yeni uzak CI, gerçek servis/indirme akışı veya fiziksel paylaşım bu tur doğrulanmış sayılmaz. Genel görsel kabul ve kullanıcı commit/push açık; aynı commitlenmemiş A5.1 paketidir.
 
 Etkilenen dosyalar: src/features/cards/image.tsx, src/features/cards/assets/README.md, AGENTS.md, docs/{DESIGN,ARCHITECTURE,DECISIONS,STATUS,TASKS}.md.
+
+### D033 — A5.1 kabulü ve ilk yayın kapsamının korunması — 31 Ekim 2026
+
+Kullanıcı A5.1 Story/yatay görünümlerini kabul etti ve **0f3d6c5 — feat: add Developer ID share cards** commit/push bilgisini verdi. Tam SHA yerel HEAD ile **0f3d6c5570e7a6bdade0d3b44ac253102ca4c4d9** olarak doğrulandı. **GitHub Actions CI #11 başarısı kullanıcı ekran görüntüsüne dayanan doğrulamadır**; bu tur bağımsız uzak sorgu yapılmadı. Böylece yalnız iki formatlı ilk analiz kartı/önizleme/indirme diliminin kabul kapısı kapanır. Önceki ajan değerlendirmeleri kabul sayılmaz; fiziksel telefon veya sosyal platform başarısı çıkarılmaz.
+
+Karar: Daha dar bir ilk yayın kullanıcı tarafından ayrıca onaylanmadığı için kaynak sözleşmenin v1 / A0–A6 kapsamı korunur. Kalan kapsam, kod kanıtı, yayın zorunluluğu ve önerilen bağımlılık sırası TASKS'ın tek tablosunda tutulur; yeni gereksinim veya uygulama yetkisi değildir. A4 önbellek/atomik throttle/kilit/uyumlu karşılaştırma, A5 üçüncü boyut/gelişim kartları/görsel cache/shareReports/SSR OG ve A6 kalite/yayın hazırlığı açık kalır. A7 pilot/anonim ölçümler ilk deploy sonrası v1 dağıtım işidir; BACKLOG'a veya v2'ye taşınmaz.
+
+Gerekçe: Kabul edilen PNG ile otomatik OG aynı teslim değildir. Mevcut 30 günlük fragment tokenlı snapshot erişimi korunur; ayrı 90 günlük kullanıcı onaylı shareReports ve yönetim/silme kontrolü uygulanmadan public paylaşım tamamlandı denemez. OG botlarının fragment'e erişememesi private tokenı query/path'e taşıma yetkisi vermez. Aynı biçimde GitHub işleminin 20s sınırı/istemci çift tıklama koruması, toplam action süresi ve dağıtık abuse korumasının yerine geçmez. Kaynakta örnek verilen kotalar bu tur sabit üretim kararı yapılmadı; tanımlanmamış cihaz/OS matrisi veya sosyal entegrasyon eklenmedi.
+
+Önerilen tek sonraki uygulama dilimi **A4 atomik throttle veri katmanı**dır (geçici öneri adı A4.3a): mevcut MongoDB native driver ile rateLimits atomik sayaç/expiry/TTL ve secretsız davranış testleri. Önce ortak veri davranışını doğrulamak, sonra güvenilir hosting/proxy kaynağı ve uçlara entegrasyonu ele almak için küçük bir sınırdır. Bu tur uygulanmadı/onaylanmış sonraki aşama sayılmadı; action/UI, session/IP üretimi, cache/kilit, paylaşım ve yayın eklenmez. Veri katmanı tek başına yayın için yeterli koruma değildir.
+
+Yalnız durum/görev/karar belgeleri değişir. Önceki revizyonların kabul bekleme kayıtları tarihsel olarak korunur; güncel kabul STATUS/TASKS ve bu kayıttır. Tasarım/ürün/puanlama/stack/erişim sözleşmesi değişmedi. Uygulama değişmediği için rutin testler tekrarlanmadı; belge diff ve tutarlılık kontrolü yapıldı. Stage/commit/push/yayın yoktur.
+
+Etkilenen dosyalar: docs/{STATUS,TASKS,DECISIONS}.md.

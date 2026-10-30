@@ -4,7 +4,33 @@ Son güncelleme: 31 Ekim 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A5.1 — yatay 1200×630 Developer ID afiş revizyonu uygulandı; genel kullanıcı görsel kabulü bekleniyor.** Son uzun EN Story mühür/başlık/footer doğruluğu kullanıcı bildirimi olarak kaydedildi; Story tasarımı korunur. Güncel yetki yalnız yataydır. Başlangıç HEAD 257acff, index boş, önceki A5.1 paketi commitlenmemişti ve korundu. A4/A5 açık işleri kapanmaz; stage/commit/push/yayın veya sonraki dilime geçiş yapılmadı.
+**A5.1 — Story/yatay önizleme ve PNG indirme dilimi kullanıcı görsel kabulü, commit/push ve kullanıcı tarafından sağlanan uzak CI doğrulamasıyla kapandı.** Güncel HEAD 0f3d6c5. Bu tur yalnız kabul kaydı ve ilk yayına kalan kapsamın belge incelemesidir; yeni uygulama dilimi başlamadı. A4/A5 bütünü ve yayın hazırlığı açık; aşağıdaki güncel kayıt önceki tarihsel kabul/commit bekleme durumlarının yerini alır.
+
+## A5.1 kabulü ve ilk yayına kalan kapsam — 31 Ekim 2026
+
+- Kullanıcı Story ve yatay görünümleri açıkça kabul etti. Önceki ajan değerlendirmesi veya test başarısı kabulün kaynağı değildir.
+- Kullanıcı commit/push bilgisini verdi: **0f3d6c5 — feat: add Developer ID share cards**. Yerel HEAD **0f3d6c5570e7a6bdade0d3b44ac253102ca4c4d9** ve başlangıçta temiz çalışma ağacı/boş index doğrulandı.
+- **GitHub Actions CI #11 başarılı:** kaynak kullanıcının ekran görüntüsüne dayanan doğrulamadır. Bu tur uzak API/CLI sorgusu yapılmadı; bağımsız CI doğrulaması veya yeni yerel test sonucu değildir. Çalışma bağlantısı verilmediğinden URL uydurulmadı.
+- A5.1'in önceki 355 test, build/lint/typecheck, PNG boyut/inceleme ve gerçek önizleme/indirme kanıtları tarihsel kayıtlar olarak korunur. Bu tur fiziksel telefonda kaydetme/paylaşım veya sosyal platform testi yapılmadı ve yapılmış sayılmaz.
+
+İlk yayına kalan işlerin **tek kapsam tablosu**, sözleşme maddesi, kod kanıtı, yayın zorunluluğu ve önerilen bağımlılık sırasıyla [TASKS — İlk yayına kalan kapsam](TASKS.md#ilk-yayına-kalan-kapsam--31-ekim-2026) bölümündedir. Daha dar bir ilk yayın ayrıca onaylanmadığı için esas alınan teslim v1 / A0–A6'dır; A7 ilk deploy sonrası dağıtım/ölçümdür, v2'ye ertelenmiş değildir. BACKLOG'daki gerçek v1 dışı fikirler ayrıca ayrıldı. Tablo yeni uygulama veya yayın yetkisi vermez.
+
+### Kapsam ayrımları ve açık noktalar
+
+- **A4:** 15 dakikalık analiz önbelleği, atomik dağıtık throttle/kilit, aynı isteği birleştirme ve uyumlu iki complete snapshot karşılaştırması/cihaz geçmişi eksiktir. A4.1/A4.2 kapanışı bu A4 kabul kriterlerini kapatmaz.
+- **A5:** İki formatlı ilk analiz kartı kabul edildi; 1080×1350, gelişim kartları, görsel cache, ayrı shareReports yaşam döngüsü ve server-rendered OG hâlâ v1 kapsamındadır. İndirilebilir 1200×630 PNG otomatik sosyal link önizlemesi değildir.
+- **Erişim ayrımı:** Mevcut 30 günlük private snapshot, fragment read tokenıyla JS/action üzerinden açılır. Sosyal bot fragment'i sunucuya göndermez. Sözleşmenin 90 günlük, açık kullanıcı işlemiyle oluşturulan ve yönetim/silme tokenı olan ayrı shareReports nesnesi henüz yoktur. OG için private tokenı path/query'ye taşımak veya mevcut snapshot'ı kendiliğinden public yapmak çözüm sayılmaz.
+- **Yayın güvenliği:** GitHub transport'unda 20s/40 istek sınırı vardır; DB adımları ayrı timeout kullanır. Tüm analiz işleminin 20 saniyeye sığdığı doğrulanmış değildir; bu bir ölçülmüş arıza iddiası değil, sözleşme §7/§9 kapsamında kapatılacak sınırdır. Kalıcı dağıtık koruma, güvenli operasyon logları, son bağımlılık/secret incelemesi ve hosting/proxy ayarları da açıktır. D011 ESLint destek sınırlaması yeniden değerlendirilmeli; bu tur yükseltme kararı verilmedi.
+- **A6/A7:** Kalıcı kritik E2E/erişilebilirlik kontrolleri, farklı gerçek hesaplarda son doğruluk kontrolü, gizlilik/metodoloji sayfaları, final README ve yetkili yayın hazırlığı açık. Fiziksel telefon indirme/okunurluk kanıtı yoktur; mobil kalite kabulüyle gerçek sosyal platform paylaşımı ayrı kontrollerdir. Sözleşmede bulunmayan bir OS/cihaz sayısı veya otomatik Instagram entegrasyonu zorunluluğu eklenmedi. A7 pilot ve anonim ölçümler ilk dağıtımdan sonra gelir.
+- Önceki görev dilimlerinin sınırı ile v1 nihai kapsamı karıştırılmamalı. Diğer belgelerdeki eski “görsel kabul açık / güncel yetki yalnız Story” ifadeleri o revizyonların kaydıdır; güncel kabul bu bölüm, TASKS ve D033'tür. Kullanıcının belge kapsamı gereği bu tur AGENTS/DESIGN veya ürün/mimari sözleşmeleri yeniden yazılmadı. Ağırlık, tasarım ve erişim kuralları değiştirilmedi; yeni bir kapsam daraltma kararı alınmadı.
+
+**Önerilen tek sonraki dilim:** A4'ün kalanından **atomik throttle veri katmanı** (öneri adı A4.3a). Mevcut native driver ile rateLimits için atomik sayaç, uygulama expiry denetimi ve TTL; eşzamanlı tüketim/sınır/süre dolumu/DB hata davranışı testleri. Yalnız sunucunun ürettiği opak anahtarlar, ham IP olmadan. Action/UI entegrasyonu, session/IP üretimi, cache/kilit, OG veya yayın bu ilk dilimde yoktur. Bu öneri henüz yetkilendirilmedi/uygulanmadı; yalnız veri katmanı bitince dağıtık abuse koruması tamamlandı denemez. Gerçek Atlas kontrolü ve uçlara entegrasyon ayrıca kalır.
+
+### Bu tur doğrulama
+
+Kaynak sözleşme, AGENTS ve sekiz proje belgesi okundu; uygulama girişleri, snapshot erişimi, kart üretimi, metadata, bağımlılıklar ve CI tanımı kalan kapsamı belirleyecek ölçüde salt okunur incelendi. Yalnız STATUS/TASKS/DECISIONS güncellendi. Belge diff/bağlantı ve kapsam tutarlılığı kontrol edildi; uygulama kodu değişmediğinden npm test/lint/typecheck/build tekrar çalıştırılmadı. Tarayıcı, canlı GitHub/Atlas, fiziksel cihaz, uzak CI veya deploy kontrolü yapılmadı. Stage/commit/push/yayın ve sonraki dilime geçiş yoktur.
+
+Belge commit kapsamı: docs/STATUS.md, docs/TASKS.md, docs/DECISIONS.md. Öneri: **docs: record A5.1 acceptance and release scope**. A4/A5/A6 açık kabul maddeleri korunur; sıradaki somut adım kullanıcı yeni dilimi yetkilendirene kadar beklemektir.
 
 ## A5.1 yatay afiş revizyonu — 31 Ekim 2026
 
