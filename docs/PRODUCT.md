@@ -53,3 +53,14 @@ A4.1 f81b46c commit'i ve uzak CI başarısı kullanıcı ekran görüntüsüyle 
 Veri zamanı ve kayıttan itibaren 30 günlük bitiş açık gösterilir. Yenileme/raporu açma/dil değişimi GitHub verisi almaz veya yeniden puanlamaz. Tam bağlantı kopyalama ve clipboard yoksa elle kopyalama vardır; erişim linki token içerdiğinden log/metadata'ya girmez, raporlar indekslenmez/listelenmez. Fragment'i okuyan tarayıcı JavaScript'i gerekir; sunucu tokenı doğrular ve snapshot okur.
 
 Kayıt hatasında hesaplanan sonuç geçici olarak ekranda kalır; kaydedilmediği ve tam yenilemede kaybolacağı açıklanır. Yeniden deneme istemcideki raporu kaydetmez; aynı seçimi sunucuda yeniden doğrulayıp güncel GitHub verilerinden yeni analiz/kayıt yapar. Önceki hesaplanmış sonuç beklerken veya yeni istek hatasında korunur. Yeni analiz eski snapshot'ı değiştirmez. Cache, karşılaştırma, dağıtık limit, paylaşım görseli ve yayın bu dilimde yoktur.
+
+
+## A5.1 — kayıtlı complete raporun ilk PNG kartı
+
+A4.2 kabulü/commit'i kapandı; 257acff9b8a86d62db5a8beda94f0bf68f42d6b4 CI başarısı kullanıcının ilettiği Codex public API doğrulamasıdır ([çalışma](https://github.com/EnessCansever/github-vitrin/actions/runs/40792217446)); bu tur bağımsız sorgulama yapılmadı. Kullanıcının yeni yetkisi A4'ün açık cache/karşılaştırma/dağıtık limit maddelerini kapatmaz.
+
+Bu dilimde erişimi doğrulanmış, süresi dolmamış complete snapshot'tan iki ayrı kompozisyon üretilir: Story 1080×1920 ve yatay 1200×630. Yatay çıktı indirilebilir PNG'dir; otomatik OG/link önizlemesi değildir. Gönderi 1080×1350, gelişim kartı, ayrı shareReports ve sosyal paylaşım sonraki dilimlerdir.
+
+Kart kayıtlı profil tipini, kullanıcı adını, toplam/kategori puanlarını, motorun ilk önerisini ve repo/profil hedefini, UTC analiz tarihini, portfolyo sunumu notunu ve config'teki marka/yazar imzasını taşır. Öneri yoksa eksiklik/gelişim uydurulmaz. Incomplete rapor okunabilir kalır ancak puanlı kart üretilemez. Demo indirmesi eklenmez.
+
+Önizleme indirmeden önce bu bilgileri göstereceğini açıklar; format rapor diline uyar. Üretim yalnız mevcut raporu okur; GitHub erişimi, yeniden puanlama, snapshot yazımı veya süre uzatma yoktur. Aynı PNG önizlenir ve kullanıcının açık indirme eylemiyle tarayıcıya verilir. İndirme isteği, cihazda kaydetme veya gerçek sosyal paylaşım başarısı diye raporlanmaz. Kartta token, erişim bağlantısı, QR, uydurma alan adı/Instagram adresi veya sahiplik/doğrulanmışlık iddiası yoktur.

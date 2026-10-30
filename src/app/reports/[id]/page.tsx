@@ -13,7 +13,7 @@ export default async function ReportPage({params}: {params: Promise<{id: string}
   return (
     <main id="main" className="shell prototype-main">
       <h1 className="stored-report-title">{t("title")}</h1>
-      <NextIntlClientProvider messages={{SavedReport: messages.SavedReport, Report: messages.Report, Scoring: messages.Scoring, Checks: messages.Checks, Common: messages.Common, Identity: messages.Identity}}>
+      <NextIntlClientProvider messages={{Card: messages.Card, SavedReport: messages.SavedReport, Report: messages.Report, Scoring: messages.Scoring, Checks: messages.Checks, Common: messages.Common, Identity: messages.Identity}}>
         <ReportAccess key={id} id={id} />
       </NextIntlClientProvider>
     </main>

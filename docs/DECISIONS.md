@@ -314,3 +314,59 @@ Analyze yalnız kendi GitHub/motor çıktısını createSnapshot'a verir. Kayıt
 Mevcut LiveReport/IdentityCard, locale ve hareket/focus yaklaşımı korunur; stored modu yalnız geçici notu kaldırır. Yeni action/rota testleri secretsızdır. Yerel production sunucusundaki GitHub sayacı gerçek fetch'e delege eden geçici ölçümdür, mock/fallback değildir; CI'a eklenmez. Test/env hata enjeksiyonu yalnız ayrı test process'inde yapılır; kullanıcı env dosyasına veya dev sunucusuna dokunulmaz. Kullanıcı görsel kabulü ve yeni commit sonrası uzak CI açık kalır.
 
 Etkilenen dosyalar: next.config.ts; src/app/{page.tsx,globals.css,reports/[id]/page.tsx}; src/features/analysis/{actions,report,live-analysis,live-report}; src/features/reports/{actions,link,report-access,copy-link}; src/messages/{tr,en}.json; tests/github/analysis.test.ts, tests/analysis/{report.test.tsx,saved-report.test.ts}; AGENTS.md, README.md, docs/{PRODUCT,ARCHITECTURE,DESIGN,DECISIONS,STATUS,TASKS}.md. Motor/adapter/DB şeması/demo/package/lock değişmez.
+
+
+### D029 — A5.1 iki formatlı PNG ve erişim kontrollü preview — 29 Ekim 2026
+
+Kullanıcı A4.2 257acff9b8a86d62db5a8beda94f0bf68f42d6b4 CI başarısını Codex public API doğrulamasıyla iletti ([run 40792217446](https://github.com/EnessCansever/github-vitrin/actions/runs/40792217446)). Bu kayıt kullanıcı tarafından sağlanan doğrulamadır; bu tur bağımsız CI sorgusu değildir. Önceki görsel/yerel kabul ile A4.2 kapanır, A4'ün cache/karşılaştırma/dağıtık limit bütünü açık kalır. Yeni açık yetki planın A5 Paylaşım aşamasının yalnız **A5.1 ilk kart, preview, iki PNG indirme** dilimidir.
+
+Mevcut Next `next/og` ImageResponse, yerel statik TTF ve tam çözünürlükte PNG'yi yeni bağımlılık gerektirmeden sağlar. CSS sınırlılığına uygun iki ayrı flex/SVG kompozisyon seçildi; ekran görüntüsü ölçekleme veya client canvas/font yükleme yarışları kullanılmaz. Kesintisiz uzun adlarda Satori overflow-wrap kuralını uygulamadığı için yalnız login/repo alanlarında desteklenen word-break:break-all seçildi ve gerçek PNG ile doğrulandı. Statik Barlow/IBM Plex dosyaları mevcut lisanslarıyla yeterlidir; değişken Manrope için yeni font veya dönüştürücü gerekmez. [Resmi renderer](https://nextjs.org/docs/app/api-reference/functions/image-response), [font koşulları](https://github.com/vercel/satori#fonts).
+
+Render yeni Server Action üzerinden mevcut snapshot erişimini her seferinde doğrular; token yalnız gövdededir. Client skor/raporu kabul edilmez, complete/null engeli sunucudadır. Preview ve download aynı PNG byte'larıdır. Base64 action yanıtı iki sınırlı kompozisyon için en küçük çözümdür; ayrı public dosya/OG endpointi, yeni saklama nesnesi veya imzalı URL gerektirmez. Rapor/motor/GitHub/süre değişmez. Format/dil istek kimliği eski yanıtı dışlar; native format ve download eylemleri ayrı pending/geri bildirim taşır. Download bildirimi tarayıcıya istek iletildiğini söyler; sosyal paylaşım veya fiziksel kaydetme iddia etmez.
+
+Yatay 1200×630 bu dilimde yalnız indirilebilir görseldir. 1080×1350, gelişim/karşılaştırma kartı, otomatik OG, ayrı shareReports/sosyal API ve yayın yetkisi yoktur. Demo indirmesi eklenmez. Kullanıcı görsel kabulü ve yeni commit sonrası CI açık kalır.
+
+Etkilenen dosyalar: src/features/cards/{types,content,image,actions,card-studio}; src/features/reports/report-access.tsx; src/app/{globals.css,reports/[id]/page.tsx}; src/messages/{tr,en}.json; tests/cards/{content,actions,image}.test.ts, tests/cards/studio.test.tsx; AGENTS.md, README.md, docs/{PRODUCT,ARCHITECTURE,DESIGN,DECISIONS,STATUS,TASKS}.md. Package/lock, motor/adapter/snapshot katmanı ve demo fixture değişmez.
+
+
+### D030 — A5.1 paylaşım afişi ve statik Manrope — 29 Ekim 2026
+
+Kullanıcı önceki krem PNG taslağına görsel kabul vermedi; bu tur yalnız paylaşım görsellerini Developer ID referansının sağ panelindeki **kobalt afiş** diline dönüştürmeyi yetkilendirdi. Referans gerçekten açıldı. Ana sayfa/raporun koyu arayüz + krem kimliği kabul edilmiş olarak kalır; D029'un PNG estetiği bu karar tarafından değiştirilir. Önceki commitlenmemiş A5.1 veri/erişim/preview/indirme işleri korunur.
+
+Story ve yatay ayrı yerleşimlerdir. Dev krem Barlow başlık/puan, kısa lime sunum mührü, ince çizgiler ve sınırlı SVG yön işaretleri kullanılır. Gövde/öneriler Manrope, kimlik/metadata mono olur. İki dilli başlık satırları ve “GitHub vitrin puanı / GitHub portfolio score” ile kısa davet yalnız Card mesajlarına aittir; rapor metni, profil tipi hesaplaması/puanlar veya fixture değiştirilmez. Tarih/kapsam/ilk öneri/config imza korunur. Sabit SVG noktaları ve birkaç kenar izi doku sağlar; bitmap referans, Math.random/clock, barkod/seri numarası veya yeni bağımlılık kullanılmaz. Aynı girdiden PNG byte eşitliği mevcut renderer testine eklendi.
+
+Mevcut Manrope-Variable.ttf, kurulu next/og font parser'ında **parseFvarAxis: Cannot read properties of undefined (reading '256')** verdi. Runtime/parser patch'i veya dönüştürücü eklemek yerine [etkin upstream'in sabit commit'indeki statik Manrope Medium](https://github.com/aaronbell/manrope/blob/468c0dbe38efa331b80bfe9448256abe27be44c3/fonts/ttf/manrope-medium.ttf) yerel font olarak eklendi. 144696 byte, SHA-256 502ee33a6e140ad6ef10ef8b762a8e5cf01f33316f318800795725f4cfd539d9. Upstream OFL metni mevcut manrope-OFL.txt ile whitespace hariç eşleşti; telif/lisans değiştirilmedi. Kaynak dosya değiştirilmeden yerel Manrope-Medium.ttf adıyla tutulur; UI değişken fontu korunur. Runtime'da font/GitHub servisi çağrısı yoktur; font edinimi bu turdaki tek public kaynak varlığı indirmesidir.
+
+Erişim/token/expiry, incomplete, pending/çift istek/retry, PNG preview/download eşitliği korunur; action/CardStudio/DB/motor/adapter yeniden yazılmaz. GitHub kullanıcı verisi/Atlas akışı bu tur tekrarlanmaz; yeni OG/public paylaşım/yayın yetkisi yoktur. Yeni ve eski çıktı dizinleri ayrı tutulur. Teknik/yerel görsel doğrulama kullanıcı kabulü değildir; A5.1 kabulü ve yeni uzak CI açık kalır. Revizyon aynı commitlenmemiş A5.1 paketine dahildir.
+
+Etkilenen dosyalar: src/features/cards/{image,content,types}.ts(x), src/messages/{tr,en}.json, src/app/fonts/{Manrope-Medium.ttf,README.md}, tests/cards/{content,actions,image}.test.ts, AGENTS.md, docs/{DESIGN,ARCHITECTURE,DECISIONS,STATUS,TASKS}.md.
+
+
+### D031 — Story referans ölçümü ve yerel baskı malzemesi — 29 Ekim 2026
+
+Kullanıcı A5.1'e görsel kabul verilmediğini açıkça belirtti. Önceki “kabul edilebilir / commit edilebilir” ajan değerlendirmesi kabul kaydı değildir. Bu tur yalnız Story kompozisyonu/dokusu düzeltilir; yatay revizyon Story kullanıcı kabulünden sonraya bırakılır. Önceki A5.1 işlev paketi commitlenmemiştir ve korunur.
+
+Konseptin sağ 419×716 paneli ayrı inceleme kırpımıyla ölçüldü; marka, başlık, mühür, kimlik ve puan oranları DESIGN'a yazıldı. 1080×1920 Story'de 210px üst/244px alt güvenli alan korunur. Başlık Barlow gerçek advance ölçüsüyle iki/üç satıra oturur; tip kelimeleri/puan/sıra değişmez. Mühür yaklaşık %28 genişlik, kategori tek şerit, görev/hedef ayrı, imza/tarih iki satırdır. Başlığın sıkı büyük blok olması ve destekleyici alanın sadeleşmesi referansın afiş hiyerarşisini izler.
+
+Story'deki eşit SVG noktaları yerine, yalnız tasarım sırasında imagegen ile üretilmiş yazısız gri kâğıt malzemesi yerelleştirildi. JPEG 461800 byte; köken/SHA assets/README.md içinde. Mevcut Sharp yalnız geçici varlık kodlama/inceleme aracı olarak kullanıldı; yeni bağımlılık veya uygulama Sharp import'u yoktur. Sabit SVG renk/alpha maskesi lif/kenar/kıvrım ve hafif harf aşınması oluşturur. Runtime üretken araç, rastgelelik, harici kaynak veya referans görseli kopyası yoktur. JPEG lazy yüklenir; Satori'nin embedded image keşfi için Story saf element ağacı önceden açılır. İlgili PNG tekrarında byte eşitliği ve production dosya izi doğrulandı.
+
+Aynı sentetik girdide yatay eski/güncel PNG byte eşittir; ortak yazı/renk/Stamp/Texture ve yatay kompozisyon değişmedi. Action/preview/token/expiry/incomplete/indirme davranışı, motor/adapter/snapshot/fixture, ana sayfa/rapor, mesajlar ve bağımlılıklar bu tur değiştirilmedi. Yeni Story PNG'leri ayrı /tmp klasöründe, önceki çıktılar korunuyor. Görsel kabul ve yeni uzak CI açık kalır; bir sonraki dilime geçilmez.
+
+Etkilenen dosyalar: src/features/cards/image.tsx, src/features/cards/assets/{letterpress-paper.jpg,README.md}, AGENTS.md, docs/{DESIGN,ARCHITECTURE,DECISIONS,STATUS,TASKS}.md. Revizyon aynı commitlenmemiş A5.1 paketinin parçasıdır.
+
+
+D031 ince ayarı — 29 Ekim 2026: Kullanıcı kompozisyon/başlık yönünü uygun buldu; tam görsel kabul vermedi. Yalnız Story mührünün açık metin ölçüleri/satır yüksekliği ve mevcut doku maskelerinin yoğunluğu düzenlendi. Yeni sistem/bağımlılık veya yerleşim değişikliği yoktur; yatay aynı kaldı. Önceki yerel story-long.png tam çözünürlükte kesilmeyi göstermediğinden birebir kök neden doğrulanmış sayılmaz; yeni çıktıların iki dil/dört tip mühürleri açılarak tam metin kontrol edildi. Etkilenen dosyalar: src/features/cards/image.tsx, docs/{DESIGN,STATUS,TASKS,DECISIONS}.md. Aynı commitlenmemiş A5.1 paketidir.
+
+
+D031 uzun Story düzeltmesi — 29 Ekim 2026: Kullanıcı dokuyu/normal TR görünümünü uygun buldu; tam Story kabulü vermedi. Geçici Satori yerleşim ölçümü önceki uzun EN son başlık kutusunun mühür altına yaklaşık 7px girdiğini gösterdi; bu, PROFILE satırında gözlenen harf kaybının kesin kök nedeni olarak sunulmaz. Yerelde eski tam PNG'de harf kaybı ve footer bitişmesi birebir üretilemedi. Buna karşılık üç satırlı başlıklara 604px sol alan/300px sağ mühür ve en az 16px alt ayrımı verildi; mühür sonra çizilir. Uzun düzenin tarih/kapsamı 8px arayla ayrı satırlara alındı, font küçültülmedi. Yeni tam PNG'lerde yedi PROFILE harfi ve footer ayrımı görsel olarak kontrol edildi. Normal TR ve yatay önceki renderer ile byte eşit; doku sistemi/asset/maskeler, veri/indirme akışı değişmedi. Etkilenen dosyalar: src/features/cards/image.tsx, docs/{DESIGN,STATUS,TASKS,DECISIONS}.md. Aynı commitlenmemiş A5.1 paketi, görsel kabul açık.
+
+
+### D032 — Ayrı yatay afiş ve Story çıktısının korunması — 31 Ekim 2026
+
+Kullanıcı son uzun EN Story'de mühür metninin eksiksiz, başlıkla çakışmasız ve footer tarih/kapsam ayrımının doğru olduğunu bildirdi. Bu kullanıcı doğrulamasıdır; A5.1 genel görsel kabulü değildir. Güncel yetki yalnız yatay 1200×630 kartı mevcut Story seviyesine getirmektir; Story, ana sayfa/rapor ve işlevler korunur.
+
+Yatayın eski nokta dokusu kaldırılıp aynı yerel JPEG/maskeler PrintTexture ile paylaşıldı; Story'nin boyut/maske varsayılanları aynı. Stamp'in eski yatay metin dalı kaldırıldı; iki format da mevcut Story'nin açık metin kutusunu kullanır. Yeni font/varlık/bağımlılık yoktur. Ayrı yatay kompozisyonda başlık 620px sol alanda, puan/mühür 476px sağ alandadır. Başlık ölçüsü yerel font advance ve aksan yüksekliğine bağlıdır; uzun tip ve Türkçe noktalar için tek örnek yaması veya clipping kullanılmaz. Puan ayrı 320px alanı, mühür 152px alanı kullanır. Footer çağrı/imza ve kapsam/tarih olarak ayrık iki satırdır; aradaki boşluklar DESIGN'dadır.
+
+Aynı 16 sentetik girdide eski/yeni Story PNG byte eşitliği doğrulandı; motor, adapter, snapshot, puan/sıra, token/expiry/incomplete ve indirme akışı değişmedi. Yatay tam/390px PNG'ler açıldı; yeni teknik kontroller ve çıktılar STATUS'tadır. Yeni uzak CI, gerçek servis/indirme akışı veya fiziksel paylaşım bu tur doğrulanmış sayılmaz. Genel görsel kabul ve kullanıcı commit/push açık; aynı commitlenmemiş A5.1 paketidir.
+
+Etkilenen dosyalar: src/features/cards/image.tsx, src/features/cards/assets/README.md, AGENTS.md, docs/{DESIGN,ARCHITECTURE,DECISIONS,STATUS,TASKS}.md.

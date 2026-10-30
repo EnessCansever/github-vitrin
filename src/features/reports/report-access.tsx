@@ -8,6 +8,7 @@ import {LiveReport} from "../analysis/live-report";
 import type {StoredReportResponse} from "../analysis/report";
 import {loadReport} from "./actions";
 import {CopyLink} from "./copy-link";
+import {CardStudio} from "../cards/card-studio";
 
 export function ReportAccess({id}: {id: string}) {
   const t = useTranslations("SavedReport");
@@ -60,6 +61,7 @@ export function ReportAccess({id}: {id: string}) {
           <div className="saved-report-info">
             <p>{t("expires", {time: format.dateTime(new Date(response.expiresAt), {dateStyle: "medium", timeStyle: "short", timeZone: "UTC"})})}</p>
             <CopyLink />
+            <CardStudio id={id} complete={response.report.status === "complete"} />
           </div>
           <LiveReport report={response.report} stored />
         </>

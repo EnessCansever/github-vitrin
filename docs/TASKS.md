@@ -270,16 +270,49 @@ A4.1 uygulaması A4'ün bütünü değildir. Action yazımı/rapor adresi aşağ
 - [x] Yalnız bu turun 4 UUID'si için temizlik/yokluk doğrulaması: üç kayıt ayrı silindi, expired zaten yoktu. İnceleme için tutulan kayıt yok. Kullanıcı dev sunucusu korundu; geçici araçlar/profil/loglar kaldırıldı. Son diff/index/koruma kontrolü STATUS'ta.
 - [x] Kullanıcı mevcut A4.2 görünümünü kabul etti (29 Ekim 2026, kullanıcı görsel incelemesi).
 - [x] Kullanıcı normal Chrome profilindeki hydration farkının yalnız data-yd-* nitelikleri olduğunu ve gizli pencerede uyarının oluşmadığını doğruladı. Olası eklenti/DOM müdahalesi; kesin neden ve eklenti adı doğrulanmadı. Bu tur bağımsız tarayıcı testi veya uygulama kodu değişikliği yok; suppressHydrationWarning eklenmedi.
-- [ ] A4.2 kullanıcı commit/push ve yeni uzak CI doğrulaması.
+- [x] A4.2 257acff9b8a86d62db5a8beda94f0bf68f42d6b4 commit/push; uzak CI başarısı kullanıcının ilettiği Codex public API doğrulaması olarak kaydedildi ([run 40792217446](https://github.com/EnessCansever/github-vitrin/actions/runs/40792217446)). Bu tur bağımsız sorgulanmadı.
 
-A4.2 yerel/canlı kontrolleri ve kullanıcı görsel kabulü tamam; commit/push ve yeni uzak CI açık. Hydration karşılaştırması kullanıcı bildirimidir; olası eklenti müdahalesi kesin teşhis değildir. Kabul kaydı turunda yalnız belge diff kontrolü yapıldı. Yeni saved yanıtı uygulama turunda özel olarak geciktirilmedi; mevcut ref guard ve önceki A3 kanıtı korunur, yeni gecikme testi gibi sunulmaz. A4'ün cache/atomic throttle/lock/karşılaştırma kabul maddeleri tamamlanmadı. Sonraki dilim açık kullanıcı mesajı bekler; yayın yoktur.
+A4.2 yerel/canlı kontrolleri, kullanıcı görsel kabulü, commit/push ve kullanıcı tarafından sağlanan uzak CI doğrulaması tamam. Hydration karşılaştırması kullanıcı bildirimidir; olası eklenti müdahalesi kesin teşhis değildir. Kabul kaydı turunda yalnız belge diff kontrolü yapıldı. Yeni saved yanıtı uygulama turunda özel olarak geciktirilmedi; mevcut ref guard ve önceki A3 kanıtı korunur, yeni gecikme testi gibi sunulmaz. A4'ün cache/atomic throttle/lock/karşılaştırma kabul maddeleri tamamlanmadı. Kullanıcının yeni açık mesajıyla yalnız aşağıdaki A5.1 yetkilendirildi; yayın yoktur.
 
 ### A5 Paylaşım:
 
 - [ ] İlk/gelişim PNG, 3 boyut, TR/EN, OG metadata server-rendered.
 - [ ] Yalnız açık kullanıcı işlemiyle shareReport; expiry/silme; anonim incognito link.
-- [ ] İndirilen resim gerçek boyutu ve Türkçe karakterleri doğrulanır.
+- [ ] Tüm üç formatın indirilen resim boyutu ve Türkçe karakterleri doğrulanır. A5.1 Story/yatay geçti; 1080×1350 henüz uygulanmadı.
 - [ ] "İndirildi", "bağlantı kopyalandı", "paylaşım menüsü açıldı" ayrılır; Instagram'a otomatik post iddiası yok.
+
+### A5.1 — ilk kart, önizleme ve iki PNG formatı
+
+- [x] Belgeler/temiz başlangıç HEAD 257acff ve A4.2 CI kaynağı ayrımı; A4'ün cache/karşılaştırma/dağıtık limit maddeleri açık bırakıldı.
+- [x] Yalnız kayıtlı/süresi geçmemiş complete rapor için id/token/format strict Server Action; mevcut readSnapshot erişim/expiry doğrulaması, istemci skor/rapor reddi ve güvenli hata ayrımı. Incomplete client ve sunucuda engellenir.
+- [x] Ayrı Story 1080×1920 ve yatay 1200×630 kompozisyonları; yerel Barlow/IBM Plex ve statik Manrope fontlarıyla Developer ID kobalt afiş kimliği. Config marka/yazar, profil tipi/login/puan/kategori/UTC tarih/kapsam/ilk öneri/hedef. Önerisiz durumda görev uydurulmaz.
+- [x] Belirgin rapor eylemi, native format seçimi, aynı PNG ile preview/download, TR/EN, pending/çift tıklama/yanıt kimliği ve güvenli retry. Token path/query, metadata, görsel, dosya adı veya QR'a eklenmez; public OG route yoktur.
+- [x] 25 yeni secretsız test; toplam **18 dosya / 355 test**. Veri eşleme/öneri sırası/null engeli, erişim/expiry/storage/render hata kodları, client rapor reddi, TR/EN incomplete sunumu ve gerçek renderer PNG boyutları. CI gerçek GitHub/Atlas gerektirmez. Lint/typecheck/secretsız build/diff başarılı.
+- [x] Gerçek EnessCansever → Atlas raporu → iki format preview ve tarayıcı indirme; PNG byte eşitliği ve IHDR boyutları doğrulandı. TR/EN/refresh kartı yeni GitHub çağrısı üretmedi (önce 23→23; son server process'inde 0). Snapshot ve expiresAt değişmedi.
+- [x] Kontrollü bekleyen gerçek action'da ikinci tıklama yeni istek oluşturmadı; native Tab/radio ve 3px focus. Browser offline kart isteğinde güvenli hata/eski download yok; online retry toparlandı. Gerçek Atlas incomplete raporda açıklamalı disabled eylem ve resim yok.
+- [x] PNG'ler gerçekten açıldı: TR/EN, dört profil tipi/39 karakter login/100 karakter repo/100 puan önerisiz sentetik düzenler. 390×844 ve 1440×900 preview ekranları incelendi; 320/390/768/1440 taşma 0. Üç demo sayfası mobilde taşmasız ve indirmesiz kaldı. Fiziksel cihaz/sosyal platform denemesi değildir.
+- [x] Kullanıcının geçerli görsel revizyonuyla referans sağ panel gerçekten açıldı; koyu arayüz/krem kimlik ile kobalt paylaşım afişi DESIGN/D030'da ayrıldı. Önceki krem PNG'ye kabul verilmedi.
+- [x] Dev krem başlık, nötr lime mühür, sabit SVG baskı dokusu; kart mesajlarında iki dilde başlık satırları, doğru puan etiketi/katılım çağrısı. Statik Manrope 500 body/öneri fontu; resmi kaynak/lisans/SHA kayıtlı, UI değişken fontu korunuyor.
+- [x] 16 yeni sentetik PNG'de gerçek ölçüler, TR/EN/dört tip/39 karakter kullanıcı/100 karakter repo/ondalık/100 puan/önerisiz durum kontrolü. Tam çözünürlük açılışı ve referansla 390 CSS px yan yana Chrome incelemesi yapıldı; teknik/görsel inceleme kullanıcı kabulü değildir.
+- [x] Revizyon sonrası tests/cards 25; tüm testler 355, lint/typecheck/secretsız build/diff geçti. Renderer tekrar üretim byte eşitliği/girdi değişmezliği doğrulandı. Başlangıç hash'leriyle action/preview/erişim/ana sayfa/rapor/motor/adapter/fixture korunumu; önceki PNG'ler duruyor.
+- [x] Bu revizyonda canlı GitHub/Atlas veya uygulama indirme/klavye akışı tekrarlanmadığı açık kaydedildi; önceki işlev kanıtı ve mevcut testler korunuyor. Fiziksel cihaz/sosyal platform/yeni CI doğrulaması yoktur.
+- [x] Story için sağ referans panel ayrı kırpılıp ölçüldü; gerçek font advance değerleriyle sıkı iki/üç satırlı başlık, referansa bağlı mühür oranı, tek kategori şeridi ve sade destekleyici yerleşim. D031/DESIGN ölçüleri kayıtlı.
+- [x] Story homojen noktaları yerine yazısız yerel deterministik kâğıt malzemesi, sabit renk/alpha maskesi ve hafif mürekkep aşınması; yeni bağımlılık/runtime üretim yok. Yatay kaynak ve karşılaştırılabilir PNG byte eşitliği korundu.
+- [x] Yeni TR/EN Story/uzun ad/100/önerisiz varyantlar ve aynı 390px referans karşılaştırması ayrı /tmp dizininde açılarak incelendi; boyut/güvenli alan kontrolü, 355 test, lint/typecheck/build/diff geçti. Canlı servis/uygulama akışı bu tur tekrarlanmadı; önceki çıktılar korundu.
+- [x] Story mühür/doku ince ayarı: iki dilde açık metin kutusu/satır yüksekliği ve küçülme/kırılma koruması; aynı doku maskelerinin yoğunluğu azaltıldı. 12 yeni Story/mühür kırpımı ve TR/EN/uzun ad 390px görünümleri açıldı; tam mühür metni/başlık ayrımı kontrol edildi. İlgili 25 test, lint/typecheck/build/diff geçti; yeni davranış testi eklenmedi. Yatay PNG byte eşit, diğer uygulama dosyaları korundu.
+- [x] Kullanıcının genel kompozisyon/başlık yönünü uygun bulduğu kaydedildi; bu tam Story/A5.1 görsel kabulü sayılmadı. Bildirilen önceki kesilme yerel eski dosyada birebir üretilemedi; kök neden doğrulandı denmedi.
+- [x] Kullanıcının doku/normal TR görünümünü uygun bulduğu kaydedildi; bu alanlar korundu. Uzun tam kart geri bildirimi önceki mühür kırpımı kontrolünden ayrı ele alındı.
+- [x] Üç satırlı Story başlık/mühür alan ayrımı, en az 16px alt boşluk ve mühürün sonra çizilmesi; uzun düzen footer'ında tarih/kapsam mevcut fontla 8px aralıklı ayrı satırlar. Eski kutu örtüşmesi ölçüldü; harf kaybı/footer bitişmesinin birebir kök nedeni doğrulandı denmedi.
+- [x] Dört tip × TR/EN tam kartlar ve iki uzun EN varyantı açılarak PROFILE yedi harfi/footer ayrımı kontrol edildi; 11 PNG boyutu/güvenli alanı doğrulandı. Normal TR ve yatay byte eşit. Son 25 kart testi/lint/typecheck/build/diff geçti; yeni davranış testi yok. OCR servisi sonuç vermedi, OCR başarısı kaydedilmedi.
+- [ ] **Story kullanıcı görsel kabulü.** A5.1'e kabul verilmedi; önceki ajan “kabul edilebilir / commit edilebilir” değerlendirmesi kullanıcı kabulü değildir.
+- [x] 31 Ekim açık kullanıcı yetkisiyle yatay 1200×630 afiş ayrı kompozisyonda uygulandı: aynı yerel doku/font, ayrık başlık/puan/mühür alanları, kategori şeridi ve boşluklu footer. Uzun adlar/iki dil/dört tip/ondalık/100/önerisiz 16 tam PNG ve 390px kopyalar incelendi.
+- [x] 16 aynı girdide Story byte eşitliği; mevcut doku asset'i/veri/güvenlik/indirme/UI dosyalarının korunumu. 355 test, lint/typecheck/build/diff geçti; yeni dependency veya görsel davranış testi yok.
+- [x] Son uzun EN Story mühür/başlık/footer doğruluğu kullanıcı bildirimi olarak kaydedildi; Story tasarımı değiştirilmedi, bu kayıt A5.1 genel kabulü sayılmadı.
+- [ ] Yatay kart kullanıcı görsel kabulü.
+- [ ] Kullanıcı A5.1 görsel kabulü.
+- [ ] Kullanıcı commit/push ve yeni uzak CI doğrulaması.
+
+Bu dilim A5'in bütünü değildir: 1080×1350, gelişim/önce-sonra kartı, otomatik OG ve ayrı shareReports/sosyal paylaşım açık. A4'ün açık kabul kriterleri kapanmaz; public deployment yoktur. PNG indirme, sosyal paylaşım veya fiziksel cihazda kaydetme başarısı olarak kaydedilmedi. Son temizlik/dosya/inceleme artifact'leri STATUS'tadır. Kullanıcı incelemesi için durulur.
 
 ### A6 Yayın kalitesi:
 

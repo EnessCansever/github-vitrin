@@ -1778,3 +1778,15 @@ details[open] > .category-content {
   color: var(--color-paper);
   font-family: var(--font-mono);
 }
+
+.card-studio { margin-top: 20px; }
+.card-studio > p { margin-top: 10px; max-width: 70ch; }
+.card-preview-panel { margin-block: 20px; padding-block: 20px; border-block: 1px solid var(--color-border); }
+.card-preview-panel > p { margin-block: 12px; }
+.card-preview-panel h2 { font-size: 1.3rem; }
+.card-formats { display: flex; flex-wrap: wrap; gap: 14px; margin-block: 18px; }
+.card-formats legend { margin-bottom: 12px; }
+.card-formats label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.card-formats input { accent-color: var(--color-brand); width: 20px; height: 20px; }
+.card-preview-image { display: block; width: 100%; height: auto; margin-block: 18px; }
+.card-preview-image--story { max-width: 360px; }

@@ -479,5 +479,57 @@
     "copied": "Rapor bağlantısı kopyalandı.",
     "manual": "Otomatik kopyalama yapılamadı. Aşağıdaki bağlantıyı seçip elle kopyalayabilirsin.",
     "manualLabel": "Tam rapor bağlantısı"
+  },
+  "Card": {
+    "title": "Paylaşım kartı",
+    "close": "Önizlemeyi kapat",
+    "intro": "Görsel kullanıcı adını, puanını ve ilk öncelikli önerini içerir. İndirmeden önce önizlemeyi kontrol et.",
+    "format": "Görsel formatı",
+    "story": "Story · 1080 × 1920",
+    "landscape": "Yatay · 1200 × 630",
+    "pending": "Kart hazırlanıyor…",
+    "download": "PNG indir",
+    "downloadRequested": "PNG indirme isteği tarayıcıya iletildi.",
+    "previewAlt": "{format} sonuç kartının PNG önizlemesi",
+    "retry": "Kartı yeniden hazırla",
+    "incomplete": "Eksik analizde toplam puan hesaplanmadığından puanlı paylaşım kartı üretilemez. Önce yeni bir analizle verileri tamamla.",
+    "errors": {
+      "invalid": "Kart isteği geçersiz. Raporu yeniden açıp tekrar dene.",
+      "missing": "Rapor bağlantısı geçersiz veya süresi dolmuş olabilir. Raporu yeniden aç.",
+      "incomplete": "Bu rapor eksik; puanlı kart üretilemiyor.",
+      "unavailable": "Rapor şu anda okunamıyor. Daha sonra yeniden dene.",
+      "render": "Görsel hazırlanamadı. Yeniden deneyebilirsin."
+    },
+    "profileTarget": "Profil",
+    "firstStep": "İLK ADIM",
+    "noTask": "Bu kapsamda öncelikli eksik bulunmadı.",
+    "date": "Analiz: {date} UTC",
+    "scope": "Portfolyo sunumu · Kod kalitesi ölçülmez",
+    "identity": "SUNUM\nPROFİLİ",
+    "signature": "Geliştiren:",
+    "actions": {
+      "bio": "Profil açıklamanı tamamla.",
+      "website": "Profiline portfolyo bağlantısı ekle.",
+      "profileReadme": "Profil README’sini ekle veya tamamla.",
+      "description": "Proje açıklamasını tamamla.",
+      "topics": "İlgili bir topic ekle.",
+      "demo": "Demo bağlantısını ekle veya işaretle.",
+      "image": "Görsel referansını ekle veya düzenle.",
+      "readme": "Proje README’sini ekle veya tamamla.",
+      "purpose": "Amaç bölümünü ekle veya düzenle.",
+      "install": "Kurulum adımlarını ekle veya düzenle.",
+      "usage": "Kullanım adımlarını ekle veya düzenle.",
+      "technology": "Teknolojiler bölümünü ekle veya düzenle.",
+      "features": "Özellikler bölümünü ekle veya düzenle."
+    },
+    "summary": "SONUÇ",
+    "scoreLabel": "GitHub vitrin puanı",
+    "invitation": "Senin GitHub vitrinin kaç puan?",
+    "types": {
+      "ready": "VİTRİNİ\nHAZIR",
+      "hiddenGem": "GİZLİ\nCEVHER",
+      "noDemo": "DEMO\nNEREDE?",
+      "inProgress": "VİTRİN\nYAPIMDA"
+    }
   }
 }

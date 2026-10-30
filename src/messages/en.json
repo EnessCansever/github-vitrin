@@ -479,5 +479,57 @@
     "copied": "Report link copied.",
     "manual": "Automatic copying failed. Select the link below and copy it manually.",
     "manualLabel": "Full report link"
+  },
+  "Card": {
+    "title": "Share card",
+    "close": "Close preview",
+    "intro": "The image includes your username, score and first priority suggestion. Check the preview before downloading.",
+    "format": "Image format",
+    "story": "Story · 1080 × 1920",
+    "landscape": "Landscape · 1200 × 630",
+    "pending": "Preparing the card…",
+    "download": "Download PNG",
+    "downloadRequested": "The PNG download was requested in your browser.",
+    "previewAlt": "PNG preview of the {format} result card",
+    "retry": "Prepare the card again",
+    "incomplete": "An incomplete analysis has no total score, so a scored share card cannot be generated. Start a new analysis to complete the data first.",
+    "errors": {
+      "invalid": "The card request is invalid. Reopen the report and try again.",
+      "missing": "The report link may be invalid or expired. Reopen the report.",
+      "incomplete": "This report is incomplete; a scored card cannot be generated.",
+      "unavailable": "The report cannot be read right now. Try again later.",
+      "render": "The image could not be prepared. You can try again."
+    },
+    "profileTarget": "Profile",
+    "firstStep": "FIRST STEP",
+    "noTask": "No priority gaps found in this scope.",
+    "date": "Analyzed: {date} UTC",
+    "scope": "Portfolio presentation · Not code quality",
+    "identity": "PORTFOLIO\nPROFILE",
+    "signature": "Built by",
+    "actions": {
+      "bio": "Complete your profile bio.",
+      "website": "Add a portfolio link to your profile.",
+      "profileReadme": "Add or complete your profile README.",
+      "description": "Complete the project description.",
+      "topics": "Add a relevant topic.",
+      "demo": "Add or label a demo link.",
+      "image": "Add or organize an image reference.",
+      "readme": "Add or complete the project README.",
+      "purpose": "Add or organize the purpose section.",
+      "install": "Add or organize installation steps.",
+      "usage": "Add or organize usage steps.",
+      "technology": "Add or organize the technology section.",
+      "features": "Add or organize the features section."
+    },
+    "summary": "RESULT",
+    "scoreLabel": "GitHub portfolio score",
+    "invitation": "What’s your GitHub portfolio score?",
+    "types": {
+      "ready": "SHOWCASE\nREADY",
+      "hiddenGem": "HIDDEN\nGEM",
+      "noDemo": "WHERE IS\nTHE DEMO?",
+      "inProgress": "SHOWCASE\nIN PROGRESS"
+    }
   }
 }

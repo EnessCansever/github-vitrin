@@ -1,10 +1,208 @@
 # Güncel durum
 
-Son güncelleme: 29 Ekim 2026 (Europe/Istanbul).
+Son güncelleme: 31 Ekim 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A4.2 — gerçek analiz kaydı ve tokenlı rapor görünümü kullanıcı tarafından kabul edildi.** Başlangıç HEAD f81b46c, çalışma alanı/index temizdi. A4.1 uzak CI başarısı **kullanıcı ekran görüntüsüyle sağlanan doğrulamadır**; önceki model/Atlas kanıtlarıyla A4.1 kapanışı kaydedildi. A4.2 commit/push ve yeni uzak CI doğrulaması hâlâ açık. A4'ün cache/throttle/lock/karşılaştırma bütünü tamamlanmadı; sonraki dilime geçilmez.
+**A5.1 — yatay 1200×630 Developer ID afiş revizyonu uygulandı; genel kullanıcı görsel kabulü bekleniyor.** Son uzun EN Story mühür/başlık/footer doğruluğu kullanıcı bildirimi olarak kaydedildi; Story tasarımı korunur. Güncel yetki yalnız yataydır. Başlangıç HEAD 257acff, index boş, önceki A5.1 paketi commitlenmemişti ve korundu. A4/A5 açık işleri kapanmaz; stage/commit/push/yayın veya sonraki dilime geçiş yapılmadı.
+
+## A5.1 yatay afiş revizyonu — 31 Ekim 2026
+
+Kullanıcı son uzun EN Story'de mühür metninin tam, başlıkla çakışma olmadığını ve footer ayrımının doğru olduğunu bildirdi. Bu **kullanıcı tarafından sağlanan doğrulama**; tüm A5.1'e genel kabul sayılmaz. Yatay dilimi açıkça yetkilendirildi, Story yeniden tasarlanmadı.
+
+- Yatay ayrı kompozisyon: 620px başlık /32px boşluk /476px puan-mühür alanı. Krem condensed tip ve 200px puan ana odak, kullanıcı üst şeritte belirgin. Türkçe noktalı başlıkların üst işaretleri font yüksekliğine katıldı; ilk taslakta marka alanına giren İ noktaları son düzenle giderildi.
+- Aynı kobalt/doku/font/mühür kullanıldı. PrintTexture mevcut asset ve maske değerlerini Story/yatay boyutlarında paylaşır; eski yatay noktalar ve kullanılmayan kod temizlendi. Yeni doku, font, bağımlılık, endpoint veya görsel yön yoktur. 152px mühür ve başlık alanları ayrık; uzun repo adı öneri bloğunda sarılır. Kategori tek şerit, footer çağrı/imza ve kapsam/tarih olarak ayrı alanlarda.
+- Kaynak değişikliği renderer ve asset köken açıklamasıyla sınırlı; AGENTS/DESIGN/ARCHITECTURE/DECISIONS/STATUS/TASKS güncellendi. İçerik mesajları, cardContent, generateCard, CardStudio, motor/adapter/snapshot, puanlar/fixture, env, package/lock ve diğer UI dosyaları başlangıç SHA'larıyla korundu.
+
+| Kontrol | Sonuç |
+| --- | --- |
+| Testler | npm test: **18 dosya /355 test başarılı**. Mevcut kart testlerinin 4 dosya /25 testi de geçti; yeni görsel davranış testleri eklenmedi. Testler gerçek GitHub/Atlas/secret gerektirmez. |
+| Lint / typecheck / build | Üçü de exit 0. GitHub/Mongo/signing process env değerleri boş production build geçti; env dosya içerikleri açılmadı/loglanmadı. Yerel doku production dosya izinde mevcut. |
+| PNG / varyantlar | **16 sentetik yatay PNG**, tamamı IHDR **1200×630**. TR/EN dört tip, 39 karakter login, 100 karakter repo, 77,5/77.5, 96.7 ve 100/önerisiz complete içerikler. Bunlar canlı hesap veya motor tipi doğrulaması değildir. |
+| Story korunumu | Aynı 16 girdinin her birinde başlangıç renderer'ı ile yeni renderer'ın Story PNG'leri **byte eşit**; SHA'lar validation.json'da. Sadece görsel benzerlik varsayılmadı. |
+| Tam PNG incelemesi | TR/EN dört profil tipi ve uzun adlar/ondalık/100/önerisiz örnekler açıldı. Başlık, mühür, puan ve footer ayrımı kontrol edildi. Görülen örneklerde kesilme/çakışma yok. |
+| 390px inceleme | TR, EN, uzun EN ve 100 puanlı küçültülmüş kopyalar gerçekten açıldı. Tip/puan/kullanıcı okunur; kategori, tarih/kapsam ve mühür iç yazısı ikincil/küçüktür. Bu gerçek telefonda veya sosyal platformda deneme değildir. |
+| Kenar kontrolü | 16 örnekte krem piksel eşik sayımı x<20/x>=1180/y<12/y>=618 dışında 0; son krem piksel y=612. Bu destekleyici raster ölçümüdür, tüm olası içerikler garantisi değildir. |
+| Diff / temizlik | git diff --check, cached diff ve değişen metin whitespace kontrolü geçti; index boş. Geçici çalıştırıcılar kaldırıldı; önceki inceleme dizinleri silinmedi. |
+
+### Yeni yatay inceleme dosyaları
+
+Ayrı klasör: **/tmp/repovitrin-a51-landscape-review-20261031**.
+
+- [TR yatay](</tmp/repovitrin-a51-landscape-review-20261031/landscape-tr.png>).
+- [EN yatay](</tmp/repovitrin-a51-landscape-review-20261031/landscape-en.png>).
+- [Uzun EN yatay](</tmp/repovitrin-a51-landscape-review-20261031/landscape-long.png>).
+- [100 / önerisiz EN](</tmp/repovitrin-a51-landscape-review-20261031/landscape-100-en.png>), [ondalıklı EN](</tmp/repovitrin-a51-landscape-review-20261031/landscape-decimal-en.png>).
+- Diğer tip/dil/uzun ad PNG'leri aynı dizinde; -390.png kopyaları ölçekli inceleme içindir. story-preserved.png yalnız karşılaştırma varlığıdır; bu tur yeni bir Story tasarımı değildir.
+
+Bu tur gerçek rapor → DB → önizleme/indirme, klavye/pending/retry veya canlı GitHub/Atlas akışı yeniden denenmedi; kaynakları korunur ve mevcut deterministik testleri geçti. Fiziksel cihaz/sosyal paylaşım ve yeni uzak CI doğrulanmadı. **Yatay ve A5.1 genel kullanıcı görsel kabulü açık**; teknik başarı kabul kaydı değildir. Aynı commitlenmemiş A5.1 paketi için kullanıcı incelemesinde durulur; ayrı belge/stil commit'i önerilmez. Genel paket için olası mesaj feat: add Developer ID share cards; kullanıcı inceleme/commit kapısı tamamlanmış sayılmaz.
+
+
+## A5.1 uzun EN tam kart incelemesi ve alan ayrımı — 29 Ekim 2026
+
+Kullanıcı mühür kırpımları doğru olsa da uzun tam kartta harf kaybı ve footer bitişmesi bildirdi. Önceki kırpım incelemesi tam kart kabulünün yerine geçmez. Normal TR görünümü ve doku için kullanıcının uygun bulma bildirimi kaydedildi; tüm Story/A5.1 kabulü açık bırakıldı.
+
+### İnceleme ve dar düzeltme
+
+- Gerçek yerel renderer'ın kullandığı Satori'nin geçici inceleme kopyasından tam kart node kutuları/SVG alındı; uygulama veya node_modules değiştirilmedi. Önceki uzun EN'de PROFILE kutusu x=758..974, y=510..552; son başlık kutusu y=683..950, mühür alanı y=390..690 idi. Son başlık kutusunun mühür alanıyla yaklaşık 7px örtüşmesi doğrulandı; PROFILE harf kaybının nedeni olduğu iddia edilmez. Eski tam PNG'de yedi harf görünüyordu; footer metin kutuları arasında da yaklaşık 265px vardı. Kullanıcının gördüğü tam fark yerelde birebir üretilemedi; clipping/overflow/çizim sırası kesin kök neden olarak varsayılmadı.
+- Üç satırlı başlıkta ilk iki satır solda 604px alan, mühür sağda 300px alan kullanır; yatay ayrım 48px. Son satır y=706'dan, mühür altından en az 16px sonra başlar; yazı genişliği 900px/üst font sınırı 270px. Mühür başlıktan sonra çizilir; yeni clipping maskesi yoktur. Yalnız tek kullanıcı/profil tipi için koordinat yaması yapılmadı.
+- Uzun düzende tarih ve kapsam ayrı satırlardır; ölçülen y=1599..1622 ve 1630..1653, araları 8px. İkisinin 20px fontu korunur. Normal iki satırlı/TR kompozisyonun başlık/footer'ı değişmez. Doku/matris/asset/renkler aynı kaldı.
+
+| Kontrol | Gerçek sonuç |
+| --- | --- |
+| Tam PNG incelemesi | **11 yeni Story**, hepsi 1080×1920: dört profil tipi × TR/EN, normal TR ve iki uzun EN varyantı. Tam TR/EN kartları gerçekten açıldı; PROFILE yedi harfi, mühür/başlık ayrımı ve footer kontrol edildi. Uzun EN ve normal TR 390px kopyaları da açıldı. Yalnız bağımsız mühür kırpımıyla doğrulama yapılmadı. |
+| Güvenli alan | Üretilen 11 dosyada krem piksel eşik sayımı üst 210px/alt 244px kritik alan dışına çıkmadı; en alt krem piksel y=1673. Bu yalnız incelenen sentetik içerikler için destekleyici ölçümdür, platform veya tüm metinler garantisi değildir. |
+| Koruma | Önceki/güncel renderer aynı sentetik içerikte **normal TR Story ve yatay PNG için byte eşit**. Doku/asset, mevcut testler ve diğer uygulama dosyaları başlangıç SHA'larıyla korundu. |
+| İlgili testler | npm test -- tests/cards: **4 dosya /25 test başarılı**. İlk denemede Satori açık undefined stil değerinde trim hatası verdi; kullanılmayan stiller nesneye eklenmeyerek düzeltildi, testler tekrar geçti. Yeni davranış testi eklenmedi; tüm 355 test bu tur tekrar çalıştırılmış sayılmaz. |
+| Lint / typecheck / build | Son kaynakta üçü de exit 0. GitHub/Mongo/signing process env değerleri boş production build geçti; env dosyaları açılmadı/loglanmadı. |
+| Diff / temizlik | git diff --check, cached diff ve değişen metin whitespace kontrolü geçti; index boş. Geçici renderer/ölçüm/OCR çalıştırıcıları kaldırıldı; uygulamaya debug endpointi/bağımlılık/test scripti eklenmedi. Önceki çıktılar korundu. |
+
+Yeni klasör **/tmp/repovitrin-a51-full-card-review-20261029**:
+
+- [Uzun EN tam Story](</tmp/repovitrin-a51-full-card-review-20261029/story-long.png>).
+- [Normal TR tam Story — öncekiyle byte eşit](</tmp/repovitrin-a51-full-card-review-20261029/story-tr.png>).
+- [İkinci uzun EN tipi](</tmp/repovitrin-a51-full-card-review-20261029/story-long-noDemo.png>).
+- Tüm tiplerin tam kartları type-{tr,en}-{ready,hiddenGem,noDemo,inProgress}.png; 390px kopyaları -390.png son ekinde. Önceki dosyaların üzerine yazılmadı. Örnekler sentetiktir; canlı hesap sonucu değildir.
+
+Ek yerel Vision OCR denemesi çalıştırıldı ancak servis metin tanıma sonucu veremedi; otomatik OCR doğrulaması iddia edilmez. Tam PNG'ler görsel olarak incelendi. Uygulama önizleme/indirme, canlı GitHub/Atlas, fiziksel cihaz, sosyal platform ve yeni uzak CI bu tur yeniden doğrulanmadı. İlgili kaynak/testler korunuyor. **Story görsel kabulü açık**; yatay revizyona veya sonraki dilime geçilmedi. Düzeltme aynı commitlenmemiş A5.1 paketinin parçasıdır.
+
+
+## A5.1 Story mühür/doku ince ayarı — 29 Ekim 2026
+
+- Kullanıcı story-long.png için PORTFOLIO / ILE kesilmesini bildirdi. Önceki yerel dosya tam çözünürlükte açıldığında PORTFOLIO / PROFILE tamamı görünüyordu; bildirilen fark bu dosyada birebir yeniden üretilemedi, kök neden kesinleştirilmiş sayılmaz. Yeni Story mühür satırlarına açık genişlik/yükseklik, yeterli iç boşluk, 1,3 satır yüksekliği, nowrap ve küçülmeyen kutular verildi. Mühür konumu/boyutu ve başlık yerleşimi değişmedi; TR/EN veya profil tipine özel koordinat kullanılmadı.
+- Aynı JPEG/SVG doku sistemi korundu. Kâğıt maskesi katkısı yaklaşık %22'ye, harfleri aşındıran mavi maske %15'e düşürüldü. İri leke/damarlar ve harf aşınması azaltıldı; hafif tane/kenar izi kaldı. Asset, puanlar, mesajlar, güvenli alan ve içerik sırası değişmedi.
+- Yeni sentetik TR/EN, 39 karakter kullanıcı/100 karakter repo ve dört profil tipi için **12 Story PNG** üretildi; hepsi 1080×1920. TR, EN ve uzun ad dosyaları tam çözünürlükte ve 390px görünümlerde açıldı. 12 mühür kırpımı tek inceleme görselinde açılarak SUNUM / PROFİLİ ve PORTFOLIO / PROFILE metinlerinin tamamı kontrol edildi; kesilme veya başlıkla çakışma görülmedi. Bunlar gerçek kullanıcı analizi veya kullanıcı kabulü değildir.
+
+| Kontrol | Sonuç |
+| --- | --- |
+| İlgili testler | npm test -- tests/cards: **4 dosya /25 test geçti**. Yeni uygulama davranışı testi eklenmedi; tüm 355 test bu tur tekrar çalıştırılmış sayılmaz. |
+| Lint / typecheck / build | Üçü de exit 0. Production build GitHub/Mongo/signing process env değerleri boşken geçti; gerçek env dosyası açılmadı/yazdırılmadı. |
+| Yatay / kapsam | Aynı sentetik girdide önceki/güncel yatay PNG byte eşit. Başlangıç hash'leriyle diğer uygulama dosyaları, doku asset'i ve mevcut testlerin korunduğu kontrol edildi. |
+| Diff / geçici araçlar | git diff --check, cached diff ve değişen metin whitespace kontrolü geçti; index boş. Geçici üretici kaldırıldı, önceki PNG'ler korundu. |
+
+Yeni inceleme klasörü **/tmp/repovitrin-a51-stamp-review-20261029**:
+
+- [TR Story](</tmp/repovitrin-a51-stamp-review-20261029/story-tr.png>) ve [EN Story](</tmp/repovitrin-a51-stamp-review-20261029/story-en.png>).
+- [Uzun EN Story](</tmp/repovitrin-a51-stamp-review-20261029/story-long.png>) ve [uzun TR Story](</tmp/repovitrin-a51-stamp-review-20261029/story-long-tr.png>).
+- [Tüm mühürlerin inceleme görseli](</tmp/repovitrin-a51-stamp-review-20261029/stamp-grid.png>). Sıra: TR ana, EN ana, EN uzun, TR uzun; TR ready/hiddenGem/noDemo/inProgress; EN ready/hiddenGem/noDemo/inProgress.
+- 390px kopyalar aynı dizinde -390.png son ekiyle tutulur. Önceki story-review/poster-review/review dizinleri silinmedi.
+
+Bu tur uygulama içinde önizleme/indirme, klavye veya canlı GitHub/Atlas akışı yeniden denenmedi; kaynakları ve ilgili deterministik testleri korunuyor. Fiziksel cihaz/sosyal platform ve yeni uzak CI doğrulanmadı. **Story kullanıcı görsel kabulü açık**, yatay revizyona geçilmedi; bu dar düzeltme aynı commitlenmemiş A5.1 paketine dahildir.
+
+
+## A5.1 Story referans/baskı revizyonu — 29 Ekim 2026
+
+Güncel yetki yalnız Story'dir. Konsept dosyası ve sağdaki 419×716 paylaşım kırpımı gerçekten açıldı; yaklaşık marka/başlık/mühür/kimlik/puan/imza oranları DESIGN ve D031'e kaydedildi. Kırpım üretim varlığı değildir.
+
+- Başlık gerçek yerel Barlow advance ölçüleriyle daha sıkı büyük blok hâline getirildi; GİZLİ / CEVHER iki satır, uzun EN tipler aynı kelimelerle üç satırdır. Mühür 230–300px, normal örnekte 300px; kullanıcı tam adı, büyük puan ve ayrı /100 korunur. Kategori tek kompakt şerit, ilk görev/hedef ayrı blok, çağrı/imza ve ikincil tarih/kapsam izlenir. Referanstan ölçülen #012BC1 yalnız Story tabanına uygulandı; ortak UI/yatay tokenı değişmedi.
+- Homojen dijital noktalar yerine, yalnız tasarım sırasında imagegen ile üretilmiş yazısız yerel kâğıt malzemesi kullanıldı: düzensiz lif/tane, hafif kıvrım/kenar aşınması ve başlıkta okunaklı mürekkep düzensizliği. JPEG 461800 byte; köken/SHA assets/README.md'de. Üretimde aynı yerel dosya/sabit maske kullanılır; yeni bağımlılık, runtime AI, ağ veya rastgelelik yoktur.
+- Bu tur kaynak değişikliği yalnız image.tsx ve yeni assets klasörüdür; AGENTS/DESIGN/ARCHITECTURE/DECISIONS/STATUS/TASKS güncellendi. Başlangıç SHA'larıyla action/CardStudio/content/types/mesaj/fontlar, ana sayfa/rapor/CSS, adapter/motor/snapshot/fixture, dependency/lock korundu. Yatay fonksiyon kaynak metni aynı; aynı girdinin önceki/güncel yatay PNG'si byte eşittir. Önceki commitlenmemiş A5.1 dosyaları korunur.
+
+| Kontrol | Gerçek sonuç |
+| --- | --- |
+| Tüm testler | npm test: **18 dosya / 355 test geçti**; bunların 4 dosya /25 testi mevcut kart erişim/eşleme/preview/renderer davranışlarını kapsar. Tasarım için yeni kopya testler eklenmedi. |
+| Lint / typecheck / production build | Üçü de exit 0. Build process'indeki GITHUB_TOKEN/MONGODB_URI/MONGODB_DB/SIGNING_SECRET boşken geçti. Env dosyası içeriği okunmadı/yazdırılmadı. Yeni JPEG production rapor dosya izinde bulundu. |
+| Boyut / determinizm | Story 1080×1920, yatay 1200×630 IHDR doğrulandı. Mevcut renderer testi tekrarda PNG byte eşitliğini ve girdi değişmezliğini doğruladı. Yatay ayrıca önceki renderer ile byte eşit. |
+| Sentetik varyantlar | Ana TR mira-sample 77,5 + 14 ek Story: TR/EN dört tip, 39 karakter login, 100 karakter kesintisiz repo, ondalıklı puan, 100/önerisiz complete. Tüm üretilen Story dosyaları tam çözünürlüktedir. Bunlar canlı kullanıcı raporu veya profil tipi/puan doğrulaması değildir. |
+| Görsel inceleme | TR ana Story, EN, uzun tip/login/repo, 100/önerisiz PNG'ler açıldı. Tam çözünürlük ve 390px görünümler incelendi; referans / tam Story / güvenli içerik aynı 390px genişlikte temiz Chrome'da yan yana görüntülendi. İncelenen örneklerde kesilme veya üst üste binme görülmedi. |
+| Güvenli alan kontrolü | 14 varyantta krem metin piksellerinin yaklaşık sınırları y=223..1670 arasında; y<210 veya y>=1676 dışı sayım 0. Bu raster eşik kontrolü görsel incelemeyi destekler; platform UI'sı veya tüm olası içerikler için garanti değildir. |
+| Diff / kapsam | git diff --check, cached diff ve yeni metin whitespace kontrolleri başarılı. Stage yok; geçici çalıştırıcılar kaldırıldı. Önceki çıktı dizinleri silinmedi. |
+
+### Bu turun inceleme dosyaları
+
+Yeni ve önceki çıktılar ayrı tutulur: **/tmp/repovitrin-a51-story-review-20261029**.
+
+- [TR Story](</tmp/repovitrin-a51-story-review-20261029/story-tr.png>) — kurmaca mira-sample, 77,5; gerçek rapor sonucu değildir.
+- [EN Story](</tmp/repovitrin-a51-story-review-20261029/story-en.png>).
+- [Uzun tip/kullanıcı/repo](</tmp/repovitrin-a51-story-review-20261029/story-long.png>) ve [uzun TR repo](</tmp/repovitrin-a51-story-review-20261029/story-long-repo.png>).
+- [100 puan / önerisiz EN](</tmp/repovitrin-a51-story-review-20261029/story-100-en.png>).
+- [Aynı 390px genişlikte referans karşılaştırması](</tmp/repovitrin-a51-story-review-20261029/reference-comparison-390.png>) ve [yalnız inceleme kırpımı](</tmp/repovitrin-a51-story-review-20261029/reference-panel.png>). Kesik güvenli alan çizgileri yalnız karşılaştırma HTML'indedir, üretim PNG'sinde yoktur.
+
+**Kalan farklar ve açık kontroller:** Barlow glyph biçimi referansın birebir kopyası değildir. Story güvenli alanı, zorunlu kategori/ilk görev ve uydurulmayan meslek/kişi bilgileri nedeniyle dikey oranlar tam aynı değildir. Kategori/tarih/kapsam 390px'de ikincil ve küçüktür; PNG yaklaşık 2 MB ile önceki nokta dokusundan daha büyüktür. Doğal doku yorumu ve kompozisyon için **Story kullanıcı görsel kabulü açık**. Yatay yeniden tasarımı bu tur yapılmadı. Canlı GitHub/Atlas, uygulama içi indirme/pending/retry/klavye akışı bu tur yeniden denenmedi; mevcut kaynak ve deterministik testler korundu. Gerçek sosyal platform, fiziksel cihaz ve yeni uzak CI doğrulanmadı. Geçici araçlar uygulamaya/CI'a eklenmedi. Yeni secret, public endpoint veya DB kaydı oluşturulmadı.
+
+Revizyon aynı commitlenmemiş A5.1 paketindedir; ayrı belge commit'i önerilmez. Kullanıcı Story görsel incelemesi için duruldu; kabul/commit veya sonraki dilim tamamlandı sayılmaz.
+
+
+## A5.1 önceki afiş revizyonu — tarihsel kayıt, kabul verilmedi — 29 Ekim 2026
+
+Bu bölüm önceki D030 revizyonunun tarihsel kaydıdır; güncel Story kapsamı ve sonuçları yukarıdadır. Önceki krem PNG taslağı ve bu afiş revizyonu kullanıcı görsel kabulü almadı. docs/design/developer-id-concept.png gerçekten açıldı; sağ panel kobalt zemin/dev krem yazı/lime mühür/baskı dokusu/hiyerarşi açısından incelendi. **Ana sayfa/rapor koyu + krem kimlik; paylaşım görseli kobalt afiştir.** D030 ve DESIGN bu ayrımı kaydeder.
+
+### Bu revizyonda değişenler
+
+- Yalnız kart renderer/eşleme tipleri ve Card mesajları: tam kobalt, iki dilde kontrollü başlık satırları, büyük condensed tip/puan, belirgin lime sunum mührü, ince çizgiler/iki sınırlı yön oku ve sabit SVG baskı tanesi/kenar izleri. Story ve yatay ayrı yerleşimlerdir. Krem kutu/siyah çerçeve kaldırıldı; referans bitmap'i üretime yapıştırılmadı.
+- Gövde/öneriler için statik yerel **Manrope Medium 500** eklendi; mevcut değişken dosya next/og parseFvarAxis hatası verdi. Resmi upstream'in sabit commit'inden indirilen fontun lisansı mevcut OFL ile eşleşti; telif metni ve mevcut UI fontları değişmedi. Kaynak/SHA fonts/README.md ve D030'da. Yeni paket/servis/dönüştürücü yoktur.
+- Kullanıcı/puan/kategori değerleri ve motorun ilk öneri/hedefi aynen biçimlendirilir; “GitHub vitrin puanı / GitHub portfolio score”, katılım çağrısı, config imzası ve UTC tarih/kapsam sunulur. Önerisiz durumda mevcut dürüst boş metin kullanılır. Başlık satırları yalnız sunumdur; profil tipi kuralları veya puan aritmetiği değişmedi.
+- generateCard, CardStudio, readSnapshot/token/expiry/incomplete, pending/çift tıklama/hata/retry ve aynı PNG preview/download kaynakları başlangıç hash'leriyle birebir korundu. Motor/adapter/DB/fixture, ana sayfa, rapor bileşenleri, CSS/header, package/lock ve env/metadata yapılandırması değiştirilmedi. Önceki işlev kanıtı aşağıdaki tarihsel kayıttadır; bu tur yeni canlı GitHub/Atlas doğrulaması gibi sunulmaz.
+
+### Kontroller ve gerçek sınırları
+
+| Kontrol | Sonuç |
+| --- | --- |
+| İlgili testler | tests/cards: **4 dosya / 25 test geçti**. Yeni afiş başlık/etiket eşlemesi beklentileri güncellendi; renderer testinde iki üretimin byte eşitliği ve girdi değişmezliği eklendi. Erişim/incomplete/güvenli hata testleri korunuyor. |
+| Tüm testler | npm test: **18 dosya / 355 başarılı**. CI ağ/Atlas/secret gerektirmez. Tasarım test sayısı için yeni test kopyaları eklenmedi. |
+| Lint / typecheck / build | Üçü de başarılı. Production build GITHUB_TOKEN/MONGODB_URI/MONGODB_DB/SIGNING_SECRET process env değerleri boşken geçti. Yeni font production rapor dosya izinde bulunuyor. Gerçek env içerikleri açılmadı/yazdırılmadı. |
+| Tam PNG boyutları | Dört profil tipi × TR/EN × Story/yatay = **16 sentetik PNG**. IHDR değerleri Story 1080×1920 ve yatay 1200×630. Değişken font yerine statik fontun OS/2 ağırlığı 500 ve ÇçĞğİıÖöŞşÜü cmap kapsamı doğrulandı. |
+| Tam boyut görsel inceleme | TR/EN ana afişler, uzun kullanıcı (39) / kesintisiz repo (100), en uzun tip “Showcase in Progress”, 96,7/96.7 ve 100/önerisiz düzenler gerçekten açıldı. İncelenen örneklerde metin kesilmesi/üst üste binmesi görülmedi; başlık/puan uzun repo nedeniyle küçültülmedi. Story kritik içerik 210px üst/244px alt hedef alanında kalır. |
+| Referansla karşılaştırma | Ayrı temiz Chrome'da yerel HTML: referansın sağ paneli + yeni TR/EN Story yan yana; ayrıca iki yatay ve uzun tip örneği **390 CSS px** genişliğinde gösterildi. Yüklenen tüm görseller ve ölçülen genişlikler doğrulandı; comparison-390.png ve landscape-390.png açılıp incelendi. Kobalt/tip/mühür/doku/hiyerarşi karşılaştırıldı; bu kullanıcı kabulü değildir. Yatayda birincil tip/puan okunur, tarih/kapsam/mühür küçük ikincil ayrıntıdır. |
+| Koruma / diff | Başlangıç dosya hash'leriyle bu revizyonun dar kapsamı kontrol edildi. git diff --check, index ve yeni metinlerde whitespace kontrolü geçti; stage yoktur. Önceki PNG dizini korunur. Yeni font varlığı dışında yeni dependency/servis/endpoint yoktur. |
+
+**Bu tur canlı GitHub/Atlas/analiz → kayıt → indirme akışı tekrarlanmadı.** İnceleme görselleri sentetik renderer örnekleridir; gerçek hesap skoru veya yeni puanlama doğrulaması değildir. Font kaynağı edinimi public upstream dosyası indirmesidir; kart üretimi runtime'da font/GitHub servisine bağlanmaz. Uygulama içi mobil gezinme, klavye/pending/retry ve indirme işlevleri bu tur tarayıcıda yeniden denenmiş sayılmaz; kaynakları aynen korunmuş, deterministik testleri geçmiştir. Fiziksel telefonda kaydetme, gerçek sosyal platform/sıkıştırma/safe-area, ekran okuyucu ve yeni uzak CI doğrulanmadı. A5.1'in görsel kabulü açık kalır.
+
+### Yeni inceleme yolları
+
+Yeni dizin: **/tmp/repovitrin-a51-poster-review-20261029**. Önceki /tmp/repovitrin-a51-review çıktıları silinmedi. Ayrı Chrome profili kapatılıp kaldırıldı; geçici üretim/tarayıcı çalıştırıcıları kaldırıldı, PNG ve yerel karşılaştırma HTML'i inceleme için kaldı. Bu revizyonda DB kaydı oluşturulmadı/silinmedi ve kullanıcı dev sunucusuna dokunulmadı.
+
+- [TR Story](/tmp/repovitrin-a51-poster-review-20261029/tr-hiddenGem-story.png) · [TR yatay](/tmp/repovitrin-a51-poster-review-20261029/tr-hiddenGem-landscape.png).
+- [EN Story](/tmp/repovitrin-a51-poster-review-20261029/en-hiddenGem-story.png) · [EN yatay](/tmp/repovitrin-a51-poster-review-20261029/en-hiddenGem-landscape.png).
+- [Referansla yan yana / 390px](/tmp/repovitrin-a51-poster-review-20261029/comparison-390.png) · [Yatayların 390px incelemesi](/tmp/repovitrin-a51-poster-review-20261029/landscape-390.png).
+- [Uzun tip/adlar](/tmp/repovitrin-a51-poster-review-20261029/en-inProgress-story.png) · [100 puan / önerisiz](/tmp/repovitrin-a51-poster-review-20261029/tr-ready-story.png). Diğer tip/dil/format PNG'leri aynı dizindedir. Bunlar public /demo indirmesi değildir.
+
+Bu revizyonun dosyaları: src/features/cards/{image.tsx,content.ts,types.ts}, src/messages/{tr,en}.json, src/app/fonts/{Manrope-Medium.ttf,README.md}, tests/cards/{content,actions,image}.test.ts, AGENTS.md, docs/{DESIGN,ARCHITECTURE,DECISIONS,STATUS,TASKS}.md. Mevcut A5.1 paketinin kalan değişiklikleri korunur ve commit kapsamına dahildir. Yalnız belge/stil commit'i önerilmez; tüm paket için **feat: add Developer ID share cards**. Teknik kontroller geçti; commit öncesi kullanıcı görsel kabulü beklenir. Stage/commit/push/yayın yapılmadı. Sonraki somut adım yeni PNG'lerin kullanıcı tarafından incelenmesidir; sonraki dilime geçilmez.
+
+## A4.2 kapanışı ve doğrulama kaynağı — 29 Ekim 2026
+
+Kullanıcı A4.2'yi kabul edip 257acff9b8a86d62db5a8beda94f0bf68f42d6b4 commit'ini gönderdi. Uzak CI başarısı **kullanıcının ilettiği Codex public API doğrulaması** ile sağlandı: [GitHub Actions run 40792217446](https://github.com/EnessCansever/github-vitrin/actions/runs/40792217446). Bu tur CI bağımsız sorgulanmadı; önceki ekran görüntüsü veya yerel A5 testiyle karıştırılmaz. Önceki A4.2 yerel/Atlas/görsel kanıtıyla bu dilimin kapanış kapıları tamamdır. Bu doğrulama commitlenmemiş A5.1 paketinin uzak CI sonucu değildir.
+
+## A5.1 — ilk uygulama ve önceki krem PNG taslağı — 29 Ekim 2026
+
+Bu bölüm önceki işlev/bağlantı kontrollerinin tarihsel kaydıdır. Güncel görsel yön ve bu turun doğrulama sınırı yukarıdaki kobalt afiş revizyonundadır; eski görüntüler yeni afişin kabulü sayılmaz.
+
+### Uygulanan kapsam
+
+- Kayıtlı rapor üstünde belirgin Paylaşım kartı eylemi, native Story/yatay radio seçimi, aynı PNG'den önizleme ve açık PNG indir eylemi. Story **1080×1920**, yatay **1200×630**, ayrı kompozisyonlardır. Format/dil/deneme kimliği eski yanıtı dışlar; pending/çift tıklama ve güvenli hata/retry vardır.
+- Mevcut next/og ImageResponse + yerel statik Barlow Condensed/IBM Plex Mono; yeni dependency, font, env veya route yoktur. Ink/krem/kobalt/küçük lime, config marka/Enes Cansever imzası, login/tip/total, kategori puanları, motorun ilk önerisi/hedefi, UTC veri tarihi ve sunum kapsamı notu taşınır. Önerisiz complete rapor için görev/eksiklik uydurulmaz.
+- Yeni generateCard action'ı yalnız strict id/token/format kabul eder; her üretimde mevcut readSnapshot üzerinden erişim/expiry/şema doğrular. İstemci raporu/skoru/önerisi alınmaz; sunucu locale cookie'si kullanılır. Incomplete/null için client ve server engeli; missing/expired ile DB/configuration/render hataları güvenli kodlarla ayrılır. Ham hata/token/URI/README logu yoktur.
+- Motor/adapter/snapshot katmanı/TTL/demo/package/lock/ortak header korunur. Üretim GitHub'a gitmez, puan hesaplamaz, snapshot değiştirmez/süre uzatmaz. Token POST gövdesinde kalır; resim/dosya adı/query/path/metadata/QR'a eklenmez. Raporun private/no-store/no-referrer/noindex sözleşmesi sürer. PNG indirme sosyal paylaşım değildir; yeni public OG veya shareReports yoktur.
+
+### Son kontroller
+
+| Kontrol | Gerçek sonuç |
+| --- | --- |
+| npm test | **18 dosya / 355 test başarılı** (330 önceki + 25 yeni). Eşleme/ilk öneri/puan korunumu, TR/EN/tip/önerisiz/null, strict girdi/client rapor reddi, erişim yeniden doğrulaması, DB/render güvenli hataları, incomplete sunucu/UI engeli ve yerel renderer'ın gerçek PNG imza/boyutları. Testlerde ağ kapalı, GitHub/Atlas/secret yoktur. Renderer'ın gömülü WASM data URI okuması testte async reddedilip yerel fallback ile çözülür; dış ağ isteği kabul edilmez. |
+| Lint / typecheck / build | max-warnings=0 lint ve strict typecheck geçti. GitHub/Mongo/signing process env değerleri boş production build geçti; import/build gerçek DB gerektirmedi. Yeni bağımlılık veya lint/TS kural susturma yoktur. |
+| PNG üretim / açarak inceleme | Gerçek rapordan TR/EN iki format; ayrıca dört tip × iki dil × iki format sentetik düzenler üretildi. PNG IHDR boyutları tam hedefle eşleşti. Çıktılar gerçekten açıldı; Türkçe karakterler, 39 karakter login, 100 karakter repo, satır kırılması, önerisiz 100 puan düzeni ve imza incelendi. Son uç kontrolde kesintisiz adlarda overflow-wrap etkisizliği görüldü; renderer destekli word-break:break-all ile düzeltildi. 39 karakter kesintisiz login ve 100 karakter kesintisiz repo dört TR/EN PNG olarak yeniden açıldı, kesilme giderildi. Son dar kırma/pasif stil düzeltmesinden sonra renderer ve tüm kod kontrolleri tekrarlandı; tüm tarayıcı akışı yeniden çalıştırılmış sayılmaz. Hedef puan veya fixture değiştirilmedi; sentetik düzenler canlı analiz sonucu değildir. |
+| Preview / download | Temiz headless Chrome'da gerçek explicit download işlemi iki formatta dosya oluşturdu; önizleme byte'larıyla birebir eşitlik geçti. Son yatay tipografiyle indirme eşitliği tekrar geçti. Dosya adı yalnız marka/format/dil. Bildirim yalnız indirme isteğinin tarayıcıya verildiğini söyler; cihazda kaydetme veya sosyal platform başarısı değildir. |
+| Gerçek veri / süre korunumu | Mevcut form üzerinden EnessCansever → seçim → gerçek GitHub analizi → Atlas snapshot → kart. Bu ölçümde sonuç 90, kategoriler 20 + 23,3 + 46,7, Gizli Cevher; kart bu kayıtlı değerleri gösterdi, 90'a sabitlenmedi. Generate öncesi/sonrası readSnapshot sonucu ve expiresAt birebir aynıydı. |
+| GitHub izolasyonu / TR↔EN / reload | Gerçek fetch'e delege eden geçici sayaç yalnız api.github.com sayısını tuttu. Kart üretimi/format/dil/full reload boyunca ilk process'te **23→23**; son build process'inde yalnız rapor/kart işlemlerinde **0**. Token/URL/header/body kaydedilmedi. Locale aynı token fragment'ini korudu, yeni GitHub analizi yoktu. |
+| Pending / retry / incomplete | Gerçek action isteği CDP ile geçici bekletildi: eylem/formatlar disabled, iki tıklamada tek istek. Offline kart isteği güvenli hata verdi ve eski indirme görünmedi; online retry gerçek PNG'yle toparlandı. Gerçek Atlas'ta sentetik incomplete snapshot açıklamalı disabled eylem ve resimsiz durum gösterdi. Yetki/expiry/render hataları yeni action testlerinde deterministik doğrulandı; tüm hata türleri canlı denenmiş sayılmaz. |
+| Klavye / responsive / demo | Native Tab format radio'suna ulaştı, görünür focus **3px**; native ok tuşu formatı değiştirdi, Tab download linkine ulaştı. 390×844 ve 1440×900 preview görüntüleri gerçekten açıldı; 320/390/768/1440 yatay taşma **0**. Yatay PNG telefon ölçeğinde de incelendi: ana tip/puan okunuyor, kategori/tarih/imza küçük ayrıntı; tam çözünürlük dosyada korunuyor. Üç demo sayfası 390px'de taşmasız ve kart indirmesi olmadan kaldı. Normal akış runtime/console error 0; offline kontrolündeki beklenen ağ hatası bu sayıya dahil değil. Yeni hareket yoktur, ortak sticky/reduced-motion kodu korunur. |
+| Diff / koruma | git diff --check/index kontrolü ve yeni dosyaların whitespace kontrolü geçti. Package/lock, GitHub/DB/motor/fixture, Next güvenlik yapılandırması, font/lisans/referanslar ve kullanıcı dosyaları değişmedi. Değişen kod sade ad/yorum/tekrar/soyutlama açısından incelendi. |
+
+### İnceleme dosyaları ve açık kapılar
+
+- Gerçek public rapordan son PNG'ler: [TR Story](/tmp/repovitrin-a51-review/live-tr-story.png), [TR yatay](/tmp/repovitrin-a51-review/live-tr-landscape.png), [EN Story](/tmp/repovitrin-a51-review/live-en-story.png), [EN yatay](/tmp/repovitrin-a51-review/live-en-landscape.png).
+- İncelenen UI: [TR yatay mobil](/tmp/repovitrin-a51-review/preview-tr-landscape-390.png), [TR Story mobil](/tmp/repovitrin-a51-review/preview-tr-story-390.png), [EN masaüstü](/tmp/repovitrin-a51-review/preview-en-1440.png). Adres çubuğu/token/elle copy alanı yoktur. Sentetik uzun ad/tip/önerisiz PNG'ler aynı dizinde synthetic-* adlarıyla ayrı durur; bunlar canlı puan doğrulaması değildir.
+- Yalnız bu tur oluşturulan **iki UUID** hedeflenerek test kayıtları tek tek silindi ve yoklukları doğrulandı; inceleme için tutulmuş DB kaydı yoktur. PNG'ler kullanıcı incelemesi için yerelde bırakılır. Kullanıcının 3000 portundaki dev sunucusu korunur; ayrı test sunucusu/tarayıcı ve geçici çalıştırıcılar kapatılıp kaldırılır.
+- **A5.1 kullanıcı görsel kabulü açık.** Fiziksel iOS/Android cihazda fotoğraflara kaydetme veya gerçek sosyal platform paylaşımı denenmedi. Ekran okuyucu ile canlı okuma ve tüm tarayıcı/cihaz kombinasyonları doğrulanmadı. Yeni public OG, üçüncü boyut 1080×1350, gelişim/karşılaştırma kartı, shareReports ve A4 açık kabul maddeleri sonraki işlerdir.
+- Bu paket için kullanıcı commit/push ve yeni uzak CI açık; yerel sonuç uzak CI diye sunulmaz. Commit kapsamı aşağıdaki A5.1 kaynak/test/belge paketinin tamamıdır. Öneri: **feat: add share card previews and PNG downloads**. Stage/commit/push/yayın yapılmaz; sıradaki somut adım kullanıcının kayıtlı complete raporunda kartları inceleyip görsel kabul vermesidir.
+
+
+### Commit kapsamı
+
+- Yeni kaynaklar: src/features/cards/{types.ts,content.ts,image.tsx,actions.ts,card-studio.tsx}.
+- Yeni testler: tests/cards/{content.test.ts,actions.test.ts,image.test.ts,studio.test.tsx}.
+- Rapor bağlantısı/stiller/mesajlar: src/features/reports/report-access.tsx, src/app/reports/[id]/page.tsx, src/app/globals.css, src/messages/{tr,en}.json.
+- Belgeler: AGENTS.md, README.md, docs/{PRODUCT,ARCHITECTURE,DESIGN,DECISIONS,STATUS,TASKS}.md.
 
 ## A4.2 kullanıcı görsel kabulü ve hydration bildirimi — 29 Ekim 2026
 
@@ -12,7 +210,7 @@ Son güncelleme: 29 Ekim 2026 (Europe/Istanbul).
 - Kullanıcı, normal Chrome profilindeki hydration uyarısında tek farkın `data-yd-*` nitelikleri olduğunu ve gizli pencerede aynı uyarının oluşmadığını doğruladı. Bu karşılaştırma **kullanıcı tarafından sağlanan doğrulamadır**; bu tur bağımsız yeniden üretim yapılmadı.
 - Bulgular olası tarayıcı eklentisi/DOM müdahalesiyle uyumludur; kesin kök neden veya eklenti adı doğrulanmadı. Belirli bir eklentiye atıf yapılmaz ve uygulama hatası kesin dışlanmış sayılmaz.
 - Bu tur yalnız STATUS/TASKS kabul kayıtları güncellendi. Uygulama kodu değiştirilmedi; suppressHydrationWarning veya uyarıyı gizleyen bir çözüm eklenmedi. Yalnız belge diff kontrolü yapıldı; test/lint/typecheck/build veya canlı bağlantı kontrolleri tekrarlanmadı.
-- Görsel kabul kapandı; kullanıcı commit/push ve A4.2 uzak CI doğrulaması açık. Commit kapsamı mevcut A4.2 kod/test/yapılandırma/belge paketinin tamamıdır; yalnız bu iki belge için ayrı commit önerilmez. Sonraki dilim yetkilendirilmedi.
+- O tur görsel kabul kapandı; kullanıcı commit/push ve A4.2 uzak CI doğrulaması daha sonra yukarıdaki 257acff kaydıyla kapandı. Commit kapsamı mevcut A4.2 kod/test/yapılandırma/belge paketinin tamamıdır; yalnız bu iki belge için ayrı commit önerilmez. Sonraki dilim yetkilendirilmedi.
 
 ## A4.2 gerçek kayıt ve rapor bağlantısı — 29 Ekim 2026
 

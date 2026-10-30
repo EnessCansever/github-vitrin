@@ -136,10 +136,70 @@ Mevcut analiz akışı yeni analizde önceki response'u kaldırıp kabul edilen 
 
 Yerel Chrome ölçümleri ve yaklaşık 1,2s mobil / 1,12s masaüstü gerçek ekran kayıtları STATUS'tadır. Hareket yalnız screenshot ile onaylanmış sayılmaz; kare/timestamp ve requestAnimationFrame ölçümleri de incelendi. Yeni sonuç/header için kullanıcı görsel kabulü ve yeni uzak CI açık kalır.
 
-## A4.2 kayıtlı rapor — kullanıcı görsel kabulü bekleniyor
+## A4.2 kayıtlı rapor — kullanıcı görsel kabulü alındı
 
 Kayıtlı /reports/[id] ekranı aynı shell/sticky header, Developer ID kartı ve LiveReport kanıt/görev/kategori bileşenlerini kullanır. Kart/puan/öneri yerleşimi yeniden tasarlanmadı. Üstte kısa genel rapor başlığı, ana forma dönen gerçek link, 30 günlük bitiş notu ve ortak mavi ikincil kopyalama eylemi vardır. Mint gezinti rengi yapılmadı; sosyal paylaşım/indirme eylemi yoktur. Gerçek link sadece clipboard veya elle kopyalama alanında görünür; metadata'da yer almaz.
 
 Clipboard geri bildirimi küçük status alanıdır; elle kopyalama label'lı readonly input'tur, focus ile tam seçim yapılır. Aynı TR/EN bileşeni kullanılır. Uzun URL input içinde kaydırılabilir; sayfayı taşırmaz. Erişim notu kopyalama sonrasında da görünür. Geçersiz/expired bağlantı ve DB erişim hatası farklı StatePanel başlıklarıyla anlatılır. Eksik rapor null puan/tip ve bilinen ayrıntıları korur.
 
 Başlık odağı ve main başlangıcına tek kaydırma sticky payını kullanır; genel h1'in kısmen kesilmesi giderildi. Mevcut kart 520ms/çubuk 80+600ms/gövde 140+420ms girişleri kullanılır; locale/accordion aynı DOM'u korur. Reduced-motion animasyon/gecikme kaldırır; null kategoride sahte çubuk yoktur. Yerel mobil/masaüstü, uzun ad, focus, giriş olayı ve reduced-motion gözlemleri STATUS'tadır. Yeni A4.2 görünümü için kullanıcı görsel kabulü açık kalır.
+
+
+## A5.1 — paylaşım görseli: kobalt afiş
+
+**Ana sayfa/rapor = koyu arayüz ve krem Developer ID kartı. Paylaşım görseli = kobalt afiş ve krem tipografi.** Kullanıcı A5.1'e görsel kabul vermedi. Önceki teknik/ajan değerlendirmesi kabul değildir. Güncel 31 Ekim revizyonu yalnız yataydır; kullanıcı son uzun EN Story mühür/başlık/footer doğruluğunu bildirdi ve Story tasarımını korumayı istedi. A5.1 genel görsel kabulü açık kalır. Aşağıdaki D030–D031 notları önceki uygulamaların tarihsel ölçüleridir; güncel yatay düzen D032'dedir.
+
+### Story referans ölçüleri ve yerleşim — 29 Ekim 2026
+
+Developer ID konsepti gerçekten açıldı; sağ panel 1774×887 kaynakta x=1331, y=127, 419×716 alanından ayrı inceleme görseline kırpıldı. Bu kırpım yalnız /tmp karşılaştırma varlığıdır; üretimde kullanılmaz. Yaklaşık mürekkep alanları panelin kendi genişlik/yüksekliğine oranlandı; bunlar birebir OCR veya piksel eşliği iddiası değildir:
+
+| Alan | Referansta yaklaşık oran / konum | Story uyarlaması |
+| --- | --- | --- |
+| Marka | x %6,4, y %4,1; genişlik %27 | 64px sol pay, güvenli alan başlangıcında 80px condensed marka |
+| Başlık | yaklaşık %90 panel genişliği; GİZLİ / CEVHER sıkı blok | İlk satır 604px, alt satır 970px hedef genişlik; -4px harf aralığı, gerçek font advance ölçüleri |
+| Mühür | x %67,5, y %14,8; genişlik %28 | Başlık sağında 230–300px; normal Gizli Cevher örneğinde 300px |
+| Kullanıcı | x %11,2, y %54,2 | 2px sol çizgi +52px girinti, tam kullanıcı adı |
+| Puan | x %7,2, y %66,9 | Kullanıcıdan sonra 200px condensed gerçek puan, 56px /100 |
+| İmza alanı | panelin alt kısmında, yaklaşık y %94 | Story alt güvenli alandan önce marka/imza ve ikincil tarih/kapsam |
+
+Story **1080×1920**; üstten 210px ve alttan en az 244px kritik içerik güvenli alanı, solda 64px yerleşim payı vardır. Sosyal platformların gerçek UI davranışı ayrıca doğrulanmış sayılmaz. Referansın kobalt piksellerinden ölçülen medyan #012BC1 Story tabanıdır; doku görünür rengi değiştirir. Krem #F4EEE2 ve lime #D4EB52 korunur. Ortak uygulama/yatay kobalt tokenı #1845F5 değişmez.
+
+Barlow Condensed 800 başlık/puan, yerel statik Manrope Medium 500 açıklama/öneri/imza, IBM Plex Mono 400 kimlik/metadata kullanılır. Başlık genişliği karakter sayısı yerine mevcut Barlow hmtx advance değerlerinden hesaplanır. GİZLİ / CEVHER iki güçlü satırdır. Uzun EN tiplerde aynı kelimeler üç satıra ayrılır (SHOWCASE / IN / PROGRESS; WHERE IS / THE / DEMO?); anlam veya motor tipi değişmez. Satır konumları glyph yüksekliği ve mühür alanını hesaba katar; bütün metinler topluca küçültülmez. Kullanıcı adı kesilmez; 39 karakterde yalnız kimlik alanının fontu sınırlanır. En çok 100 karakter repo adı ilk adımın ayrı alanında sarılır.
+
+Ana hiyerarşi marka → tip → kullanıcı → puan. Mühür yalnız “Sunum profili / Portfolio profile” der; profil tipini veya puanı yeniden tekrarlamaz, doğrulama/teknik kalite onayı değildir. Üç kategori tek ince şeritte, ilk adım etiketi/hedefi ve eylemi ayrı satırlarda yer alır. Katılım çağrısı ve marka/geliştirici imzası görünür; tarih/kapsam son ikincil satırdadır. Puan etiketi “GitHub vitrin puanı / GitHub portfolio score”. İlk görev ve önerisiz sonuç mesajı mevcut Card mesajlarından aynen gelir. Yeni eksiklik, sahiplik, meslek veya gelişim iddiası yoktur; domain/Instagram/QR eklenmez.
+
+### Story baskı malzemesi
+
+Homojen SVG nokta dokusu Story'den kaldırıldı. Yerel, yazısız **letterpress-paper.jpg**, kullanıcının izin verdiği görsel üretim aracıyla yalnız tasarım sırasında oluşturuldu. Düzensiz lif/tane, hafif kıvrım ve kenar aşınması içerir; gerçek kişi/metin/puan veya referans bitmap'i içermez. Kaynak ve SHA assets/README.md'dedir. SVG sabit renk/alpha matrisleri aynı gri dokuyu kâğıt lifi ve hafif mürekkep aşınmasına dönüştürür; başlıkta da okunaklı kalan küçük düzensizlik vardır. Dosya ve dönüşüm deterministiktir; istekte rastgelelik, runtime AI/ağ veya yeni bağımlılık yoktur.
+
+Yatay **1200×630**, D030 yerleşimi ve eski sabit SVG malzemesiyle aynen kalır. Aynı sentetik içerikte önceki ve güncel yatay PNG byte eşitliği kontrol edildi. Story doku/giriş değişikliği diğer ekranlara veya yataya yayılmaz.
+
+Format seçimi, incomplete engeli, pending/focus/retry, aynı PNG preview/download, sticky header ve reduced-motion değişmez. Tam boyut dosyalar ve 390px gösterimleri açılıp incelendi; sağ panel / tam Story / güvenli içerik alanı aynı 390px genişlikte yan yana gösterildi. Bu **kullanıcı görsel kabulü değildir**. Fontun glyph biçimi referansla birebir aynı değildir; güvenli alan ve zorunlu kategori/ilk görev içeriği nedeniyle dikey oranlar da aynı değildir. Kategori/tarih gibi ikincil alanlar telefon ölçeğinde küçüktür. Önceki çıktılar korunur; fiziksel cihaz/sosyal platform kabulü çıkarılmaz.
+
+
+### Story mühür ve doku ince ayarı — 29 Ekim 2026
+
+Kullanıcı genel kompozisyon ve başlık yönünü uygun buldu; bu bildirim tam Story/A5.1 görsel kabulü değildir. Yerleşim, içerik sırası ve 210px üst/244px alt güvenli alan değişmez.
+
+Story mühründe metin kutusu mühür genişliğinin %72'si, yüksekliğinin %30'udur; iki satır ayrı %14 yükseklik taşır. Metin %10 font boyutu ve 1,3 satır yüksekliğiyle ortalanır, satır kırılması ve flex küçülmesi engellenir. TR SUNUM / PROFİLİ, EN PORTFOLIO / PROFILE aynı kuralla gösterilir; profil tipine özel konum düzeltmesi yoktur. Yatay eski metin yerleşimini korur.
+
+Aynı yerel JPEG ve mevcut SVG maskeleri kullanılır; yeni doku sistemi/varlık/bağımlılık yoktur. Kâğıt maskesinin katkısı öncekinin yaklaşık %22'sine, mavi mürekkep aşınması %15'ine indirildi. İri damar/lekeler daha silik; hafif tane/kenar izi kalır ve krem harfler daha temizdir. Referansa bağlı başlık geometrisi, puanlar ve destekleyici içerik değişmez. Son PNG incelemesi ve yolları STATUS'tadır; kullanıcı görsel kabulü açık kalır.
+
+
+### Uzun Story başlığında mühür alanı ve footer — 29 Ekim 2026
+
+Kullanıcı dokuyu ve normal TR Story görünümünü uygun buldu; bunlar korunur. Uzun EN dahil tüm Story için tam görsel kabul açık kalır. Üç satırlı başlıkların ilk iki satırı solda 604px alan kullanır; sağdaki 300px mühürle arada 48px ayrım vardır. Son başlık satırının kutusu mühür altından en az 16px sonra başlar, yazı hedef genişliği 900px ve font üst sınırı 270px'dir. Mühür bu düzende başlık sonrasında çizilir. Yeni overflow/clip maskesi veya metni kesen bir çözüm yoktur; mühür iç ölçüleri/doku/renkler değişmedi. Bu kural kullanıcı adına veya tek profil tipine özel değildir; üç satıra ayrılan tüm başlıklara uygulanır.
+
+Üç satırlı Story footer'ında tarih ve kapsam notu ayrı satırlarda, aralarında 8px boşlukla ve mevcut 20px boyutlarıyla gösterilir. İki satırlı başlıkların/TR kartların eski footer/başlık düzeni korunur. Kritik 210px üst/244px alt güvenli alan aynı kalır. Tüm profil tiplerinin tam TR/EN PNG'leri açılarak incelenir; yalnız mühür kırpımından tam kart doğrulaması çıkarılmaz.
+
+
+### Yatay afiş — 31 Ekim 2026, kullanıcı incelemesi bekleniyor
+
+Story küçültülmez veya kırpılmaz; 1200×630 için ayrı HTML/SVG kompozisyonu vardır. Aynı #012BC1 kobalt, #F4EEE2 krem, #D4EB52 lime, yerel Barlow/Manrope/IBM Plex ve aynı letterpress-paper.jpg kullanılır. PrintTexture mevcut sabit maskeleri iki hedef boyuta uygular; yeni doku/font/bağımlılık yoktur. Eski yatay nokta pattern'i ve artık kullanılmayan kod kaldırılır. Story doku yoğunluğu/değerleri değişmez.
+
+- Çerçeve payları: üst 24px, sağ/sol 36px, alt en az 16px. Marka 44px, üstte tam kullanıcı adı en çok 852px alanda 38px mono; uzun ad için yalnız bu alanın fontu sınırlanır, ad kesilmez.
+- Ana alan 296px yüksekliğinde; başlık solda 620px, sağ puan/mühür alanı 476px, araları 32px. Profil tipi mevcut mesajdaki iki satırdır; kelimeler/puan kuralları değişmez. Başlık fontu en çok 196px; Barlow advance değerleriyle genişlik ve Türkçe noktalı/aksanlı başlıkların yüksekliği birlikte sınırlandırılır. Noktalı büyük İ işaretleri marka alanına giremez. Puan 200px, /100 42px. Mühür sağ üstte ayrı 152px alan kullanır; uzun başlıklar bu alana taşmaz. Mühür tüm dillerde tam iki satırlı sunum etiketi, onay rozeti değildir.
+- Kategoriler 44px'lik tek şeritte 25px etiket /28px puan. İlk adım etiketi ve repo adı aynı satır grubunda, eylem altında yer alır. Uzun repo 980px alanda sarılır; 100 karakter örneğinde iki satırdır. Başlık ve puan repo yüzünden küçültülmez; olmayan görev uydurulmaz.
+- Katılım çağrısı ve geliştirici imzası 672/408px alanlar ve 48px arayla; tarih/kapsam sonraki satırda 624/400px alanlar ve 104px arayla yerleşir. Kapsam 20px, tarih 20px mono. Yeni küçük etiket eklenmedi; alanlar üst üste binmez.
+
+TR/EN dört tip, 39 karakter kullanıcı, 100 karakter repo, ondalıklı/100 ve önerisiz complete örnekleri tam PNG olarak açıldı; 390px gösterimde tip/puan/kullanıcı ana hiyerarşisi incelendi. Tarih/kapsam/mühür iç metni telefon ölçeğinde küçük ikincil bilgidir; fiziksel cihaz/sosyal platform garantisi verilmez. Story aynı 16 sentetik girdide önceki renderer ile byte eşittir; tasarımı yeniden yapılmadı. A5.1 genel kullanıcı görsel kabulü açık kalır.
