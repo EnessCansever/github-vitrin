@@ -384,3 +384,17 @@ Gerekçe: Kabul edilen PNG ile otomatik OG aynı teslim değildir. Mevcut 30 gü
 Yalnız durum/görev/karar belgeleri değişir. Önceki revizyonların kabul bekleme kayıtları tarihsel olarak korunur; güncel kabul STATUS/TASKS ve bu kayıttır. Tasarım/ürün/puanlama/stack/erişim sözleşmesi değişmedi. Uygulama değişmediği için rutin testler tekrarlanmadı; belge diff ve tutarlılık kontrolü yapıldı. Stage/commit/push/yayın yoktur.
 
 Etkilenen dosyalar: docs/{STATUS,TASKS,DECISIONS}.md.
+
+### D034 — A4.3a sabit pencereli atomik sayaç — 31 Ekim 2026
+
+Kullanıcı D033'te önerilen MongoDB rateLimits veri katmanını açıkça yetkilendirdi. Temiz başlangıç HEAD 95c9881'dir; bu belge commit'i için yeni uzak CI bilgisi verilmedi. Önceki A5.1 kullanıcı kabulü/CI kaynağı korunur. Güncel AGENTS aşama sınırı bu yeni kullanıcı mesajına göre güncellendi.
+
+Karar: Tek küçük server-only `consumeRateLimit` fonksiyonu, native driver/Zod ve mevcut lazy DB havuzuyla çalışır; yeni bağımlılık yoktur. Kota/windowMs çağırandan gelir; 10/10 dakika ve 60s örnekleri sabit ürün kararı yapılmadı. İlk kabulde başlayan sabit pencere, retlerde uzamayan expiry ve limitte kalan kabul sayacı seçildi. Key yalnız 64 küçük hex opak sunucu anahtarıdır; ham IP/kimlik türetme bu modülde yoktur. Aktif key/politika uyuşmazlığı invalid_limit; süre dolunca yeni politika uygulanabilir. Bu seçim, yanlışlıkla farklı config veren çağıranın aktif kotayı büyütmesini önler.
+
+Gerekçe: Ayrı read/count/write yaklaşımı eşzamanlı isteklere fazla hak verebilir. Bunun yerine tek belge pipeline'ı Mongo $$NOW ile expiry ve kotayı değerlendirir; allowed son karar alanı ve count aynı atomik işlemde değişir, her çağrı kendi post-image'ını döndürür. Allowed alanı sonraki isteğe izin kaynağı olarak okunmaz. Unique _id oluşturma yarışını sınırlar; 11000 durumunda tek non-upsert kurtarma vardır. Ağ/timeout yazımının belirsizliği kör yeniden tüketimle büyütülmez; hata configuration/unavailable/invalid_record/invalid_limit olarak kalır. Majority write concern ve mevcut DB timeout'u korunur. TTL temizliği gecikse de expiry pipeline'da denetlenir; ek silme döngüsü yoktur.
+
+36 secretsız mock test dönüş/validation/kurtarma/hata davranışını doğrular; Mongo atomikliği iddiası değildir. Ayrı gerçek Atlas smoke'ta yeni anahtarın 30 eşzamanlı çağrısında 10 kabul/20 ret, bir kullanım sonrası 30 çağrıda 9 kabul/21 ret ve count=10 gözlendi. Farklı key, politika uyuşmazlığı, hâlâ saklanan expired kaydın yenilenmesi, kısa gerçek pencere ve indeksler de doğrulandı. Yalnız dört geçici kayıt temizlendi/4 yokluk okuması geçti; çalıştırıcı/derlenmiş kopyalar kaldırıldı. Çoklu process/failover/ağ bölünmesi ve fiziksel TTL silinmesi doğrulanmış değildir.
+
+Bu dilim hiçbir action/rapor/PNG akışına bağlanmaz. Session/IP/proxy güveni, requestLocks, cache, UI, toplam analiz bütçesi ve yayın açık kalır; bütün dağıtık koruma veya A4 tamamlandı denmez. Motor/adapter/snapshot/demo/arayüz/paketler değişmez. Yerel son kontrol sonuçları STATUS'tadır. Varsayılan Turbopack build yerel port açma ortam kısıtı nedeniyle iki denemede geçmedi; mevcut --webpack seçeneğiyle production build geçti. Bu yalnız doğrulama komutudur, paket/build script/config veya araç zinciri kararı değiştirilmedi. Varsayılan build/yeni CI açık; stage/commit/push/yayın yapılmaz.
+
+Etkilenen dosyalar: src/lib/db/{rate-limits,errors}.ts, tests/db/rate-limits.test.ts, AGENTS.md, docs/{ARCHITECTURE,DECISIONS,STATUS,TASKS}.md.

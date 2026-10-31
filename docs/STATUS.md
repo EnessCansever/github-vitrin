@@ -4,7 +4,39 @@ Son güncelleme: 31 Ekim 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A5.1 — Story/yatay önizleme ve PNG indirme dilimi kullanıcı görsel kabulü, commit/push ve kullanıcı tarafından sağlanan uzak CI doğrulamasıyla kapandı.** Güncel HEAD 0f3d6c5. Bu tur yalnız kabul kaydı ve ilk yayına kalan kapsamın belge incelemesidir; yeni uygulama dilimi başlamadı. A4/A5 bütünü ve yayın hazırlığı açık; aşağıdaki güncel kayıt önceki tarihsel kabul/commit bekleme durumlarının yerini alır.
+**A4.3a — MongoDB atomik istek sayacı veri katmanı ve yerel kontroller tamam; varsayılan build kullanıcı tarafından doğrulandı.** Temiz başlangıç HEAD 95c9881. Kullanıcı yalnız rateLimits katmanı/testleri için yetki verdi; action, rapor, PNG, session/IP/proxy, kilit/cache veya UI entegrasyonu yoktur. A4 bütünü/dağıtık abuse koruması ve yayın hazır sayılmaz. A5.1 kabul kaydı aşağıda korunur.
+
+## A4.3a atomik sayaç veri katmanı — 31 Ekim 2026
+
+### Uygulanan sınır
+
+- `src/lib/db/rate-limits.ts`: server-only consumeRateLimit, mevcut native driver/Zod/getDatabase havuzu. Strict key (64 küçük hex opak sunucu anahtarı), pozitif güvenli tamsayı limit/windowMs ve tarih aralığı doğrulaması. Limitler çağırandan gelir; 10/10 dakika ve 60s örneklerine ürün sabiti/default eklenmedi. IP/hash/session üretimi bu modülde yoktur.
+- Tek belge pipeline/upsert, Mongo $$NOW ile ilk kabulde başlayan sabit pencere; kabulde count artar, ret count/expiry'yi uzatmaz. Unique _id ve majority write concern; 11000 oluşturma yarışında yalnız bir non-upsert kurtarma. Aktif key için farklı limit/pencere invalid_limit; pencere bitince yeni politika uygulanabilir. Ağ/timeout belirsiz yazımına kör tekrar yoktur.
+- RateLimitResult allowed/remaining/resetAt/retryAt tipleri açıktır; son hak kabulde remaining=0/retryAt=null, sonraki rette remaining=0/retryAt=resetAt. configuration/unavailable/invalid_record/invalid_limit ayrı hatadır; DB hatası izin/ret sayılmaz. Anahtar veya ham DB hata/cause loglanmaz/dönmez.
+- `_id` unique ve `rate_limit_expiry` expiresAt:1 / expireAfterSeconds:0; indeks mevcut snapshot yaklaşımıyla idempotent istenir. Expired kayıt duruyorsa pipeline yeniler, doğruluk TTL temizleme zamanına bağlı değildir. Yeni bağımlılık/genel repository altyapısı yoktur.
+
+### Kontroller ve gerçek bağlantı
+
+| Kontrol | Gerçek sonuç / sınır |
+| --- | --- |
+| Deterministik testler | **19 dosya /391 test başarılı**, 36 yeni rateLimits testi. İlk/sınır/ret dönüşü, farklı key, yenilenen pencere yanıtı, mock eşzamanlı post-image/duplicate kurtarma ve girdi/kayıt/DB hataları. Mock pipeline'ı çalıştırmaz; Mongo atomikliği veya fiziksel TTL kanıtı değildir. CI secret/ağ gerektirmez. |
+| Gerçek Atlas: eşzamanlı oluşturma | Mevcut modül, 30 eşzamanlı tüketim, limit=10: **10 kabul /20 ret**, kabul remaining değerleri 9..0, aynı resetAt ve saklanan count=10. Bu gerçek DB çağrısıdır; mock setup taşınmadı. |
+| Gerçek Atlas: güncelleme yarışı | İlk hakkı tüketilmiş farklı anahtara 30 eşzamanlı çağrı: **9 kabul /21 ret**, count=10. |
+| Gerçek Atlas: expiry/anahtar/politika | DB'de hâlâ duran expired kaydın yeniden kabulü/remaining=9, yeni reset; farklı anahtarların ayrımı; aktif politika uyuşmazlığında invalid_limit ve sayaç korunumu; kısa gerçek pencere limit=1 kabul→ret→yenilenme doğrulandı. |
+| Gerçek Atlas: indeks/temizlik | _id_ ve rate_limit_expiry tanımları kontrol edildi. Yalnız bu çalıştırmanın dört rastgele geçici anahtarı ayrı _id filtreleriyle silindi; **4/4 yokluk okuması geçti**. Koleksiyon/DB silinmedi, mevcut kayıtlar değiştirilmedi. Anahtarlar/env/URI/token raporlanmadı; geçici çalıştırıcı ve üç derlenmiş kopya kaldırıldı. İndeks normal uygulama tanımı olarak kalır. |
+| Gerçek bağlantı sınırı | İlk sandbox bağlantısı güvenli unavailable verdi; aynı modül/env yükleme izinli ağ ortamında başarılı oldu, ayar/uygulama değiştirilmedi. Tek Node süreci/paylaşılan max10 havuzundan gerçek eşzamanlı işlemler; çoklu uygulama süreci, failover/ağ bölünmesi, gerçek duplicate-key dalının zorlandığı veya fiziksel TTL silinmesi iddia edilmez. Duplicate kurtarma dalı deterministik mock testte zorlandı. |
+| Lint / typecheck | İkisi exit 0; yeni union/driver seçenekleri strict tip kontrolünden geçti. |
+| Production build | Varsayılan npm run build, sandbox ve izinli tekrar denemesinde Turbopack/PostCSS yerel port bind için Operation not permitted verdi. Uygulama/paket/config değiştirilmeden **npm run build -- --webpack exit 0**: derleme, TypeScript, 6 statik sayfa ve trace tamamlandı. Her iki yolda GITHUB_TOKEN/MONGODB_URI/MONGODB_DB/SIGNING_SECRET process değerleri boştu. Bu webpack doğrulamasıdır; varsayılan Turbopack/uzak CI başarı iddiası değildir. |
+| Varsayılan build — kullanıcı doğrulaması | Kullanıcı kendi VS Code terminalinde varsayılan **npm run build** komutunun başarılı olduğunu bildirdi (31 Ekim 2026). Bu **kullanıcı tarafından sağlanan yerel doğrulamadır**; Codex ortamında yeniden çalıştırılmış veya uzak CI doğrulaması değildir. Yukarıdaki Turbopack port kısıtı önceki Codex kontrolünün tamamlanamama nedenidir, uygulama hatası olarak yorumlanmaz. |
+| Diff/kapsam | git diff --check ve cached diff geçti; index boş. Değişen kod sade isim/yorum/tekrar/soyutlama yönünden incelendi. Yeni modülü yalnız testler çağırıyor; Server Action/rapor/PNG bağlantısı eklenmedi. |
+
+Env dosyası görüntülenmedi/değiştirilmedi; gerçek değerler yalnız geçici smoke runtime'ında Next env yükleyicisinden alındı. Gerçek smoke normal npm test/CI'a eklenmedi. Tarayıcı/telefon/UI testi bu veri katmanı diliminde yapılmadı; UI değişmedi.
+
+**Açık kalanlar:** A4'ün session/IP/proxy kaynağı ve endpoint limit entegrasyonu, requestLocks/istek birleştirme, cache/karşılaştırma ve toplam analiz süre bütçesi; A5/A6/A7 kalan işleri ilk yayın tablosunda açık. Varsayılan build için yerel doğrulama açığı kullanıcı bildirimiyle kapandı; Codex ortamındaki kısıt ve önceki webpack kontrolü tarihsel kanıt olarak korunur. Mevcut A4.3a paketi yerel kontroller/kullanıcı build doğrulamasıyla commit için hazırdır; commit/push yapılmış veya yeni uzak CI başarılı sayılmaz. Yeni commit/push/uzak CI kullanıcıdan beklenir; başlangıç 95c9881 için de uzak CI varsayılmadı.
+
+Bu kabul kaydı turunda yalnız STATUS/TASKS güncellendi ve belge diff kontrolü yapıldı. Uygulama kodu/build yapılandırması ve önceki commitlenmemiş A4.3a değişiklikleri korundu; test/lint/typecheck/build veya gerçek DB kontrolü tekrarlanmadı.
+
+Commit kapsamı: src/lib/db/{rate-limits,errors}.ts, tests/db/rate-limits.test.ts, AGENTS.md ve docs/{ARCHITECTURE,DECISIONS,STATUS,TASKS}.md. Öneri: **feat: add atomic MongoDB rate limit counter**. Stage/commit/push/yayın yapılmadı; bu dilimden sonra durulur.
 
 ## A5.1 kabulü ve ilk yayına kalan kapsam — 31 Ekim 2026
 
