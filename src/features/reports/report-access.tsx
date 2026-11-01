@@ -9,9 +9,11 @@ import type {StoredReportResponse} from "../analysis/report";
 import {loadReport} from "./actions";
 import {CopyLink} from "./copy-link";
 import {CardStudio} from "../cards/card-studio";
+import {RetryNotice} from "../../components/retry-notice";
 
 export function ReportAccess({id}: {id: string}) {
   const t = useTranslations("SavedReport");
+  const requests = useTranslations("Requests");
   const format = useFormatter();
   const [response, setResponse] = useState<StoredReportResponse | null>(null);
   const [attempt, setAttempt] = useState(0);
@@ -53,6 +55,12 @@ export function ReportAccess({id}: {id: string}) {
       {response?.status === "missing" && <StatePanel state="notFound" title={t("missingTitle")} description={t("missingText")} />}
       {response?.status === "unavailable" && (
         <StatePanel state="network" title={t("errorTitle")} description={t("errorText")}>
+          <button type="button" className="button button-secondary state-action" onClick={() => setAttempt(value => value + 1)}>{t("retry")}</button>
+        </StatePanel>
+      )}
+      {(response?.status === "rateLimit" || response?.status === "configuration") && (
+        <StatePanel state={response.status} title={requests(`${response.status}Title`)} description={requests(`${response.status}Text`)}>
+          <RetryNotice retryAt={response.status === "rateLimit" ? response.retryAt : undefined} />
           <button type="button" className="button button-secondary state-action" onClick={() => setAttempt(value => value + 1)}>{t("retry")}</button>
         </StatePanel>
       )}

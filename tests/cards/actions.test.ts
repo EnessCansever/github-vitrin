@@ -6,6 +6,9 @@ import {readSnapshot} from "../../src/lib/db/snapshots";
 import {reportSchema} from "../../src/lib/db/snapshot-schema";
 import {report} from "../db/fixtures";
 
+vi.mock("../../src/lib/security/requests", () => ({
+  limitRequest: vi.fn(async () => {}), limitAnalysis: vi.fn(async () => {}), requestFailure: () => null,
+}));
 vi.mock("next-intl/server", () => ({getLocale: vi.fn()}));
 vi.mock("../../src/lib/db/snapshots", () => ({readSnapshot: vi.fn()}));
 vi.mock("../../src/features/cards/image", () => ({renderCard: vi.fn()}));

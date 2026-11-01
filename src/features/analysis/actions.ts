@@ -6,11 +6,17 @@ import {GitHubError} from "../../lib/github/errors";
 import {profileInput} from "../../lib/github/input";
 import {repoName} from "../../lib/github/schemas";
 import {createSnapshot} from "../../lib/db/snapshots";
+import {limitRequest, limitAnalysis, requestFailure} from "../../lib/security/requests";
 import {RULES_VERSION, scoreAnalysis} from "./scoring/engine";
 import type {AnalysisResponse, Report} from "./report";
 import type {SearchError, SearchResult} from "./selection";
 
 export async function getRepos(input: unknown): Promise<SearchResult> {
+  try {
+    await limitRequest("search");
+  } catch (error) {
+    return {status: "error", ...(requestFailure(error) ?? {code: "unavailable" as const})};
+  }
   if (typeof input !== "string" || Buffer.byteLength(input, "utf8") > 256) {
     return {status: "error", code: "invalid_input"};
   }
@@ -58,11 +64,17 @@ const analysisInput = z.object({
 }).strict();
 
 export async function analyze(input: unknown): Promise<AnalysisResponse> {
+  try {
+    await limitRequest("analysis");
+  } catch (error) {
+    return {status: "error", ...(requestFailure(error) ?? {code: "unavailable" as const})};
+  }
   const parsed = analysisInput.safeParse(input);
   if (!parsed.success || Buffer.byteLength(JSON.stringify(input), "utf8") > 2048) {
     return {status: "error", code: "invalid_input"};
   }
   try {
+    await limitAnalysis(parsed.data.username, parsed.data.repos.map(repo => repo.id));
     const client = new GitHubClient();
     const profile = await client.getProfile(parsed.data.username);
     if (profile.id !== parsed.data.profileId || profile.login.toLowerCase() !== parsed.data.username) return {status: "error", code: "selectionChanged"};
@@ -85,6 +97,8 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
       return {status: "success", report, snapshot: {status: "failed"}};
     }
   } catch (error) {
+    const limited = requestFailure(error);
+    if (limited) return {status: "error", ...limited};
     if (error instanceof GitHubError && error.code === "repo_unavailable") {
       return {status: "error", code: "selectionChanged"};
     }

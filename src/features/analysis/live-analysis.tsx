@@ -12,6 +12,7 @@ import {LiveReport} from "./live-report";
 import type {AnalysisResponse, Report} from "./report";
 import type {SearchResult} from "./selection";
 import {reportHref} from "../reports/link";
+import {RetryNotice} from "../../components/retry-notice";
 
 type Selection = Extract<SearchResult, {status: "success"}>;
 
@@ -103,8 +104,10 @@ export function LiveAnalysis({selection, onProfile}: {selection: Selection; onPr
           </div>
           {pending && <StatePanel state="loading" title={t("loadingTitle")} description={t("loadingText")} />}
           {response?.status === "error" && (
-            <StatePanel state={response.code === "selectionChanged" || response.code === "invalid_input" ? "configuration" : response.code}
-              title={t(`errors.${response.code}.title`)} description={t(`errors.${response.code}.description`)} />
+            <StatePanel state={response.code === "selectionChanged" || response.code === "invalid_input" ? "configuration" : response.code === "unavailable" ? "network" : response.code}
+              title={t(`errors.${response.code}.title`)} description={t(`errors.${response.code}.description`)}>
+              <RetryNotice retryAt={response.retryAt} />
+            </StatePanel>
           )}
           {response?.status === "success" && response.snapshot.status === "saved" && (
             <p role="status" className="selection-notice"><Link className="text-link" href={reportHref(response.snapshot)}>{saved("opening")}</Link></p>

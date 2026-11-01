@@ -28,4 +28,4 @@ export type CardResponse = {
   locale: "tr" | "en";
   width: number;
   height: number;
-} | {status: "error"; code: "invalid" | "missing" | "incomplete" | "unavailable" | "render"};
+} | {status: "error"; code: "invalid" | "missing" | "incomplete" | "unavailable" | "render" | "rateLimit" | "configuration"; retryAt?: string};

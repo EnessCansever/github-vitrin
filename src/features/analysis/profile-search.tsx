@@ -9,6 +9,7 @@ import {getRepos} from "./actions";
 import {LiveAnalysis} from "./live-analysis";
 import {StatePanel} from "./analysis-states";
 import type {SearchResult} from "./selection";
+import {RetryNotice} from "../../components/retry-notice";
 
 export function ProfileSearch({children, preview}: {children: ReactNode; preview: ReactNode}) {
   const t = useTranslations("Search");
@@ -97,7 +98,8 @@ export function ProfileSearch({children, preview}: {children: ReactNode; preview
       <div ref={resultRegion} role="region" className="search-result" aria-label={t("region")}>
         {pending && <StatePanel state="loading" title={t("pending")} description={t("loading")} />}
         {result?.status === "error" && result.code !== "invalid_input" && (
-          <StatePanel state={result.code} title={t(`errors.${result.code}.title`)} description={t(`errors.${result.code}.description`)}>
+          <StatePanel state={result.code === "unavailable" ? "network" : result.code} title={t(`errors.${result.code}.title`)} description={t(`errors.${result.code}.description`)}>
+            <RetryNotice retryAt={result.retryAt} />
             <button type="button" className="button button-secondary state-action" onClick={() => form.current?.requestSubmit()}>
               {t("retry")}<ArrowRight size={16} aria-hidden="true" />
             </button>

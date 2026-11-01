@@ -263,11 +263,15 @@
       },
       "rateLimit": {
         "title": "Şimdilik istek sınırına ulaşıldı",
-        "description": "GitHub erişimine ara vermek gerekiyor. Daha sonra yeniden deneyebilirsin."
+        "description": "Bu işlem için istek sınırına ulaşıldı. Yeniden denemeden önce kısa bir ara ver."
       },
       "configuration": {
-        "title": "GitHub bağlantısı şu an kullanılamıyor",
-        "description": "Sunucu bağlantısının yapılandırılması veya erişim izninin kontrol edilmesi gerekiyor. Daha sonra yeniden dene."
+        "title": "İşlem şu anda kullanılamıyor",
+        "description": "Sunucu yapılandırması kontrol edilmeli. Daha sonra yeniden deneyebilirsin."
+      },
+      "unavailable": {
+        "title": "İşlem şu anda kullanılamıyor",
+        "description": "Sunucu hizmetine erişilemedi. Daha sonra yeniden deneyebilirsin."
       }
     }
   },
@@ -451,11 +455,15 @@
       },
       "rateLimit": {
         "title": "Şimdilik istek sınırına ulaşıldı",
-        "description": "GitHub erişimine ara vermek gerekiyor. Daha sonra verileri yeniden almayı deneyebilirsin."
+        "description": "Bu işlem için istek sınırına ulaşıldı. Yeniden denemeden önce kısa bir ara ver."
       },
       "configuration": {
-        "title": "GitHub bağlantısı kullanılamıyor",
-        "description": "Sunucunun bağlantı yapılandırması veya erişim izni kontrol edilmeli. Daha sonra yeniden dene."
+        "title": "İşlem şu anda kullanılamıyor",
+        "description": "Sunucu yapılandırması kontrol edilmeli. Daha sonra yeniden deneyebilirsin."
+      },
+      "unavailable": {
+        "title": "İşlem şu anda kullanılamıyor",
+        "description": "Sunucu hizmetine erişilemedi. Daha sonra yeniden deneyebilirsin."
       }
     },
     "partialSummary": "Bilinen bulguları ve kategori ayrıntılarını aşağıda inceleyebilirsin."
@@ -498,7 +506,9 @@
       "missing": "Rapor bağlantısı geçersiz veya süresi dolmuş olabilir. Raporu yeniden aç.",
       "incomplete": "Bu rapor eksik; puanlı kart üretilemiyor.",
       "unavailable": "Rapor şu anda okunamıyor. Daha sonra yeniden dene.",
-      "render": "Görsel hazırlanamadı. Yeniden deneyebilirsin."
+      "render": "Görsel hazırlanamadı. Yeniden deneyebilirsin.",
+      "rateLimit": "Görsel üretimi için istek sınırına ulaşıldı.",
+      "configuration": "Sunucu yapılandırması kontrol edilmeli. Daha sonra yeniden deneyebilirsin."
     },
     "profileTarget": "Profil",
     "firstStep": "İLK ADIM",
@@ -531,5 +541,12 @@
       "noDemo": "DEMO\nNEREDE?",
       "inProgress": "VİTRİN\nYAPIMDA"
     }
+  },
+  "Requests": {
+    "retryAt": "Şu zamandan sonra yeniden deneyebilirsin: {time} UTC.",
+    "rateLimitTitle": "Şimdilik istek sınırına ulaşıldı",
+    "rateLimitText": "Bu işlem için kısa bir ara gerekiyor. Rapor bağlantın değişmedi.",
+    "configurationTitle": "İşlem şu anda kullanılamıyor",
+    "configurationText": "Sunucu yapılandırması kontrol edilmeli. Daha sonra yeniden deneyebilirsin."
   }
 }

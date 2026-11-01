@@ -6,6 +6,9 @@ import {StorageError} from "../../src/lib/db/errors";
 import {reportSchema} from "../../src/lib/db/snapshot-schema";
 import {report} from "../db/fixtures";
 
+vi.mock("../../src/lib/security/requests", () => ({
+  limitRequest: vi.fn(async () => {}), limitAnalysis: vi.fn(async () => {}), requestFailure: () => null,
+}));
 vi.mock("../../src/lib/db/snapshots", () => ({readSnapshot: vi.fn()}));
 const id = "11111111-1111-4111-8111-111111111111";
 const token = "a".repeat(64);

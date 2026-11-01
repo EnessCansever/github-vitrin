@@ -263,11 +263,15 @@
       },
       "rateLimit": {
         "title": "The request limit has been reached",
-        "description": "GitHub access needs a pause. You can try again later."
+        "description": "The request limit for this operation has been reached. Please pause before trying again."
       },
       "configuration": {
-        "title": "The GitHub connection is unavailable",
-        "description": "The server connection configuration or access permission needs to be checked. Try again later."
+        "title": "This operation is currently unavailable",
+        "description": "The server configuration needs checking. Please try again later."
+      },
+      "unavailable": {
+        "title": "This operation is currently unavailable",
+        "description": "A server service could not be reached. Please try again later."
       }
     }
   },
@@ -451,11 +455,15 @@
       },
       "rateLimit": {
         "title": "The request limit has been reached",
-        "description": "GitHub access needs a pause. Try fetching the data again later."
+        "description": "The request limit for this operation has been reached. Please pause before trying again."
       },
       "configuration": {
-        "title": "GitHub connection unavailable",
-        "description": "The server connection configuration or access permission needs attention. Try again later."
+        "title": "This operation is currently unavailable",
+        "description": "The server configuration needs checking. Please try again later."
+      },
+      "unavailable": {
+        "title": "This operation is currently unavailable",
+        "description": "A server service could not be reached. Please try again later."
       }
     },
     "partialSummary": "Known findings and category details remain available below."
@@ -498,7 +506,9 @@
       "missing": "The report link may be invalid or expired. Reopen the report.",
       "incomplete": "This report is incomplete; a scored card cannot be generated.",
       "unavailable": "The report cannot be read right now. Try again later.",
-      "render": "The image could not be prepared. You can try again."
+      "render": "The image could not be prepared. You can try again.",
+      "rateLimit": "The image generation request limit has been reached.",
+      "configuration": "The server configuration needs checking. Please try again later."
     },
     "profileTarget": "Profile",
     "firstStep": "FIRST STEP",
@@ -531,5 +541,12 @@
       "noDemo": "WHERE IS\nTHE DEMO?",
       "inProgress": "SHOWCASE\nIN PROGRESS"
     }
+  },
+  "Requests": {
+    "retryAt": "You can try again after {time} UTC.",
+    "rateLimitTitle": "Request limit reached for now",
+    "rateLimitText": "This operation needs a short pause. Your report link has not changed.",
+    "configurationTitle": "This operation is currently unavailable",
+    "configurationText": "The server configuration needs checking. Please try again later."
   }
 }

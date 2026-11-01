@@ -15,8 +15,8 @@ export type AnalysisResponse = {
   status: "success";
   report: Report;
   snapshot: ({status: "saved"} & SnapshotAccess) | {status: "failed"};
-} | {status: "error"; code: AnalysisError};
+} | {status: "error"; code: AnalysisError; retryAt?: string};
 
 export type StoredReportResponse = {
   status: "success"; report: Report; expiresAt: string;
-} | {status: "missing" | "unavailable"};
+} | {status: "missing" | "unavailable" | "configuration"} | {status: "rateLimit"; retryAt: string};

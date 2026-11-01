@@ -6,10 +6,10 @@ export type RepoOption = {
   pinned: boolean;
 };
 
-export type SearchError = "invalid_input" | "notFound" | "empty" | "network" | "rateLimit" | "configuration";
+export type SearchError = "invalid_input" | "notFound" | "empty" | "network" | "rateLimit" | "configuration" | "unavailable";
 
 export type SearchResult =
-  | {status: "error"; code: SearchError}
+  | {status: "error"; code: SearchError; retryAt?: string}
   | {
     status: "success";
     profile: {id: number; login: string};

@@ -7,10 +7,16 @@ import {readToken, snapshotId} from "../../lib/db/snapshot-schema";
 import {cardContent} from "./content";
 import {renderCard} from "./image";
 import {cardFormats, type CardResponse} from "./types";
+import {limitRequest, requestFailure} from "../../lib/security/requests";
 
 const inputSchema = z.strictObject({id: snapshotId, token: readToken, format: z.enum(["story", "landscape"])});
 
 export async function generateCard(input: unknown): Promise<CardResponse> {
+  try {
+    await limitRequest("card");
+  } catch (error) {
+    return {status: "error", ...(requestFailure(error) ?? {code: "unavailable" as const})};
+  }
   const parsed = inputSchema.safeParse(input);
   if (!parsed.success) return {status: "error", code: "invalid"};
   let snapshot;

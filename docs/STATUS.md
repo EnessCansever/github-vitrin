@@ -1,10 +1,46 @@
 # Güncel durum
 
-Son güncelleme: 31 Ekim 2026 (Europe/Istanbul).
+Son güncelleme: 1 Kasım 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A4.3a — MongoDB atomik istek sayacı veri katmanı ve yerel kontroller tamam; varsayılan build kullanıcı tarafından doğrulandı.** Temiz başlangıç HEAD 95c9881. Kullanıcı yalnız rateLimits katmanı/testleri için yetki verdi; action, rapor, PNG, session/IP/proxy, kilit/cache veya UI entegrasyonu yoktur. A4 bütünü/dağıtık abuse koruması ve yayın hazır sayılmaz. A5.1 kabul kaydı aşağıda korunur.
+**A4.3b — sunucu giriş bütçeleri uygulandı; varsayılan build ve normal yerel akış kullanıcı tarafından doğrulandı.** Kullanıcı doğrudan Vercel ve başlangıç kotalarını açıkça onayladı (D035). A4.3a 0f9c734 commit/push ve CI #13 kaynağı kullanıcı GitHub Actions ekran görüntüsüdür; bağımsız uzak sorgu yapılmadı. Başlangıç HEAD 0f9c734ded4813ad3507c4908f959325a3e8b335/çalışma ağacı/index temizdi. A4 bütünü/üretim güvenliği ve yayın tamamlanmadı.
+
+## A4.3b — sunucu giriş bütçeleri, 1 Kasım 2026
+
+### Tamamlanan kapsam
+
+- AGENTS, ilgili sözleşme §7/§9 ve mimari/karar/durum/görev kayıtlarıyla mevcut action/snapshot/kart/rateLimits kodu incelendi. İlk incelemede kota/proxy eksikleri raporlandı; kullanıcı yanıtı gelmeden politika uydurulmadı. Kullanıcı doğrudan Vercel, IP başına arama 20/10dk, analiz 10/10dk, rapor 60/1dk ve PNG iki format ortak 10/10dk politikasını onayladı. Merkezi server-only `src/config/request-limits.ts`; bu değerler kapasite ölçümü değildir.
+- `src/lib/security/requests.ts`: her action girişinde bir IP bütçesi; girdi parse/kimlik doğrulama/GitHub/render/snapshot işleminden önce. Geçersiz girdi/yanlış token/olmayan veya expired rapor/incomplete görüntü isteği/başarısız işlem hak tüketir, iade yoktur. PNG dahili readSnapshot çağrısı rapor kotası tüketmez. Framework'ün 8 KiB sınırında action'a ulaşmadan reddedilen body'ler sayaç dışındadır; key üretilemeyen kimlik/config hatası pahalı işlem başlatmaz.
+- Runtime SIGNING_SECRET HMAC-SHA256; boş/kısa secret veya eksik/güvensiz platform kimliği fail-closed configuration, DB/bozuk sayaç unavailable, dolu kota ayrı rateLimit. Development'da ortak yerel bütçe, IP header okumama; diğer ortamlarda VERCEL=1 + VERCEL_ENV=production|preview ve yalnız tek geçerli x-vercel-forwarded-for. Alternatif header/cookie/payload IP fallback'i yoktur; IPv6 kanonikleştirilir. Resmi kaynak dayanağı ARCHITECTURE/D035'tedir; bu gerçek Vercel deployment doğrulaması değildir.
+- IP key'leri işlem/politika dönemi/kimlik üzerinden HMAC ile her takvim hizalı 1/10 dakika penceresinde değişir. Sabit pencere sınırında komşu pencereler kullanılabilir; kayan pencere veya ölçülmüş kapasite iddiası yoktur. Kullanımdan çıkan key TTL gecikmesiyle DB'de kalabilir. Gerçek retryAt, DB expiry ile key dönem sonundan erken olan zamandır; ham IP/secret/key/token DTO/log/snapshot'a girmez.
+- Geçerli analyze girdisinin normalize profil + sıralı repo ID kapsamı için IP'den ayrı 1/60s tüketim GitHub'dan önce yapılır. Bu key dönemle dönmez; sınırda, client profileId/repo sırası/adı veya IP değişimiyle aynı scope'un beklemesi atlanmaz. Mevcut GitHub kimlik/sahiplik/uygunluk doğrulaması korunur; iddia edilen geçersiz kapsam veya upstream hatası tüketimi iade etmez. Bu bir dağıtık analiz kilidi değildir.
+- Search/Analysis/Card/StoredReport DTO'larında güvenli hata ve gerektiğinde retryAt; tek RetryNotice TR/EN gerçek UTC zamanı gösterir. ReportAccess DB/config/limit durumunu missing/expired diye sunmaz. Mevcut tasarım/fragment/token/expiry/incomplete/analiz sonucu ve preview-download PNG davranışı korunur. Ham hata veya README eklenmez. Gerekli runtime secret ve topoloji README/.env.example'da belgelenir; gerçek env dosyası açılmadı/değiştirilmedi.
+
+### Doğrulama
+
+| Kontrol | Gerçek sonuç ve sınırı |
+| --- | --- |
+| Test | **22 dosya /426 test geçti**; 35 yeni guard/action/TR–EN testi. Dört önceki action test dosyası gate'i açıkça mock ederek mevcut domain/HTTP testlerini korur; yeni güvenlik testleri gerçek gate'i, mock Mongo sayaç/adapter/storage/render sınırlarıyla çağırır. Global fail-open mock veya gerçek secret/ağ ihtiyacı yoktur. |
+| Davranış | Limitte GitHub/readSnapshot/render/createSnapshot çağrılmıyor; süre/dönem dolunca açılıyor; 60s analiz beklemesi dönem değişiminde korunuyor. Geçersiz/başarısız giriş bütçesi, rapor/PNG ayrımı ve PNG iç okumasında ikinci hak tüketmeme; değiştirilmiş seçim, missing/incomplete ve mevcut başarılı akışlar test edildi. |
+| Güven/hata | Eksik secret/platform env/IP, sahte alternatif header/cookie, belirsiz IP listesi reddi ve IPv6/HMAC/dönem davranışı; DB/config ayrı hatası, gerçek retry zamanı ve TR/EN metinleri doğrulandı. Platform kaynağı unit testte simüle edilir; gerçek Vercel ingress spoofing veya Mongo atomikliği kanıtı değildir. A4.3a gerçek Atlas kanıtı tarihsel olarak korunur. |
+| Lint / typecheck | İkisi de son kaynakta exit 0. İlk kontrolde fixture rulesVersion tipi mevcut reportSchema.parse ile daraltıldı; EN saatin 12 saat gösterimi test beklentisine işlendi. Bunlar giderildi, hata susturma/type assertion ile geçilmedi. |
+| Varsayılan build | GitHub/Mongo/signing process env değerleri boş **npm run build** iki kez çalıştırıldı (normal ve izinli deneme). Turbopack/PostCSS yerel port bind Operation not permitted ortam kısıtında kaldı; uygulama hatası/başarı gibi sunulmaz. Build script/config/dependency değiştirilmedi. Bu önceki Codex ortam kontrolüdür; aşağıdaki kullanıcı yerel doğrulaması ayrı kaynakla kaydedilir. |
+| Ek production kontrolü | Aynı boş secret env ile **npm run build -- --webpack exit 0**: derleme, TypeScript, 6 sayfa ve trace tamamlandı. Bu ek kontrol, varsayılan Turbopack veya uzak CI başarısı değildir. |
+| Kullanıcı yerel doğrulaması — 1 Kasım 2026 | Kullanıcı ignore edilen .env.local içine SIGNING_SECRET eklediğini; varsayılan npm run build, profil getirme → repo seçimi → analiz → kayıtlı rapor, rapor yenileme, TR/EN değişimi, kart önizleme ve PNG indirmenin başarılı olduğunu, hata gözlemlemediğini bildirdi. **Kullanıcı tarafından sağlanan yerel doğrulamadır**; Codex bu kontrolleri tekrarlamadı, secret dosyasını açmadı/değerini yazdırmadı. Kota aşımı, eşzamanlılık, çoklu instance veya gerçek Vercel IP/header güveni doğrulaması değildir. Önceki 426 test/mocked guard sınırı ve A4.3a Atlas kanıtının kapsamı değişmez. |
+| Diff/kapsam | git diff --check/cached diff ve yeni dosya whitespace/LF kontrolü; index boş. Yeni kod sade ad/yorum/tekrar/soyutlama yönünden gözden geçirildi. Motor/adapter/DB sayaç-snapshot/renderer/demo, paketler ve build yapılandırması korundu; yeni dependency, endpoint veya geçici kontrol dosyası yoktur. |
+
+### Açık işler / durma noktası
+
+- Kullanıcı SIGNING_SECRET'ı ignore edilen .env.local içine eklediğini bildirdi; bu yerel kurulum bildirimi kaydedildi, dosya/değer açılmadı veya bağımsız incelenmedi. Bütün instance'larda tutarlı secret/politika/saat, gerçek Vercel sistem env/header davranışı, Atlas/region/plan/timeout ve secret geçişi yayın öncesi doğrulanmalı. Yerelde geliştirme modu desteklenir; self-hosted npm start için Vercel bayraklarını taklit etmek desteklenmez. Yeni provider/proxy zinciri seçilirse güven kararı yeniden gerekir.
+- Varsayılan build ve belirtilen normal yerel akışlar kullanıcı bildirimiyle doğrulandı; yeni commit/push/uzak CI açık. Codex bu tur canlı GitHub/Atlas/browser/telefon/Vercel veya rutin test kontrolü tekrarlamadı. Kullanıcı kontrolü gerçek kota aşımı/eşzamanlılık/Vercel güveni kanıtı değildir; bu konulardaki önceki test kanıtları/sınırları ve açık gerçek ortam kontrolleri korunur. Üretim kapasitesi veya public deployment hazır iddiası yoktur.
+- Anonim session bütçesi, requestLocks/istek birleştirme, analiz/görsel cache, toplam action süre bütçesi, karşılaştırma/OG ve yayın ilgili açık görevlerdir; A4 bütünü kapanmaz. Kullanıcının bu IP politikası dilimi genel koruma tamamlandı demek değildir.
+
+Commit kapsamı: src/config/request-limits.ts, src/lib/security/requests.ts, src/components/retry-notice.tsx; src/features/analysis/{actions.ts,selection.ts,report.ts,profile-search.tsx,live-analysis.tsx}; src/features/reports/{actions.ts,report-access.tsx}; src/features/cards/{actions.ts,types.ts,card-studio.tsx}; src/messages/{tr,en}.json; tests/security/{requests.test.ts,actions.test.ts,retry-notice.test.tsx}, tests/github/{actions,analysis}.test.ts, tests/cards/actions.test.ts, tests/analysis/saved-report.test.ts; .env.example, README.md, AGENTS.md, docs/{ARCHITECTURE,DECISIONS,STATUS,TASKS}.md.
+
+Bu kullanıcı doğrulaması kayıt turunda yalnız STATUS/TASKS değişti; uygulama kodu, build yapılandırması ve önceki A4.3b paketi korundu. Rutin testler tekrarlanmadı; belge diff kontrolü yapıldı.
+
+Öneri: **feat: enforce server request limits**. Mevcut birleşik A4.3b paketi önceki yerel kontroller ve kullanıcı tarafından sağlanan build/akış doğrulamasıyla commit için hazır; yeni uzak CI, üretim güveni veya A4'ün bütünü tamamlanmış sayılmaz. Stage/commit/push/yayın veya sonraki dilime geçiş yapılmadı.
 
 ## A4.3a atomik sayaç veri katmanı — 31 Ekim 2026
 

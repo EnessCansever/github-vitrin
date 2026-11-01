@@ -4,6 +4,9 @@ import {createSnapshot} from "../../src/lib/db/snapshots";
 import {english} from "../scoring/fixtures";
 import {json, readme, repository, respond} from "./fixtures";
 
+vi.mock("../../src/lib/security/requests", () => ({
+  limitRequest: vi.fn(async () => {}), limitAnalysis: vi.fn(async () => {}), requestFailure: () => null,
+}));
 const selection = {username: "mona", profileId: 7, repos: [{id: 10, name: "project-10"}]};
 vi.mock("../../src/lib/db/snapshots", () => ({createSnapshot: vi.fn()}));
 beforeEach(() => {

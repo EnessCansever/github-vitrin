@@ -7,6 +7,7 @@ import {useLocale, useTranslations} from "next-intl";
 import {site} from "../../config/site";
 import {generateCard} from "./actions";
 import {cardFormats, type CardFormat, type CardResponse} from "./types";
+import {RetryNotice} from "../../components/retry-notice";
 
 export function CardStudio({id, complete}: {id: string; complete: boolean}) {
   const t = useTranslations("Card");
@@ -59,7 +60,7 @@ export function CardStudio({id, complete}: {id: string; complete: boolean}) {
           </fieldset>
           <p role="status" className="small">{pending ? t("pending") : requested === key ? t("downloadRequested") : ""}</p>
           {response?.status === "error" && (
-            <div role="alert"><p>{t(`errors.${response.code}`)}</p><button type="button" className="button button-secondary" onClick={() => setAttempt(value => value + 1)}>{t("retry")}</button></div>
+            <div role="alert"><p>{t(`errors.${response.code}`)}</p><RetryNotice retryAt={response.retryAt} /><button type="button" className="button button-secondary" onClick={() => setAttempt(value => value + 1)}>{t("retry")}</button></div>
           )}
           {response?.status === "success" && (
             <>

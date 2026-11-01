@@ -2,6 +2,9 @@ import {expect, it, vi} from "vitest";
 import {getRepos} from "../../src/features/analysis/actions";
 import {json, profile, repository, respond} from "./fixtures";
 
+vi.mock("../../src/lib/security/requests", () => ({
+  limitRequest: vi.fn(async () => {}), limitAnalysis: vi.fn(async () => {}), requestFailure: () => null,
+}));
 function publicProfile() {
   return json({data: {user: {databaseId: profile.id, login: profile.login, name: profile.name,
     bio: null, websiteUrl: null, avatarUrl: profile.avatarUrl}}});
