@@ -25,7 +25,8 @@ it("does not require configuration at import and opens one shared pool only on u
   expect(MongoClient).toHaveBeenCalledTimes(1);
   expect(fake.connect).toHaveBeenCalledTimes(1);
   expect(fake.close).not.toHaveBeenCalled();
-  expect(vi.mocked(MongoClient).mock.calls[0][1]).toMatchObject({maxPoolSize: 10, minPoolSize: 0, timeoutMS: 8000, serverSelectionTimeoutMS: 5000});
+  expect(vi.mocked(MongoClient).mock.calls[0][1]).not.toHaveProperty("timeoutMS");
+  expect(vi.mocked(MongoClient).mock.calls[0][1]).toMatchObject({maxPoolSize: 10, minPoolSize: 0, socketTimeoutMS: 5000, serverSelectionTimeoutMS: 2000, connectTimeoutMS: 2000, waitQueueTimeoutMS: 1000, retryReads: false, retryWrites: false});
 });
 
 it("can import without database secrets and only fails when called", async () => {

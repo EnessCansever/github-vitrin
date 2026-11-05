@@ -12,10 +12,17 @@ import {reportSchema} from "../../src/lib/db/snapshot-schema";
 import {report} from "../db/fixtures";
 import {input} from "../scoring/fixtures";
 
-const github = vi.hoisted(() => ({profile: vi.fn(), pinned: vi.fn(), candidates: vi.fn(), selected: vi.fn(), readme: vi.fn()}));
+vi.mock("../../src/lib/db/analysis-locks", async importOriginal => ({
+  ...await importOriginal<typeof import("../../src/lib/db/analysis-locks")>(),
+  acquireAnalysisLock: vi.fn(async (key: string) => ({acquired: true, lock: {
+    key, owner: "11111111-1111-4111-8111-111111111111", expiresAt: new Date(Date.now() + 45000).toISOString(),
+  }})),
+  ownsAnalysisLock: vi.fn(async () => true), releaseAnalysisLock: vi.fn(async () => true),
+}));
+const github = vi.hoisted(() => ({profile: vi.fn(), pinned: vi.fn(), candidates: vi.fn(), selected: vi.fn(), repository: vi.fn(), repoReadme: vi.fn(), readme: vi.fn()}));
 vi.mock("../../src/lib/github/client", () => ({GitHubClient: vi.fn(function () {
   return {getProfile: github.profile, getPinned: github.pinned, getCandidates: github.candidates,
-    getSelected: github.selected, getProfileReadme: github.readme};
+    getSelected: github.selected, getRepository: github.repository, getReadme: github.repoReadme, getProfileReadme: github.readme};
 })}));
 vi.mock("next-intl/server", () => ({getLocale: async () => "tr"}));
 vi.mock("../../src/lib/db/rate-limits", () => ({consumeRateLimit: vi.fn()}));
@@ -51,6 +58,8 @@ beforeEach(() => {
   github.pinned.mockReset().mockResolvedValue({status: "available", repos: []});
   github.candidates.mockReset().mockResolvedValue({repos: value.repos.map(item => item.repo), limited: false});
   github.selected.mockReset().mockResolvedValue(value.repos);
+  github.repository.mockReset().mockResolvedValue(value.repos[0].repo);
+  github.repoReadme.mockReset().mockResolvedValue(value.repos[0].readme);
   github.readme.mockReset().mockResolvedValue(value.profileReadme);
   vi.mocked(createSnapshot).mockReset().mockResolvedValue({id, readToken: token});
   vi.mocked(readSnapshot).mockReset().mockResolvedValue({id, snapshotVersion: 1, selectedRepoIds: [10], scopeHash: "b".repeat(64),
@@ -118,24 +127,34 @@ it("charges invalid analysis requests and blocks GitHub and snapshot writes at t
   expect(consumeRateLimit).toHaveBeenCalledTimes(11);
 });
 
-it("enforces the separate cooldown before GitHub and writes; a later valid analysis is permitted", async () => {
+it("enforces cooldown after metadata validation and before README or snapshot work", async () => {
   expect(await analyze(selected)).toMatchObject({status: "success"});
   expect(await analyze({...selected, username: "https://github.com/MIRA-SAMPLE/"})).toEqual({
     status: "error", code: "rateLimit", retryAt: "2026-11-01T00:01:00.000Z",
   });
-  expect(github.profile).toHaveBeenCalledTimes(1);
+  expect(github.profile).toHaveBeenCalledTimes(2);
+  expect(github.repoReadme).toHaveBeenCalledTimes(1);
   expect(createSnapshot).toHaveBeenCalledTimes(1);
   vi.advanceTimersByTime(60_000);
   expect(await analyze(selected)).toMatchObject({status: "success"});
-  expect(github.profile).toHaveBeenCalledTimes(2);
+  expect(github.profile).toHaveBeenCalledTimes(3);
   expect(createSnapshot).toHaveBeenCalledTimes(2);
 });
 
-it("does not refund admitted failures or erase access verification", async () => {
+it("charges an unverified preflight failure only to the IP entry budget", async () => {
   github.profile.mockRejectedValueOnce(new GitHubError("network"));
   expect(await analyze(selected)).toEqual({status: "error", code: "network"});
-  expect(await analyze(selected)).toMatchObject({code: "rateLimit"});
-  expect(github.profile).toHaveBeenCalledTimes(1);
+  expect(await analyze(selected)).toMatchObject({status: "success"});
+  expect(github.profile).toHaveBeenCalledTimes(2);
+  expect(createSnapshot).toHaveBeenCalledTimes(1);
+});
+
+it("keeps the 60-second wait after a verified analysis fails and releases its working lock", async () => {
+  github.repoReadme.mockRejectedValueOnce(new GitHubError("network"));
+  expect(await analyze(selected)).toEqual({status: "error", code: "network"});
+  expect(await analyze(selected)).toEqual({status: "error", code: "rateLimit", retryAt: "2026-11-01T00:01:00.000Z"});
+  expect(github.profile).toHaveBeenCalledTimes(2);
+  expect(github.repoReadme).toHaveBeenCalledTimes(1);
   expect(createSnapshot).not.toHaveBeenCalled();
 });
 
@@ -143,10 +162,10 @@ it("does not reset the profile cooldown when the IP key rotates at a time bounda
   vi.setSystemTime(new Date("2026-11-01T00:09:59Z"));
   expect(await analyze(selected)).toMatchObject({status: "success"});
   vi.advanceTimersByTime(1000);
-  expect(await analyze({...selected, profileId: 999})).toEqual({
+  expect(await analyze(selected)).toEqual({
     status: "error", code: "rateLimit", retryAt: "2026-11-01T00:10:59.000Z",
   });
-  expect(github.profile).toHaveBeenCalledTimes(1);
+  expect(github.profile).toHaveBeenCalledTimes(2);
   expect(createSnapshot).toHaveBeenCalledTimes(1);
 });
 

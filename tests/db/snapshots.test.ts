@@ -9,7 +9,9 @@ import {report} from "./fixtures";
 const db = vi.hoisted(() => ({
   get: vi.fn(), collection: vi.fn(), createIndex: vi.fn(), insertOne: vi.fn(), findOne: vi.fn(),
 }));
-vi.mock("../../src/lib/db/client", () => ({getDatabase: db.get}));
+vi.mock("../../src/lib/db/client", async importOriginal => ({
+  ...await importOriginal<typeof import("../../src/lib/db/client")>(), getDatabase: db.get,
+}));
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -38,7 +40,7 @@ it.each([false, true])("round trips an immutable %s-incomplete report with separ
   expect(access.readToken).toMatch(/^[a-f\d]{64}$/);
   expect(document.readTokenHash).toBe(createHash("sha256").update(access.readToken).digest("hex"));
   expect(JSON.stringify(document)).not.toContain(access.readToken);
-  expect(db.createIndex).toHaveBeenCalledWith({expiresAt: 1}, {name: "snapshot_expiry", expireAfterSeconds: 0});
+  expect(db.createIndex).toHaveBeenCalledWith({expiresAt: 1}, {name: "snapshot_expiry", expireAfterSeconds: 0}, {maxTimeMS: 4000, writeConcern: {w: "majority", wtimeoutMS: 4000}});
   db.findOne.mockResolvedValue(document);
   const restored = await readSnapshot(access.id, access.readToken);
   expect(restored?.report).toEqual(value);
@@ -82,7 +84,7 @@ it("requires both id and token hash and excludes expired records in the database
   expect(db.findOne).toHaveBeenLastCalledWith({
     _id: access.id, readTokenHash: createHash("sha256").update("f".repeat(64)).digest("hex"),
     expiresAt: {$gt: new Date()},
-  });
+  }, {maxTimeMS: 4000});
   db.findOne.mockResolvedValue(saved());
   await expect(readSnapshot(access.id, "f".repeat(64))).rejects.toMatchObject({code: "invalid_record"});
   vi.advanceTimersByTime(SNAPSHOT_TTL_MS);

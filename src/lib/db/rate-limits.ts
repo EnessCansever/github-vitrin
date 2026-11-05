@@ -2,7 +2,7 @@ import "server-only";
 
 import {MongoServerError} from "mongodb";
 import {z} from "zod";
-import {getDatabase} from "./client";
+import {getDatabase, dbMaxTimeMs, dbWriteConcern} from "./client";
 import {StorageError} from "./errors";
 
 const positiveInteger = z.number().int().min(1).max(Number.MAX_SAFE_INTEGER);
@@ -38,14 +38,14 @@ export async function consumeRateLimit(input: unknown): Promise<RateLimitResult>
   ];
   try {
     const collection = (await getDatabase()).collection<z.infer<typeof recordSchema>>("rateLimits");
-    await collection.createIndex({expiresAt: 1}, {name: "rate_limit_expiry", expireAfterSeconds: 0});
+    await collection.createIndex({expiresAt: 1}, {name: "rate_limit_expiry", expireAfterSeconds: 0}, {maxTimeMS: dbMaxTimeMs, writeConcern: dbWriteConcern});
     let record: z.infer<typeof recordSchema> | null;
     try {
-      record = await collection.findOneAndUpdate({_id: key}, update, {upsert: true, returnDocument: "after", writeConcern: {w: "majority"}});
+      record = await collection.findOneAndUpdate({_id: key}, update, {upsert: true, returnDocument: "after", maxTimeMS: dbMaxTimeMs, writeConcern: dbWriteConcern});
     } catch (error) {
       if (!(error instanceof MongoServerError) || error.code !== 11000) throw error;
       // A competing upsert created the unique key; consume against that record once.
-      record = await collection.findOneAndUpdate({_id: key}, update, {upsert: false, returnDocument: "after", writeConcern: {w: "majority"}});
+      record = await collection.findOneAndUpdate({_id: key}, update, {upsert: false, returnDocument: "after", maxTimeMS: dbMaxTimeMs, writeConcern: dbWriteConcern});
     }
     if (!record) throw new StorageError("unavailable");
     const result = recordSchema.safeParse(record);

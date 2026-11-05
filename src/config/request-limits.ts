@@ -8,3 +8,4 @@ export const requestLimits = {
 } as const;
 
 export const analysisRefresh = {limit: 1, windowMs: 60_000} as const;
+export const analysisLeaseMs = 45_000;

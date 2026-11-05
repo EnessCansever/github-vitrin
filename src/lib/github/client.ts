@@ -142,7 +142,7 @@ export class GitHubClient {
     }
   }
 
-  private async getRepository(profile: Profile, name: string, expectedId?: number): Promise<Repository> {
+  async getRepository(profile: Profile, name: string, expectedId?: number): Promise<Repository> {
     const safeName = repoName.safeParse(name);
     if (!safeName.success) throw new GitHubError("invalid_input");
     const data = await this.transport.request(`/repos/${encodeURIComponent(profile.login)}/${encodeURIComponent(safeName.data)}`);

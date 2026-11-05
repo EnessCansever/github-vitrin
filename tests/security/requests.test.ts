@@ -1,3 +1,4 @@
+import {analysisScope} from "../../src/lib/db/analysis-locks";
 import {createHmac} from "node:crypto";
 import {beforeEach, expect, it, vi} from "vitest";
 import {limitAnalysis, limitRequest, requestFailure} from "../../src/lib/security/requests";
@@ -85,12 +86,12 @@ it.each(["", "too-short", " ".repeat(32)])("requires a server secret before any 
 });
 
 it("keeps the profile/scope cooldown separate from IP and repo ordering", async () => {
-  await limitAnalysis("mona", [20, 10]);
+  await limitAnalysis(analysisScope(7, [20, 10]));
   request.values.set("x-vercel-forwarded-for", "198.51.100.99");
-  await limitAnalysis("mona", [10, 20]);
+  await limitAnalysis(analysisScope(7, [10, 20]));
   expect(vi.mocked(consumeRateLimit).mock.calls[0][0]).toEqual(vi.mocked(consumeRateLimit).mock.calls[1][0]);
   expect(vi.mocked(consumeRateLimit).mock.calls[0][0]).toMatchObject({limit: 1, windowMs: 60_000});
-  await limitAnalysis("mona", [10]);
+  await limitAnalysis(analysisScope(7, [10]));
   expect(vi.mocked(consumeRateLimit).mock.calls[2][0]).not.toEqual(vi.mocked(consumeRateLimit).mock.calls[0][0]);
 });
 
@@ -105,11 +106,11 @@ it("rotates IP keys at aligned window boundaries, reports their true next availa
   vi.mocked(consumeRateLimit).mockResolvedValueOnce({allowed: false, remaining: 0, resetAt: "2026-11-01T00:19:59Z", retryAt: "2026-11-01T00:19:59Z"});
   await expect(limitRequest("analysis")).rejects.toMatchObject({retryAt: "2026-11-01T00:10:00.000Z"});
   const before = vi.mocked(consumeRateLimit).mock.calls[0][0];
-  await limitAnalysis("mona", [10]);
+  await limitAnalysis(analysisScope(7, [10]));
   const cooldown = vi.mocked(consumeRateLimit).mock.calls[1][0];
   vi.advanceTimersByTime(1000);
   await limitRequest("analysis");
-  await limitAnalysis("mona", [10]);
+  await limitAnalysis(analysisScope(7, [10]));
   expect(vi.mocked(consumeRateLimit).mock.calls[2][0]).not.toEqual(before);
   expect(vi.mocked(consumeRateLimit).mock.calls[3][0]).toEqual(cooldown);
 });

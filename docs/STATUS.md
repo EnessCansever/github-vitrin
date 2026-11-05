@@ -1,10 +1,51 @@
 # Güncel durum
 
-Son güncelleme: 1 Kasım 2026 (Europe/Istanbul).
+Son güncelleme: 5 Kasım 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A4.3b — sunucu giriş bütçeleri uygulandı; varsayılan build ve normal yerel akış kullanıcı tarafından doğrulandı.** Kullanıcı doğrudan Vercel ve başlangıç kotalarını açıkça onayladı (D035). A4.3a 0f9c734 commit/push ve CI #13 kaynağı kullanıcı GitHub Actions ekran görüntüsüdür; bağımsız uzak sorgu yapılmadı. Başlangıç HEAD 0f9c734ded4813ad3507c4908f959325a3e8b335/çalışma ağacı/index temizdi. A4 bütünü/üretim güvenliği ve yayın tamamlanmadı.
+**A4.3c — dağıtık analiz kilidi ve kullanıcı onaylı MongoDB güvenlik düzeltmesi uygulandı; kullanıcı incelemesi/yeni commit ve CI açık.** A4.3b **f64b181** commit/push ve **CI #14 başarısı kullanıcı GitHub Actions ekran görüntüsüne dayanır**; bağımsız uzak sorgu yapılmadı. Başlangıç HEAD f64b18130c43669760a292ebc669b08dd392a7d7; çalışma ağacı/index temizdi. A4 bütünü ve yayın tamamlanmadı.
+
+## A4.3c — analiz kilidi, 5 Kasım 2026
+
+### Tamamlanan kapsam
+
+- AGENTS, ana sözleşme ve mimari/karar/durum/görevler ile action/IP/DB kodu incelendi. Önceki 60s kontrolü cooldown idi; çalışma kilidi değildi. D036 doğrulanmış profil/repo ID kümesine geçer, repo sırası etkisizdir. Minimal profil/repo metadata doğrulaması kilitten önce zorunludur; alınamayan kilit README, motor, snapshot veya scope cooldown başlatmaz. IP giriş tüketimi korunur.
+- requestLocks atomik claim/upsert, bounded duplicate-key kurtarma, Mongo saatli 45s lease, UUID owner ve TTL indeksi eklendi. Ayrı mevcut 60s tüketim doğrulanmış kapsam/kilit sonrası tek kez yapılır. Hata sonunda owner filtreli release; expiry TTL fiziksel temizliğine bağlı değildir. DB/config hata ile busy/lease kaybı ayrı TR/EN sonuçlardır.
+- Snapshot kaydı aktif lease belgesine gerçek writeFence yazımı ve insert'i aynı native transaction'a alır. Yeni owner aldıktan sonra eski işlem kayıt yazamaz/kilidi silemez. İş deadline kontrolü, sahiplik kontrolü ve cleanup güvenli logu eklendi. Çalışan eski süreci OS düzeyinde durdurma garantisi verilmez; DB transaction kilidi cleanup'a kadar takeover'ı geciktirebilir.
+
+### Ayrı sürüm düzeltmesi kapsamı
+
+Kullanıcı açık onayıyla **yalnız mongodb 7.7.0→7.8.0** güncellendi. Manifest/lockfile'da başka paket değişmedi. [Resmi duyuru](https://github.com/mongodb/node-mongodb-native/releases/tag/v7.8.0) önceki timeoutMS kullanımını etkileyen havuz desenkronizasyonu ve SRV hostname güvenliğini açıklar; projede exploit doğrulanmadı. Ayrı olarak 7.8.0'da timeoutMS artık etkisizdir. D037'deki desteklenen selection/connect/checkout/socket/command/write/commit sınırları bu nedenle uygulandı; eski toplam CSOT=8s ile eşdeğer garanti iddiası yoktur. Node, build config veya diğer paketler değiştirilmedi.
+
+### Kontroller
+
+| Kontrol | Gerçek sonuç / sınır |
+| --- | --- |
+| Deterministik testler | **25 dosya /466 test geçti.** Aynı/farklı kapsam, sıra, hata/expiry toparlanma, eski owner, snapshot transaction/deadline, IP ve 60s ayrımı, DB/config hataları. CI secret/ağ gerektirmez; mock yarışları tek başına gerçek atomiklik kanıtı değildir. |
+| Lint / typecheck | İkisi de exit 0. |
+| Varsayılan production build | Boş GitHub/Mongo/signing process env ile **npm run build, Turbopack başarılı**, TypeScript ve 6 sayfa tamamlandı. Yerel port gereksinimi için izinli çalıştırıldı; webpack fallback/config değişikliği kullanılmadı. Önceki A4.3b ortam kısıtı tarihsel kayıt olarak aşağıda korunur. |
+| Gerçek Atlas / üç bağımsız süreç | Aynı scope'ta **1 acquired /2 busy**; farklı scope aynı anda alındı. Süresi geçmiş kayıt hâlâ DB'deyken yeni owner aldı; eski release reddedildi, eski snapshot yazımı lock_lost ile reddedildi. Yeni owner native transaction ile yazabildi ve bırakabildi. Sentetik complete snapshot motor/kayıt/okuma sırası ve değerleri korundu. Gerçek GitHub çağrısı yapılmadı. |
+| İndeks / temizlik | request_lock_expiry expiresAt:1/expireAfterSeconds:0 doğrulandı. Yalnız bu smoke'un **iki geçici lock anahtarı ve iki sentetik snapshot'ı** tekil kimliklerle temizlendi; lock yokluğu **2/2**, kalan snapshot **0**. Geçici çalıştırıcılar kaldırıldı. Fiziksel TTL silinmesi gözlenmedi, uzun süre beklenmedi. |
+| Gizlilik | Env yalnız runtime yükleyicisiyle kullanıldı; gerçek env içeriği/URI/token/hash/lock owner/key/tam kayıt veya README loglanmadı. Public debug endpointi/test bağımlılığı eklenmedi. |
+| Diff / kapsam | git diff --check ve cached diff kontrolü geçti; yeni dosyalarda LF/trailing-whitespace kontrolü geçti, index boş. Manifest ve lockfile HEAD karşılaştırması yalnız mongodb kaydının değiştiğini doğruladı. Motor/puanlar/demo/renderer/tasarım/build config korunur. |
+
+### Açık işler ve durma noktası
+
+- Kullanıcı incelemesi, bu paketin commit/push ve yeni uzak CI doğrulaması açık. A4.3b CI #14 kullanıcı kaynağı yeni paket CI sonucu değildir.
+- Eski Node/Next sürecini yeniden başlatmak gerekir: HMR eski driver/pool tutabilir. Cooldown namespace geçişi için eski süreçleri durdurup ≥60s trafik bekletme planı D036'da; eski kayıtlar topluca silinmez. Kullanıcı geliştirme süreci bu tur durdurulmadı.
+- Gerçek GitHub üzerinden çoklu süreç analiz/arayüz, Vercel IP/ingress, failover/partition ve exploit doğrulaması yapılmadı. Lease OS preemption değildir; doğal transaction DB kilidi commit/abort'a kadar sürebilir. Aşama timeout'ları kesin toplam HTTP sınırı değildir; DB/cleanup dahil 20s hedefi açık.
+- Session bütçesi, istek birleştirme/sonuç paylaşımı ve global concurrency, analiz/görsel cache, karşılaştırma, OG ve yayın açık. Busy reddi sonuç birleştirme sayılmaz; A4 bütünü kapanmaz.
+
+### Birleşik commit kapsamı
+
+- AGENTS.md, README.md, docs/{ARCHITECTURE,DECISIONS,STATUS,TASKS}.md.
+- package.json, package-lock.json (yalnız mongodb sürüm kaydı).
+- src/config/request-limits.ts; src/lib/db/{client,errors,analysis-locks,rate-limits,snapshots}.ts; src/lib/github/client.ts; src/lib/security/requests.ts.
+- src/features/analysis/{actions.ts,analysis-states.tsx,report.ts}; src/messages/{tr,en}.json.
+- tests/db/{client,rate-limits,snapshots,analysis-locks,snapshot-lock}.test.ts; tests/analysis/locks.test.ts; tests/github/analysis.test.ts; tests/security/{actions,requests}.test.ts.
+
+Yerel kontrollerle birleşik paket commit için hazır; kullanıcı incelemesi ve yeni uzak CI henüz açık. Öneri: **feat: add distributed analysis locking**. Güvenlik düzeltmesi aynı onaylı A4.3c paketinin ayrı kapsamıdır. Stage/commit/push/yayın yapılmaz; kullanıcı incelemesinden sonraki dilime otomatik geçilmez.
 
 ## A4.3b — sunucu giriş bütçeleri, 1 Kasım 2026
 

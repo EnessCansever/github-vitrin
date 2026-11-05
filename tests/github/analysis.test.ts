@@ -4,6 +4,13 @@ import {createSnapshot} from "../../src/lib/db/snapshots";
 import {english} from "../scoring/fixtures";
 import {json, readme, repository, respond} from "./fixtures";
 
+vi.mock("../../src/lib/db/analysis-locks", async importOriginal => ({
+  ...await importOriginal<typeof import("../../src/lib/db/analysis-locks")>(),
+  acquireAnalysisLock: vi.fn(async (key: string) => ({acquired: true, lock: {
+    key, owner: "11111111-1111-4111-8111-111111111111", expiresAt: new Date(Date.now() + 45000).toISOString(),
+  }})),
+  ownsAnalysisLock: vi.fn(async () => true), releaseAnalysisLock: vi.fn(async () => true),
+}));
 vi.mock("../../src/lib/security/requests", () => ({
   limitRequest: vi.fn(async () => {}), limitAnalysis: vi.fn(async () => {}), requestFailure: () => null,
 }));
@@ -55,7 +62,7 @@ describe("analysis server action", () => {
       expect(serialized).not.toContain(forbidden);
     }
     expect(fetch).toHaveBeenCalledTimes(5);
-    expect(createSnapshot).toHaveBeenCalledExactlyOnceWith(result.report);
+    expect(createSnapshot).toHaveBeenCalledExactlyOnceWith(result.report, expect.objectContaining({key: expect.any(String), owner: expect.any(String)}));
     expect(result.snapshot).toMatchObject({status: "saved", id: "11111111-1111-4111-8111-111111111111"});
   });
 
@@ -145,7 +152,7 @@ describe("analysis server action", () => {
     respond(publicProfile(), json(repository()), json(repository()), json({}, 503), noProfileReadme());
     const result = await analyze(selection);
     expect(result).toMatchObject({status: "success", report: {status: "incomplete", score: null, profileType: null}, snapshot: {status: "saved"}});
-    expect(createSnapshot).toHaveBeenCalledWith(expect.objectContaining({status: "incomplete", score: null}));
+    expect(createSnapshot).toHaveBeenCalledWith(expect.objectContaining({status: "incomplete", score: null}), expect.objectContaining({key: expect.any(String)}));
   });
 
   it("retries by fetching fresh server data, not by accepting the previous client report", async () => {

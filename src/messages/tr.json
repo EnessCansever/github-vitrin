@@ -464,6 +464,14 @@
       "unavailable": {
         "title": "İşlem şu anda kullanılamıyor",
         "description": "Sunucu hizmetine erişilemedi. Daha sonra yeniden deneyebilirsin."
+      },
+      "busy": {
+        "title": "Bu analiz zaten sürüyor",
+        "description": "Aynı profil ve proje seçimi için bir analiz çalışıyor. Biraz sonra yeniden deneyebilirsin."
+      },
+      "analysisExpired": {
+        "title": "Analiz tamamlanamadı",
+        "description": "Bu deneme zamanında tamamlanamadı. Proje seçimin korunuyor; yeniden deneyebilirsin."
       }
     },
     "partialSummary": "Bilinen bulguları ve kategori ayrıntılarını aşağıda inceleyebilirsin."

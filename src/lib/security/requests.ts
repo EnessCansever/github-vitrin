@@ -54,9 +54,9 @@ export async function limitRequest(operation: keyof typeof requestLimits): Promi
   await consume(key, policy, (period + 1) * policy.windowMs);
 }
 
-export async function limitAnalysis(username: string, repoIds: number[]): Promise<void> {
+export async function limitAnalysis(scope: string): Promise<void> {
   const key = createHmac("sha256", secret()).update(JSON.stringify([
-    "analysis-refresh-v1", username, [...repoIds].sort((a, b) => a - b),
+    "analysis-refresh-v2", scope,
   ])).digest("hex");
   await consume(key, analysisRefresh);
 }

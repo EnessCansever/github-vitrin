@@ -4,7 +4,9 @@ import {consumeRateLimit} from "../../src/lib/db/rate-limits";
 import {StorageError} from "../../src/lib/db/errors";
 
 const db = vi.hoisted(() => ({get: vi.fn(), collection: vi.fn(), createIndex: vi.fn(), update: vi.fn()}));
-vi.mock("../../src/lib/db/client", () => ({getDatabase: db.get}));
+vi.mock("../../src/lib/db/client", async importOriginal => ({
+  ...await importOriginal<typeof import("../../src/lib/db/client")>(), getDatabase: db.get,
+}));
 
 const key = "a".repeat(64);
 const input = {key, limit: 10, windowMs: 600_000};
@@ -31,10 +33,10 @@ it("returns first, within-window, boundary and rejected decisions without extend
   expect(await consumeRateLimit(input)).toEqual({allowed: true, remaining: 0, resetAt, retryAt: null});
   expect(await consumeRateLimit(input)).toEqual({allowed: false, remaining: 0, resetAt, retryAt: resetAt});
   expect(db.collection).toHaveBeenCalledWith("rateLimits");
-  expect(db.createIndex).toHaveBeenCalledWith({expiresAt: 1}, {name: "rate_limit_expiry", expireAfterSeconds: 0});
+  expect(db.createIndex).toHaveBeenCalledWith({expiresAt: 1}, {name: "rate_limit_expiry", expireAfterSeconds: 0}, {maxTimeMS: 4000, writeConcern: {w: "majority", wtimeoutMS: 4000}});
   expect(db.update).toHaveBeenCalledTimes(4);
   expect(db.update.mock.calls[0]).toEqual([
-    {_id: key}, expect.any(Array), {upsert: true, returnDocument: "after", writeConcern: {w: "majority"}},
+    {_id: key}, expect.any(Array), {upsert: true, returnDocument: "after", maxTimeMS: 4000, writeConcern: {w: "majority", wtimeoutMS: 4000}},
   ]);
 });
 
@@ -63,7 +65,7 @@ it("returns each concurrent operation's own post-image, including creation races
   expect(results.filter(value => !value.allowed)).toHaveLength(1);
   expect(results.map(value => value.remaining).sort()).toEqual([0, 0, 1]);
   expect(db.update).toHaveBeenCalledTimes(4);
-  expect(db.update.mock.calls[3][2]).toEqual({upsert: false, returnDocument: "after", writeConcern: {w: "majority"}});
+  expect(db.update.mock.calls[3][2]).toEqual({upsert: false, returnDocument: "after", maxTimeMS: 4000, writeConcern: {w: "majority", wtimeoutMS: 4000}});
 });
 
 it("bounds duplicate-key recovery and sanitizes a second conflict", async () => {

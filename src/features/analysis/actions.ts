@@ -1,11 +1,14 @@
 "use server";
 
 import {z} from "zod";
+import {randomUUID} from "node:crypto";
 import {GitHubClient} from "../../lib/github/client";
 import {GitHubError} from "../../lib/github/errors";
 import {profileInput} from "../../lib/github/input";
-import {repoName} from "../../lib/github/schemas";
+import {repoName, type Repository} from "../../lib/github/schemas";
 import {createSnapshot} from "../../lib/db/snapshots";
+import {StorageError} from "../../lib/db/errors";
+import {acquireAnalysisLock, analysisScope, ownsAnalysisLock, releaseAnalysisLock, type AnalysisLock} from "../../lib/db/analysis-locks";
 import {limitRequest, limitAnalysis, requestFailure} from "../../lib/security/requests";
 import {RULES_VERSION, scoreAnalysis} from "./scoring/engine";
 import type {AnalysisResponse, Report} from "./report";
@@ -73,13 +76,30 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
   if (!parsed.success || Buffer.byteLength(JSON.stringify(input), "utf8") > 2048) {
     return {status: "error", code: "invalid_input"};
   }
+  const startedAt = Date.now();
+  let lock: AnalysisLock | undefined;
+  function checkDeadline() {
+    if (Date.now() - startedAt >= 20_000) throw new StorageError("lock_lost");
+  }
   try {
-    await limitAnalysis(parsed.data.username, parsed.data.repos.map(repo => repo.id));
     const client = new GitHubClient();
     const profile = await client.getProfile(parsed.data.username);
     if (profile.id !== parsed.data.profileId || profile.login.toLowerCase() !== parsed.data.username) return {status: "error", code: "selectionChanged"};
-    const repos = await client.getSelected(profile, parsed.data.repos);
+    const metadata: Repository[] = [];
+    for (const selected of parsed.data.repos) metadata.push(await client.getRepository(profile, selected.name, selected.id));
+    checkDeadline();
+    const scope = analysisScope(profile.id, metadata.map(repo => repo.id));
+    const acquired = await acquireAnalysisLock(scope);
+    if (!acquired.acquired) return {status: "error", code: "busy", retryAt: acquired.retryAt};
+    lock = acquired.lock;
+    await limitAnalysis(scope);
+    checkDeadline();
+    const repos = [];
+    for (const repo of metadata) repos.push({repo, readme: await client.getReadme(profile, repo)});
     const profileReadme = await client.getProfileReadme(profile);
+    checkDeadline();
+    if (!(await ownsAnalysisLock(lock))) throw new StorageError("lock_lost");
+    checkDeadline();
     const checkedAt = new Date().toISOString();
     const result = scoreAnalysis({rulesVersion: RULES_VERSION, profile, profileReadme, repos, checkedAt});
     const report: Report = {
@@ -91,17 +111,33 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
       }))})),
     };
     try {
-      const access = await createSnapshot(report);
+      checkDeadline();
+      const access = await createSnapshot(report, lock);
       return {status: "success", report, snapshot: {status: "saved", ...access}};
-    } catch {
+    } catch (error) {
+      if (error instanceof StorageError && error.code === "lock_lost") throw error;
       return {status: "success", report, snapshot: {status: "failed"}};
     }
   } catch (error) {
     const limited = requestFailure(error);
     if (limited) return {status: "error", ...limited};
+    if (error instanceof StorageError) {
+      return {status: "error", code: error.code === "lock_lost" ? "analysisExpired" : error.code === "configuration" ? "configuration" : "unavailable"};
+    }
     if (error instanceof GitHubError && error.code === "repo_unavailable") {
       return {status: "error", code: "selectionChanged"};
     }
     return {status: "error", code: safeError(error)};
+  } finally {
+    if (lock) {
+      try {
+        await releaseAnalysisLock(lock);
+      } catch (error) {
+        console.warn("analysis_lock_release_failed", {
+          errorType: error instanceof StorageError ? error.code : "unavailable",
+          correlationId: randomUUID(), durationMs: Date.now() - startedAt,
+        });
+      }
+    }
   }
 }

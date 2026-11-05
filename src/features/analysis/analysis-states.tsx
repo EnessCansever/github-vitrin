@@ -14,6 +14,8 @@ const stateIcons = {
   rateLimit: Hourglass,
   partial: TriangleAlert,
   configuration: TriangleAlert,
+  busy: Hourglass,
+  analysisExpired: CloudOff,
 };
 
 export function AnalysisStates({ examples }: { examples: StateExample[] }) {

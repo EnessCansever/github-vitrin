@@ -464,6 +464,14 @@
       "unavailable": {
         "title": "This operation is currently unavailable",
         "description": "A server service could not be reached. Please try again later."
+      },
+      "busy": {
+        "title": "This analysis is already running",
+        "description": "An analysis is running for this profile and project selection. Please try again shortly."
+      },
+      "analysisExpired": {
+        "title": "The analysis could not finish",
+        "description": "This attempt did not finish in time. Your project selection is preserved; you can try again."
       }
     },
     "partialSummary": "Known findings and category details remain available below."
