@@ -1,10 +1,40 @@
 # Güncel durum
 
-Son güncelleme: 5 Kasım 2026 (Europe/Istanbul).
+Son güncelleme: 7 Kasım 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A4.3c — dağıtık analiz kilidi ve kullanıcı onaylı MongoDB güvenlik düzeltmesi uygulandı; kullanıcı incelemesi/yeni commit ve CI açık.** A4.3b **f64b181** commit/push ve **CI #14 başarısı kullanıcı GitHub Actions ekran görüntüsüne dayanır**; bağımsız uzak sorgu yapılmadı. Başlangıç HEAD f64b18130c43669760a292ebc669b08dd392a7d7; çalışma ağacı/index temizdi. A4 bütünü ve yayın tamamlanmadı.
+**A4.4a — analiz cache veri katmanı ve testleri; action/UI entegrasyonu yok.** A4.3c **3cc125a — feat: add distributed analysis locking** commit/push ve **CI #15 başarısı kullanıcı GitHub Actions ekran görüntüsüne dayanır**; bağımsız uzak sorgu yapılmadı. Başlangıç yerel HEAD 3cc125a8fce086e94df5044bbf048073f5615607, çalışma ağacı/index temizdi. A4 bütünü ve yayın açık.
+
+## A4.4a — analiz cache veri katmanı, 7 Kasım 2026
+
+### Kapsam ve tamamlananlar
+
+- AGENTS, ana sözleşme ve ilgili belgeler/action/snapshot/kilit/istek sınırı kaynakları incelendi. TASKS kilit bağımlılığı A4.3c ile karşılandı; istek birleştirme/global concurrency açık. Bunlar bağımsız veri katmanını engellemez; tam entegrasyon yapılmış sayılmadı.
+- Kullanıcı, tanımlanmayan incomplete cache politikasına yanıt olarak **yalnız complete sonuçların cache'lenmesini** onayladı. Mevcut incomplete snapshot ve null/unknown kuralları değişmez (D038).
+- Server-only analysis-cache-schema/analysis-cache: doğrulanmış profil ID + canonical repo ID kümesi + rulesVersion key'i; cacheVersion=1 ve mevcut strict güvenli Report. Süre veri zamanı checkedAt/fetchedAt + **15 dakika**; geç yazım/hit süreyi veya analiz zamanını yenilemez. `_id` unique ve analysis_cache_expiry TTL indeksi. Okuma Mongo/uygulama expiry kontrolüyle TTL silinmesini beklemez.
+- Cache kaydında snapshot kimliği, okuma tokenı/hash'i, yetki, ham README/API veya hazır çevrilmiş metin yoktur. Incomplete/error/credential-bearing/geçersiz kayıt reddi; DB/config/bozuk kayıt hatası ayrı, miss gibi sunulmaz. Modül public endpoint veya sınırsız fallback oluşturmaz.
+- Yazım mevcut aktif owner/expiry çitini cache replace/upsert ile aynı native transaction'da tutar. Yanlış kapsam/eski owner yazamaz. Mevcut D037 komut/commit/deadline sınırları korunur; bu kesin toplam HTTP süre garantisi değildir. Mevcut action, motor, adapter, snapshot, lock ve limiter kodu değişmedi.
+
+### Doğrulama
+
+| Kontrol | Sonuç ve sınır |
+| --- | --- |
+| Deterministik testler | Son kaynakta **26 dosya/507 test geçti**; 41 yeni cache davranış testi. Hit/miss, TTL silmeden expiry/sınır, geç okuma/future, farklı profil/kapsam/sürüm, repo sırası, token/şema izolasyonu, incomplete/error reddi, owner transaction/deadline ve güvenli DB/config hataları. Mock DB gerçek Atlas transaction/TTL kanıtı değildir. Test tipi düzeltmesinden sonra tam test paketi tekrar başarılı oldu. |
+| Lint | Son kaynakta tekrar çalıştırıldı, exit 0. |
+| Typecheck | İlk çalışmada yalnız yeni test fixture sürüm literal'i ve test tablo anahtar tipi hataları bulundu; fixture mevcut reportSchema ile parse edildi, tablo literal tipleri daraltıldı. Hata susturma eklenmedi; son typecheck exit 0. |
+| Varsayılan build | Boş GitHub/Mongo/signing process env ile varsayılan npm run build **exit 0**, Turbopack/TypeScript/6 sayfa başarılı. İlk kısıtlı ortam denemesi derleme aşamasında çıktı vermeden beklediği için durduruldu (130); kesin neden teşhis edildi denmez. Aynı komut izinli ortamda geçti. Webpack fallback veya build yapılandırması değişikliği yoktur. |
+| Gerçek bağlantı / arayüz | Bu dilimde gerçek Atlas/GitHub/browser kontrolü yapılmadı; mevcut akış cache'i henüz kullanmaz. Önceki A4.3c Atlas kanıtı cache doğrulaması olarak sunulmaz. Env dosyası okunmadı/değiştirilmedi, yeni dependency veya geçici runner yoktur. |
+| Diff | git diff --check/cached diff, yeni dosyalarda LF/trailing-whitespace ve kapsam kontrolleri geçti; index boş. Yalnız üç yeni kaynak/test ve altı belge değişti. Stage/commit/push/yayın yoktur. |
+
+### Açık işler / durma noktası
+
+- Action/UI entegrasyonu, cache kaynağı ve gerçek analiz zamanı sunumu, cache hit için bağımsız rapor erişimi/snapshot süre semantiği ve gerçek zorunlu yenileme açık. Bu veri katmanı hiçbir snapshot oluşturmaz/süresini uzatmaz; başka kişinin tokenını cache üzerinden vermez. İstemci seçim/metadata güvenilir kabul edilmez; entegrasyonda mevcut GitHub kimlik/uygunluk doğrulaması zorunludur.
+- Gelecek normal/hit/miss/force yolları için aynı IP → strict girdi → doğrulanmış profil/repo scope → lock → tek 60s kontrolü korunmalı. Sonra normal cache hit/miss ayrılır, force cache'i atlayıp gerçekten veri alır; meşgul/DB/config hatası cache fallback'iyle aşılmaz. Bu sıra ARCHITECTURE'da tasarım gereksinimidir, uygulanmış action davranışı değildir.
+- Gerçek Atlas cache roundtrip/expiry/stale-owner kontrolü, istek birleştirme/global concurrency, session, DB/cleanup dahil bütün action süre bütçesi ve A4'ün karşılaştırma kabulü açık. PNG cache/OG/yayın bu tur yoktur.
+- Sonraki somut adım bu paketi kullanıcı incelemesine sunmak; yeni mesaj olmadan entegrasyon dilimine geçilmez. Yeni commit/uzak CI açık.
+
+Commit kapsamı: src/lib/db/analysis-cache-schema.ts, src/lib/db/analysis-cache.ts, tests/db/analysis-cache.test.ts; AGENTS.md, docs/{PRODUCT,ARCHITECTURE,DECISIONS,STATUS,TASKS}.md. Öneri: **feat: add analysis cache storage**. Yerel kontrollerle bu sınırlı paket commit için hazır; gerçek Atlas/entegrasyon ve yeni uzak CI başarısı iddia edilmez.
 
 ## A4.3c — analiz kilidi, 5 Kasım 2026
 
@@ -32,7 +62,7 @@ Kullanıcı açık onayıyla **yalnız mongodb 7.7.0→7.8.0** güncellendi. Man
 
 ### Açık işler ve durma noktası
 
-- Kullanıcı incelemesi, bu paketin commit/push ve yeni uzak CI doğrulaması açık. A4.3b CI #14 kullanıcı kaynağı yeni paket CI sonucu değildir.
+- 7 Kasım kullanıcı bildirimiyle A4.3c 3cc125a commit/push ve CI #15 kapısı kapandı; kaynak kullanıcı GitHub Actions ekran görüntüsüdür, bağımsız sorgu değildir. Aşağıdaki operasyon sınırları açık kalır.
 - Eski Node/Next sürecini yeniden başlatmak gerekir: HMR eski driver/pool tutabilir. Cooldown namespace geçişi için eski süreçleri durdurup ≥60s trafik bekletme planı D036'da; eski kayıtlar topluca silinmez. Kullanıcı geliştirme süreci bu tur durdurulmadı.
 - Gerçek GitHub üzerinden çoklu süreç analiz/arayüz, Vercel IP/ingress, failover/partition ve exploit doğrulaması yapılmadı. Lease OS preemption değildir; doğal transaction DB kilidi commit/abort'a kadar sürebilir. Aşama timeout'ları kesin toplam HTTP sınırı değildir; DB/cleanup dahil 20s hedefi açık.
 - Session bütçesi, istek birleştirme/sonuç paylaşımı ve global concurrency, analiz/görsel cache, karşılaştırma, OG ve yayın açık. Busy reddi sonuç birleştirme sayılmaz; A4 bütünü kapanmaz.
@@ -45,7 +75,7 @@ Kullanıcı açık onayıyla **yalnız mongodb 7.7.0→7.8.0** güncellendi. Man
 - src/features/analysis/{actions.ts,analysis-states.tsx,report.ts}; src/messages/{tr,en}.json.
 - tests/db/{client,rate-limits,snapshots,analysis-locks,snapshot-lock}.test.ts; tests/analysis/locks.test.ts; tests/github/analysis.test.ts; tests/security/{actions,requests}.test.ts.
 
-Yerel kontrollerle birleşik paket commit için hazır; kullanıcı incelemesi ve yeni uzak CI henüz açık. Öneri: **feat: add distributed analysis locking**. Güvenlik düzeltmesi aynı onaylı A4.3c paketinin ayrı kapsamıdır. Stage/commit/push/yayın yapılmaz; kullanıcı incelemesinden sonraki dilime otomatik geçilmez.
+A4.3c paketinin önceki commit önerisi: **feat: add distributed analysis locking**; 7 Kasım kullanıcı bildirimiyle commit/push/CI #15 tamamlandı. Güvenlik düzeltmesi aynı onaylı A4.3c paketinin ayrı kapsamıdır. Stage/commit/push/yayın yapılmaz; kullanıcı incelemesinden sonraki dilime otomatik geçilmez.
 
 ## A4.3b — sunucu giriş bütçeleri, 1 Kasım 2026
 

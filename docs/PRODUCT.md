@@ -64,3 +64,10 @@ Bu dilimde erişimi doğrulanmış, süresi dolmamış complete snapshot'tan iki
 Kart kayıtlı profil tipini, kullanıcı adını, toplam/kategori puanlarını, motorun ilk önerisini ve repo/profil hedefini, UTC analiz tarihini, portfolyo sunumu notunu ve config'teki marka/yazar imzasını taşır. Öneri yoksa eksiklik/gelişim uydurulmaz. Incomplete rapor okunabilir kalır ancak puanlı kart üretilemez. Demo indirmesi eklenmez.
 
 Önizleme indirmeden önce bu bilgileri göstereceğini açıklar; format rapor diline uyar. Üretim yalnız mevcut raporu okur; GitHub erişimi, yeniden puanlama, snapshot yazımı veya süre uzatma yoktur. Aynı PNG önizlenir ve kullanıcının açık indirme eylemiyle tarayıcıya verilir. İndirme isteği, cihazda kaydetme veya gerçek sosyal paylaşım başarısı diye raporlanmaz. Kartta token, erişim bağlantısı, QR, uydurma alan adı/Instagram adresi veya sahiplik/doğrulanmışlık iddiası yoktur.
+
+
+## A4.4a — analiz cache politikası (7 Kasım 2026)
+
+Kaynak sözleşme §6–7'deki analiz önbelleği 15 dakikadır; aynı doğrulanmış GitHub kullanıcı ID'si, repo kümesi ve puanlama sürümünü kapsar. Kullanıcı bu dilimde yalnız **complete** sonuçların cache'lenmesini açıkça onayladı; incomplete ve hatalar cache'lenmez. Incomplete snapshot saklama kuralı aynen korunur. Cache, özel rapor erişimi veya public paylaşım kaydı değildir; okuma tokenı/hash'i ve snapshot kimliği içermez.
+
+Bu tur yalnız veri katmanıdır; gerçek analiz hâlâ mevcut GitHub/motor/snapshot akışındadır, kullanıcıya cache isabeti sunulmaz. Veri katmanı analizin gerçek checkedAt değerini korur; 15 dakikayı bu veri zamanından sayar, hit/write anında uzatmaz. Aynı cache yeni ölçüm/gelişim değildir. Normal/önbelleği atlayan zorunlu yenileme seçimi, cache kaynağı/zamanının arayüzde açıklanması ve cache'ten bağımsız özel rapor erişimi sonraki entegrasyon diliminde ele alınır; uygulanmış sayılmaz.
