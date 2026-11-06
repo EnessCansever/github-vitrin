@@ -3,7 +3,7 @@ import {createSnapshot} from "../../src/lib/db/snapshots";
 import {analysisScope} from "../../src/lib/db/analysis-locks";
 import {report} from "./fixtures";
 
-const db = vi.hoisted(() => ({get: vi.fn(), index: vi.fn(), insert: vi.fn(), fence: vi.fn(), start: vi.fn(), commit: vi.fn(), abort: vi.fn(), end: vi.fn(), active: false}));
+const db = vi.hoisted(() => ({get: vi.fn(), index: vi.fn(), insert: vi.fn(), fence: vi.fn(), capacity: vi.fn(), start: vi.fn(), commit: vi.fn(), abort: vi.fn(), end: vi.fn(), active: false}));
 vi.mock("../../src/lib/db/client", async original => ({...await original<typeof import("../../src/lib/db/client")>(), getDatabase: db.get}));
 const lock = {key: analysisScope(1, [10]), owner: "11111111-1111-4111-8111-111111111111", expiresAt: "2026-11-05T00:00:45.000Z"};
 const session = {startTransaction: db.start, commitTransaction: db.commit, abortTransaction: db.abort, endSession: db.end, inTransaction: () => db.active};
@@ -17,10 +17,11 @@ beforeEach(() => {
   db.end.mockReset().mockResolvedValue(undefined);
   db.index.mockReset().mockResolvedValue("snapshot_expiry");
   db.insert.mockReset().mockResolvedValue({acknowledged: true});
+  db.capacity.mockReset().mockResolvedValue({acknowledged: true, matchedCount: 1});
   db.fence.mockReset().mockResolvedValue({_id: lock.key, owner: lock.owner});
   db.get.mockReset().mockResolvedValue({
     client: {startSession: () => session}, collection: (name: string) => name === "requestLocks"
-      ? {findOneAndUpdate: db.fence} : {createIndex: db.index, insertOne: db.insert},
+      ? {findOneAndUpdate: db.fence} : name === "analysisCapacity" ? {updateOne: db.capacity} : {createIndex: db.index, insertOne: db.insert},
   });
 });
 
@@ -75,4 +76,22 @@ it.each(["fence", "insert", "commit"])("sanitizes transaction %s failure and alw
   await expect(createSnapshot(report(), lock)).rejects.toMatchObject({code: "unavailable", message: "unavailable"});
   expect(db.end).toHaveBeenCalledTimes(1);
   expect(db.start).toHaveBeenCalledTimes(1);
+});
+
+
+it("fences global capacity before the scope lock and snapshot in the same transaction", async () => {
+  const permit = {owner: "22222222-2222-4222-8222-222222222222", expiresAt: lock.expiresAt};
+  await createSnapshot(report(), lock, permit);
+  expect(db.capacity.mock.calls[0][0]).toMatchObject({"permits.owner": permit.owner});
+  expect(db.capacity.mock.calls[0][2]).toMatchObject({session, maxTimeMS: 4000});
+  expect(db.capacity.mock.invocationCallOrder[0]).toBeLessThan(db.fence.mock.invocationCallOrder[0]);
+  expect(db.fence.mock.invocationCallOrder[0]).toBeLessThan(db.insert.mock.invocationCallOrder[0]);
+});
+
+it("does not write a snapshot when its global permit expired or was replaced", async () => {
+  db.capacity.mockResolvedValue({acknowledged: true, matchedCount: 0});
+  await expect(createSnapshot(report(), lock, {owner: "22222222-2222-4222-8222-222222222222", expiresAt: lock.expiresAt})).rejects.toMatchObject({code: "lock_lost"});
+  expect(db.fence).not.toHaveBeenCalled();
+  expect(db.insert).not.toHaveBeenCalled();
+  expect(db.abort).toHaveBeenCalledTimes(1);
 });

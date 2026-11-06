@@ -6,6 +6,7 @@ import {GitHubClient} from "../../lib/github/client";
 import {GitHubError} from "../../lib/github/errors";
 import {profileInput} from "../../lib/github/input";
 import {repoName, type Repository} from "../../lib/github/schemas";
+import {acquireAnalysisCapacity, ownsAnalysisCapacity, releaseAnalysisCapacity, type AnalysisPermit} from "../../lib/db/analysis-capacity";
 import {createSnapshot} from "../../lib/db/snapshots";
 import {StorageError} from "../../lib/db/errors";
 import {acquireAnalysisLock, analysisScope, ownsAnalysisLock, releaseAnalysisLock, type AnalysisLock} from "../../lib/db/analysis-locks";
@@ -78,10 +79,15 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
   }
   const startedAt = Date.now();
   let lock: AnalysisLock | undefined;
+  let permit: AnalysisPermit | undefined;
   function checkDeadline() {
     if (Date.now() - startedAt >= 20_000) throw new StorageError("lock_lost");
   }
   try {
+    const capacity = await acquireAnalysisCapacity();
+    if (!capacity.acquired) return {status: "error", code: "capacity", retryAt: capacity.retryAt};
+    permit = capacity.permit;
+    checkDeadline();
     const client = new GitHubClient();
     const profile = await client.getProfile(parsed.data.username);
     if (profile.id !== parsed.data.profileId || profile.login.toLowerCase() !== parsed.data.username) return {status: "error", code: "selectionChanged"};
@@ -98,7 +104,7 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
     for (const repo of metadata) repos.push({repo, readme: await client.getReadme(profile, repo)});
     const profileReadme = await client.getProfileReadme(profile);
     checkDeadline();
-    if (!(await ownsAnalysisLock(lock))) throw new StorageError("lock_lost");
+    if (!(await ownsAnalysisCapacity(permit)) || !(await ownsAnalysisLock(lock))) throw new StorageError("lock_lost");
     checkDeadline();
     const checkedAt = new Date().toISOString();
     const result = scoreAnalysis({rulesVersion: RULES_VERSION, profile, profileReadme, repos, checkedAt});
@@ -112,7 +118,7 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
     };
     try {
       checkDeadline();
-      const access = await createSnapshot(report, lock);
+      const access = await createSnapshot(report, lock, permit);
       return {status: "success", report, snapshot: {status: "saved", ...access}};
     } catch (error) {
       if (error instanceof StorageError && error.code === "lock_lost") throw error;
@@ -134,6 +140,16 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
         await releaseAnalysisLock(lock);
       } catch (error) {
         console.warn("analysis_lock_release_failed", {
+          errorType: error instanceof StorageError ? error.code : "unavailable",
+          correlationId: randomUUID(), durationMs: Date.now() - startedAt,
+        });
+      }
+    }
+    if (permit) {
+      try {
+        await releaseAnalysisCapacity(permit);
+      } catch (error) {
+        console.warn("analysis_capacity_release_failed", {
           errorType: error instanceof StorageError ? error.code : "unavailable",
           correlationId: randomUUID(), durationMs: Date.now() - startedAt,
         });

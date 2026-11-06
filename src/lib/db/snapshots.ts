@@ -2,6 +2,7 @@ import "server-only";
 
 import {createHash, randomBytes, randomUUID} from "node:crypto";
 import {getDatabase, dbMaxTimeMs, dbWriteConcern} from "./client";
+import {fenceAnalysisCapacity, type AnalysisPermit} from "./analysis-capacity";
 import {StorageError} from "./errors";
 import {analysisScope, lockFilter, type AnalysisLock, type LockRecord} from "./analysis-locks";
 import {readToken, reportSchema, scopeHash, snapshotId, snapshotSchema, SNAPSHOT_TTL_MS, SNAPSHOT_VERSION, type SnapshotRecord} from "./snapshot-schema";
@@ -10,9 +11,10 @@ function tokenHash(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
 
-export async function createSnapshot(input: unknown, lock?: AnalysisLock) {
+export async function createSnapshot(input: unknown, lock?: AnalysisLock, permit?: AnalysisPermit) {
   const report = reportSchema.safeParse(input);
   if (!report.success) throw new StorageError("invalid_report");
+  if (permit && !lock) throw new StorageError("invalid_lock");
   const createdAt = new Date();
   const token = randomBytes(32).toString("hex");
   const selectedRepoIds = [...new Set(report.data.checks.filter(check => check.scope.kind === "repo").map(check => check.scope.id))].sort((a, b) => a - b);
@@ -38,6 +40,7 @@ export async function createSnapshot(input: unknown, lock?: AnalysisLock) {
       }
       try {
         session.startTransaction({writeConcern: dbWriteConcern, maxCommitTimeMS: dbMaxTimeMs});
+        if (permit) await fenceAnalysisCapacity(database, session, permit, remaining());
         // A real write holds the lease document through snapshot commit, fencing out a newer owner.
         const owned = await database.collection<LockRecord>("requestLocks").findOneAndUpdate(lockFilter(lock),
           {$set: {writeFence: randomUUID()}}, {session, returnDocument: "after", maxTimeMS: remaining()});

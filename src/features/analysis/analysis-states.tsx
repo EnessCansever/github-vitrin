@@ -14,7 +14,7 @@ const stateIcons = {
   rateLimit: Hourglass,
   partial: TriangleAlert,
   configuration: TriangleAlert,
-  busy: Hourglass,
+  busy: Hourglass, capacity: Hourglass,
   analysisExpired: CloudOff,
 };
 

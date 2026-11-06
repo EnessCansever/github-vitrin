@@ -71,3 +71,8 @@ Kart kayıtlı profil tipini, kullanıcı adını, toplam/kategori puanlarını,
 Kaynak sözleşme §6–7'deki analiz önbelleği 15 dakikadır; aynı doğrulanmış GitHub kullanıcı ID'si, repo kümesi ve puanlama sürümünü kapsar. Kullanıcı bu dilimde yalnız **complete** sonuçların cache'lenmesini açıkça onayladı; incomplete ve hatalar cache'lenmez. Incomplete snapshot saklama kuralı aynen korunur. Cache, özel rapor erişimi veya public paylaşım kaydı değildir; okuma tokenı/hash'i ve snapshot kimliği içermez.
 
 Bu tur yalnız veri katmanıdır; gerçek analiz hâlâ mevcut GitHub/motor/snapshot akışındadır, kullanıcıya cache isabeti sunulmaz. Veri katmanı analizin gerçek checkedAt değerini korur; 15 dakikayı bu veri zamanından sayar, hit/write anında uzatmaz. Aynı cache yeni ölçüm/gelişim değildir. Normal/önbelleği atlayan zorunlu yenileme seçimi, cache kaynağı/zamanının arayüzde açıklanması ve cache'ten bağımsız özel rapor erişimi sonraki entegrasyon diliminde ele alınır; uygulanmış sayılmaz.
+
+
+## A4.4b — başlangıç global analiz sınırı
+
+7 Kasım 2026 kullanıcı kararı: tüm Vercel süreçlerinde ortak en fazla **5 aktif analiz admission'ı**. Bu ölçülmüş kapasite değil merkezi sunucu koruma politikasıdır; gerçek kullanımda yeniden değerlendirilecek. Kapasite doluysa yeni GitHub analizi başlamaz, kullanıcı mevcut manuel retry ile yeniden deneyebilir; istek kuyruğa alındığı veya belirli anda kesin biteceği söylenmez. Mevcut scope kilidi/60s/IP kotaları korunur. Sonuç paylaşımıyla istek birleştirme ve cache arayüzü bu sınırlı dilimde uygulanmadı.

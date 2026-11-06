@@ -472,6 +472,10 @@
       "analysisExpired": {
         "title": "The analysis could not finish",
         "description": "This attempt did not finish in time. Your project selection is preserved; you can try again."
+      },
+      "capacity": {
+        "title": "Analysis capacity is currently full",
+        "description": "Other analyses are running. Try again when capacity becomes available; this request has not been queued."
       }
     },
     "partialSummary": "Known findings and category details remain available below."

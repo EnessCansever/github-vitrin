@@ -4,7 +4,45 @@ Son güncelleme: 7 Kasım 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A4.4a — analiz cache veri katmanı ve testleri; action/UI entegrasyonu yok.** A4.3c **3cc125a — feat: add distributed analysis locking** commit/push ve **CI #15 başarısı kullanıcı GitHub Actions ekran görüntüsüne dayanır**; bağımsız uzak sorgu yapılmadı. Başlangıç yerel HEAD 3cc125a8fce086e94df5044bbf048073f5615607, çalışma ağacı/index temizdi. A4 bütünü ve yayın açık.
+**A4.4b — global analiz kapasitesi gerçek analyze girişine bağlandı; istek birleştirme ayrı açık iş.** A4.4a **fd6a54d — feat: add analysis cache storage** commit/push ve **CI #16 başarısı kullanıcı GitHub Actions ekran görüntüsüne dayanır**; bağımsız uzak sorgu yapılmadı. Başlangıç yerel HEAD fd6a54da39a497f8e933425f24f3123964195f57, çalışma ağacı/index temizdi. A4 bütünü/yayın açık.
+
+## A4.4b — global analiz kapasitesinin sınırlı dilimi, 7 Kasım 2026
+
+### Uygulanan kapsam
+
+- AGENTS/sözleşme/ilgili mimari/karar/durum/görevler ve mevcut action/kilit/cache incelendi. Kapsam kilidinin zaten tek aynı-scope iş çalıştırdığı, busy reddinin sonuç birleştirme olmadığı belirlendi; aynı işi yapan ikinci kapsam kilidi kurulmadı.
+- Global kapasite sayısı tanımlı değildi; yalnız gerekli karar soruldu. Kullanıcı tüm Vercel süreçlerinde ortak **5 aktif analiz**, merkezi config, ölçülmemiş başlangıç politikası ve dolu kapasitede GitHub başlatmama kararını verdi (D039).
+- analysisCapacity Mongo tek belge/atomik prune+claim: owner UUID, 45s expiry, unique _id ve TTL indeksi. Aktif sayı 5'te kalır; expired permit fiziksel TTL silinmeden geri kazanılır. İlk oluşturma yarışı tek duplicate-key kurtarmasıyla sınırlı; DB/config hatası full değildir. Aktifken farklı limitli süreç configuration alır.
+- Analyze sırası IP → strict girdi → global permit → GitHub kimlik/sahiplik/metadata → mevcut scope lock → tek 60s → veri/motor → çitli snapshot → finally release. Kapasite reddi GitHub/score/snapshot veya scope cooldown başlatmaz; istek kendi IP hakkını tüketir. Token/kota paylaşımı yoktur.
+- Aynı native snapshot transaction'ında global permit writeFence → scope writeFence → insert; eski/süresi dolmuş owner yeni işten sonra yazamaz. Başarılı/başarısız tüm çıkışlarda owner-specific release; cleanup hatası safe tür/correlationId/süre logu ve lease ile toparlanır, elde edilmiş sonuç kaybedilmez.
+- Mevcut durum bileşenine TR/EN capacity mesajı; gerçek en erken permit expiry'siyle manuel retry, otomatik kuyruk/poll/sahte yüzde yoktur. Yerleşim/tasarım, motor/adapter/demo/renderer/cache ve snapshot/token/30 gün şeması değişmedi. Yeni dependency veya endpoint yoktur.
+
+### Doğrulama
+
+| Kontrol | Sonuç ve sınır |
+| --- | --- |
+| Deterministik testler | **28 dosya /531 test geçti.** Kapasite/admission, beş farklı scope+altıncı ret, kendi giriş kotası, hata/expiry toparlanma, eski owner, snapshot global/scope transaction sırası; mevcut IP/60s/scope ve complete/incomplete testleri korunur. İki yeni dosya; mevcut üç action test dosyasında permit sınırı açıkça mock edilir. Mock post-image/Map gerçek DB atomikliği kanıtı sayılmaz. |
+| Lint / typecheck | Son kaynakta ikisi exit 0. İlk typecheck'te yeni Mongo koleksiyonunun string _id tipi açık CapacityRecord/Filter ile düzeltildi; any/ignore eklenmedi. |
+| Varsayılan build | Boş GitHub/Mongo/signing process env ile **npm run build exit 0**; izinli ortamda varsayılan Turbopack, TypeScript ve 6 sayfa başarılı. Build script/config veya webpack fallback değişikliği yoktur. |
+| Gerçek Atlas çoklu süreç | Üç bağımsız Node süreciyle **15 eşzamanlı claim: 5 kabul /10 ret**, saklanan aktif permit sayısı 5. Owner release sonrası yeni kabul; eski release yeni permit'i silemedi. TTL silinmeden retained expired permit devralındı, owns=false ve yeni owner geçerli. Gerçek GitHub çağrısı yapılmadı. |
+| Gerçek transaction | Eski global permit ile sentetik snapshot lock_lost ve 0 insert; yeni owner aynı mevcut createSnapshot+scope lock yoluyla yazabildi. Motor yalnız sentetik normalize veri için çalıştı, gerçek hesabın sonucu gibi sunulmadı. |
+| İndeks / temizlik | analysis_capacity_expiry expiresAt:1/expireAfterSeconds:0 doğrulandı. Başlangıçta pool kaydı olmadığı kontrol edildi; yalnız bu turun permit'leri, pool kaydı, scope kilidi ve **bir sentetik snapshot** temizlendi, yoklukları doğrulandı. Yeni normal uygulama indeksi kalır. Üç geçici çalıştırıcı kaldırıldı; mevcut kayıt değişmedi. Fiziksel TTL silinmesi gözlenmedi. |
+| Gizlilik / ortam | Env yalnız runtime Next yükleyicisiyle kullanıldı; .env.local içeriği/değeri değiştirilmedi veya çıktıya alınmadı. URI/parola/token/hash/owner/tam kayıt/README loglanmadı. Gerçek Vercel ingress/failover/yük veya browser/telefon kontrolü yapılmadı. |
+| Diff | git diff --check/cached diff ve yeni dosya LF/trailing-whitespace kontrolleri geçti; index boş. Kapsam dışı cache/motor/adapter/demo/renderer/CSS/paket/build dosyaları korunur. Stage/commit/push/yayın yoktur. |
+
+### Açıklar / cache entegrasyonuna kalan
+
+- **İstek birleştirme henüz uygulanmadı.** Aynı scope kaybedeni hâlâ busy alır; bekleyip mevcut public analiz verisini kendi yetkisiyle alma, token paylaşmadan sonuç sunumu ve snapshot çoğalmasını önleyen sonuç erişimi tasarımı/testleri açık. Bu tur aynı-scope çalıştırma ve snapshot çoğalmasına karşı mevcut kilidi korudu, sonuç paylaşımı sağlamadı.
+- Cache action/UI hit/miss/force-refresh, açık kaynak/gerçek analiz zamanı, cache hit için bağımsız rapor erişimi/snapshot süre semantiği açık. Cache yazımı gerçek akışa bağlanırken global permit çiti ve toplam süre bütçesi de eklenmeli; cache veri katmanı bu tur değişmedi. Entegrasyona tamamlandı denmez.
+- Beş geçerli admission fiziksel olarak durmuş OS/upstream işini anında kesmez. Eski iş 20s/deadline/owner denetiminde ve nihai transaction çitinde reddedilir. Transaction ortak pool belgesini commit/abort'a kadar tutar; cleanup gecikmesi/DB timeout ayrı hata olabilir. Kesin uçtan uca 20s hedefi, session ve gerçek Vercel/Atlas hosting operasyonu açık.
+- Tüm instance'lar aynı DB/pool/limit ve gate'i içeren sürümde olmalı; eski gate'siz kodla karışık trafik koruma garantisi değildir. Kapasite değişimi kontrollü drain/yeniden başlatma gerektirir. Bu tur kullanıcı geliştirme süreci veya deployment durdurulmadı/yayımlanmadı.
+- Kullanıcı incelemesi ve yeni commit/CI açık. Sonraki somut iş, yeni yetkiyle token taşımayan sınırlı istek birleştirme dilimini belirlemek; bu tur uygulanmaz. PNG cache, session, karşılaştırma/OG ve A4 bütünü açık.
+
+### Commit kapsamı
+
+AGENTS.md, README.md, docs/{PRODUCT,ARCHITECTURE,DECISIONS,STATUS,TASKS}.md; src/config/request-limits.ts; src/lib/db/{analysis-capacity,snapshots}.ts; src/features/analysis/{actions.ts,analysis-states.tsx,report.ts}; src/messages/{tr,en}.json; tests/analysis/{capacity,locks}.test.ts; tests/db/{analysis-capacity,snapshot-lock}.test.ts; tests/github/analysis.test.ts; tests/security/actions.test.ts.
+
+Yerel kontrollerle bu sınırlı paket commit için hazır; kullanıcı incelemesi ve yeni uzak CI açık. Öneri: **feat: limit concurrent analyses across processes**. Yalnız bu global kapasite dilimi; istek birleştirme/cache/A4 bütünü kapatılmaz.
 
 ## A4.4a — analiz cache veri katmanı, 7 Kasım 2026
 
@@ -32,7 +70,7 @@ Son güncelleme: 7 Kasım 2026 (Europe/Istanbul).
 - Action/UI entegrasyonu, cache kaynağı ve gerçek analiz zamanı sunumu, cache hit için bağımsız rapor erişimi/snapshot süre semantiği ve gerçek zorunlu yenileme açık. Bu veri katmanı hiçbir snapshot oluşturmaz/süresini uzatmaz; başka kişinin tokenını cache üzerinden vermez. İstemci seçim/metadata güvenilir kabul edilmez; entegrasyonda mevcut GitHub kimlik/uygunluk doğrulaması zorunludur.
 - Gelecek normal/hit/miss/force yolları için aynı IP → strict girdi → doğrulanmış profil/repo scope → lock → tek 60s kontrolü korunmalı. Sonra normal cache hit/miss ayrılır, force cache'i atlayıp gerçekten veri alır; meşgul/DB/config hatası cache fallback'iyle aşılmaz. Bu sıra ARCHITECTURE'da tasarım gereksinimidir, uygulanmış action davranışı değildir.
 - Gerçek Atlas cache roundtrip/expiry/stale-owner kontrolü, istek birleştirme/global concurrency, session, DB/cleanup dahil bütün action süre bütçesi ve A4'ün karşılaştırma kabulü açık. PNG cache/OG/yayın bu tur yoktur.
-- Sonraki somut adım bu paketi kullanıcı incelemesine sunmak; yeni mesaj olmadan entegrasyon dilimine geçilmez. Yeni commit/uzak CI açık.
+- 7 Kasım kullanıcı bildirimi: A4.4a fd6a54d commit/push ve CI #16 başarılı; kaynak kullanıcı GitHub Actions ekran görüntüsü, bağımsız uzak sorgu değil. Yeni yetkili A4.4b yukarıdadır; cache entegrasyonu açık kalır.
 
 Commit kapsamı: src/lib/db/analysis-cache-schema.ts, src/lib/db/analysis-cache.ts, tests/db/analysis-cache.test.ts; AGENTS.md, docs/{PRODUCT,ARCHITECTURE,DECISIONS,STATUS,TASKS}.md. Öneri: **feat: add analysis cache storage**. Yerel kontrollerle bu sınırlı paket commit için hazır; gerçek Atlas/entegrasyon ve yeni uzak CI başarısı iddia edilmez.
 

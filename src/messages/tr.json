@@ -472,6 +472,10 @@
       "analysisExpired": {
         "title": "Analiz tamamlanamadı",
         "description": "Bu deneme zamanında tamamlanamadı. Proje seçimin korunuyor; yeniden deneyebilirsin."
+      },
+      "capacity": {
+        "title": "Analiz kapasitesi şu an dolu",
+        "description": "Şu an başka analizler çalışıyor. Bir yer açıldığında yeniden deneyebilirsin; otomatik sıraya alınmadın."
       }
     },
     "partialSummary": "Bilinen bulguları ve kategori ayrıntılarını aşağıda inceleyebilirsin."

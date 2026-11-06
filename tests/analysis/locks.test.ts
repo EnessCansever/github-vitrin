@@ -11,6 +11,12 @@ import {input, repo} from "../scoring/fixtures";
 
 const state = vi.hoisted(() => ({locks: new Map<string, {key: string; owner: string; expiresAt: string}>(), sequence: 0}));
 const github = vi.hoisted(() => ({profile: vi.fn(), repository: vi.fn(), readme: vi.fn(), profileReadme: vi.fn()}));
+vi.mock("../../src/lib/db/analysis-capacity", () => ({
+  acquireAnalysisCapacity: vi.fn(async () => ({acquired: true, permit: {
+    owner: "22222222-2222-4222-8222-222222222222", expiresAt: new Date(Date.now() + 45000).toISOString(),
+  }})),
+  ownsAnalysisCapacity: vi.fn(async () => true), releaseAnalysisCapacity: vi.fn(async () => true),
+}));
 vi.mock("../../src/lib/github/client", () => ({GitHubClient: vi.fn(function () {
   return {getProfile: github.profile, getRepository: github.repository, getReadme: github.readme, getProfileReadme: github.profileReadme};
 })}));
