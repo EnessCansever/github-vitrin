@@ -76,3 +76,8 @@ Bu tur yalnız veri katmanıdır; gerçek analiz hâlâ mevcut GitHub/motor/snap
 ## A4.4b — başlangıç global analiz sınırı
 
 7 Kasım 2026 kullanıcı kararı: tüm Vercel süreçlerinde ortak en fazla **5 aktif analiz admission'ı**. Bu ölçülmüş kapasite değil merkezi sunucu koruma politikasıdır; gerçek kullanımda yeniden değerlendirilecek. Kapasite doluysa yeni GitHub analizi başlamaz, kullanıcı mevcut manuel retry ile yeniden deneyebilir; istek kuyruğa alındığı veya belirli anda kesin biteceği söylenmez. Mevcut scope kilidi/60s/IP kotaları korunur. Sonuç paylaşımıyla istek birleştirme ve cache arayüzü bu sınırlı dilimde uygulanmadı.
+
+
+## A4.4c — eşzamanlı çalışmanın paylaşılması
+
+Aynı doğrulanmış profil/repo kümesi ve mevcut kural sürümünde eşzamanlı çağrılar tek liderin README/puanlama sonucunu paylaşabilir. Her çağrı kendi giriş kotası/doğrulamasından geçer; katılan ikinci global analiz permit'i veya yeni ölçüm üretmez. Minimal kimlik/uygunluk metadata doğrulaması tekrarlanabilir; yalnız tek lider gerçek analiz verisini getirip puanlar. Katılanlar birbirlerinin rapor erişimini almaz, ayrı snapshot/token üretilir; checkedAt, snapshot kayıt zamanı ve 30 günlük bitiş aynı kalır. Incomplete sonuç mevcut null/bilinen kanıtlarıyla aktarılabilir, complete cache'e girmez. Bekleme sınırlıdır; sonuç yayınlanamıyorsa yeni analiz yapılmış gibi davranılmaz. Normal 15 dakikalık cache ve force-refresh kullanıcı akışı henüz bağlanmadı.

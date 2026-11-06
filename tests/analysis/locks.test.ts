@@ -11,6 +11,7 @@ import {input, repo} from "../scoring/fixtures";
 
 const state = vi.hoisted(() => ({locks: new Map<string, {key: string; owner: string; expiresAt: string}>(), sequence: 0}));
 const github = vi.hoisted(() => ({profile: vi.fn(), repository: vi.fn(), readme: vi.fn(), profileReadme: vi.fn()}));
+vi.mock("../../src/lib/db/analysis-runs", () => ({failAnalysisRun: vi.fn(async () => {}), waitForAnalysis: vi.fn(async () => null)}));
 vi.mock("../../src/lib/db/analysis-capacity", () => ({
   acquireAnalysisCapacity: vi.fn(async () => ({acquired: true, permit: {
     owner: "22222222-2222-4222-8222-222222222222", expiresAt: new Date(Date.now() + 45000).toISOString(),
@@ -38,7 +39,7 @@ beforeEach(() => {
   state.locks.clear(); state.sequence = 0;
   vi.mocked(acquireAnalysisLock).mockReset().mockImplementation(async key => {
     const existing = state.locks.get(key);
-    if (existing && Date.parse(existing.expiresAt) > Date.now()) return {acquired: false, retryAt: existing.expiresAt};
+    if (existing && Date.parse(existing.expiresAt) > Date.now()) return {acquired: false, retryAt: existing.expiresAt, lock: existing};
     const lock = {key, owner: `00000000-0000-4000-8000-${String(++state.sequence).padStart(12, "0")}`, expiresAt: new Date(Date.now() + 45000).toISOString()};
     state.locks.set(key, lock);
     return {acquired: true, lock};

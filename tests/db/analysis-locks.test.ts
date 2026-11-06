@@ -46,7 +46,7 @@ it("acquires an opaque owner and fixed lease with only the required indexes and 
 
 it("returns contention separately without exposing another owner's token", async () => {
   db.update.mockResolvedValue({_id: key, owner: otherOwner, expiresAt: new Date(Date.now() + 12345)});
-  expect(await acquireAnalysisLock(key)).toEqual({acquired: false, retryAt: "2026-11-05T00:00:12.345Z"});
+  expect(await acquireAnalysisLock(key)).toEqual({acquired: false, retryAt: "2026-11-05T00:00:12.345Z", lock: {key, owner: otherOwner, expiresAt: "2026-11-05T00:00:12.345Z"}});
 });
 
 it("accepts an expired lease's new atomic image even when TTL has not deleted the key", async () => {

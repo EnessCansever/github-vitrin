@@ -12,6 +12,7 @@ import {reportSchema} from "../../src/lib/db/snapshot-schema";
 import {report} from "../db/fixtures";
 import {input} from "../scoring/fixtures";
 
+vi.mock("../../src/lib/db/analysis-runs", () => ({failAnalysisRun: vi.fn(async () => {}), waitForAnalysis: vi.fn(async () => null)}));
 vi.mock("../../src/lib/db/analysis-capacity", () => ({
   acquireAnalysisCapacity: vi.fn(async () => ({acquired: true, permit: {
     owner: "22222222-2222-4222-8222-222222222222", expiresAt: new Date(Date.now() + 45000).toISOString(),

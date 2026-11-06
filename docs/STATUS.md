@@ -4,7 +4,46 @@ Son güncelleme: 7 Kasım 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A4.4b — global analiz kapasitesi gerçek analyze girişine bağlandı; istek birleştirme ayrı açık iş.** A4.4a **fd6a54d — feat: add analysis cache storage** commit/push ve **CI #16 başarısı kullanıcı GitHub Actions ekran görüntüsüne dayanır**; bağımsız uzak sorgu yapılmadı. Başlangıç yerel HEAD fd6a54da39a497f8e933425f24f3123964195f57, çalışma ağacı/index temizdi. A4 bütünü/yayın açık.
+**A4.4c — aynı kapsam/sürümde eşzamanlı analizleri birleştirme uygulandı; kullanıcı incelemesi/yeni CI açık.** A4.4b **8f3b225 — feat: limit concurrent analyses across processes** commit/push ve **CI #17 başarısı kullanıcı GitHub Actions ekran görüntüsüne dayanır**; bağımsız uzak sorgu yapılmadı. Başlangıç HEAD 8f3b225a99d9a2e33da70cd40a23c68866560bc2, çalışma ağacı/index temizdi. A4 bütünü ve yayın açık.
+
+## A4.4c — aynı analiz çalışmasını birleştirme, 7 Kasım 2026
+
+### Uygulanan davranış
+
+- AGENTS/sözleşme ve ilgili belge/kilit/permit/cache/snapshot/action incelendi. Mevcut scope kilidi lider seçiminde korundu; yeni kilit veya process Promise paylaşımı kurulmadı. Repo sırasız kimliği korunur, outcome sürümü ayrıca eşleşir.
+- Her çağrı kendi IP girişi, strict girdi, gerçek GitHub profil/repo kimlik/sahiplik/uygunluk metadata ön kontrolünden geçer. Sonra scope lock lider seçer; **yalnız lider global permit ve scope 60s hakkı** tüketir, README/profil README/puanlama yapar. Katılan permit veya ikinci analiz başlatmaz. Metadata ön kontrolleri bu nedenle global permit önüne taşındı; bunların sıfır tekrarlı veya global beşle sınırlı olduğu iddia edilmez (D040).
+- analysisRuns yalnız mevcut owner UUID + scope + rulesVersion, completedAt, orijinal lease expiry ve safe report/error taşır. Snapshot ID/token/hash/adres veya raw veri yoktur. Bu en fazla 45s çalışma aktarımıdır; analysisCache okunmaz/yazılmaz, kullanıcı complete-only/15dk kararı değişmez. Eski cache/başka çalışma sonucu yeni sonuç gibi seçilmez.
+- Lider global/scope çitleri arkasında run+snapshot'ı tek transaction'da commit eder. Katılan doğru çalışmayı salt okuyarak ayrı snapshot ID/token/hash alır; checkedAt, snapshot createdAt ve 30 günlük expiresAt liderle aynı kalır. Polling başına snapshot yoktur, bir başarılı çağrı bir özel erişim üretir.
+- Bekleme max8s/9 kontrol/1s aralık, request/lease kalanıyla sınırlıdır. Lider error paylaşımı, incomplete null/bilinen bulgular, süreç/owner kaybı ve timeout ARCHITECTURE/D040'ta ayrıdır. DB hatası miss/başarı değildir; geçerli rapor sonrası kendi storage hatasında mevcut açık saveFailed/geçici sonuç davranışı kalır. Yeni UI/force-refresh/cache/poll endpointi veya bağımlılık yoktur.
+
+### Doğrulama ve bulunan dar hata
+
+| Kontrol | Sonuç ve sınır |
+| --- | --- |
+| Test | Son kaynakta **30 dosya /551 test geçti**. 20 yeni run/coalescing testi: tek permit/README grubu/puanlama, sıra/kapsam, ayrı erişim/zaman, complete/incomplete/error, eski owner/sürüm/veri, bounded wait, DB hatası ve atomic publish. Mevcut IP/60s/global/scope ve snapshot testleri korunur; eski domain testlerinde yeni run sınırı açıkça mock edilir. |
+| Lint / typecheck | İkisi exit 0. Yeni test fixture kural sürümü tipi mevcut reportSchema.parse ile daraltıldı; any/ignore eklenmedi. |
+| Varsayılan build | Boş GitHub/Mongo/signing process env ile izinli ortamda **npm run build exit 0**; varsayılan Turbopack/TypeScript/6 sayfa geçti. Build config/script veya webpack fallback değişmedi. |
+| İlk Atlas denemeleri | İlk denemede 3 katılımcıdan birinin snapshot'ı kaydedilemedi. İkinci teşhis koşusunda yalnız güvenli Mongo kodu **112 (WriteConflict)** ölçüldü: aynı immutable kaynak belgeye gereksiz writeFence yazımı nedeniydi. Başarı diye kaydedilmedi. Dar salt-okuma düzeltmesi liderin global/scope çitlerini korur; mevcut joined source testi yazma yöntemi olmayan koleksiyon sınırıyla regresyonu kapsar. Her iki denemenin 2'şer snapshot/1'er run referansı/4'er counter anahtarı ve kendi pool'u temizlendi. |
+| Son Atlas: complete | Üç bağımsız Node sürecinde **mevcut analyze** ve gerçek Mongo/kilit/permit/cooldown/snapshot: tek global permit, tek iki-repoluk README grubu ve tek puanlama; üç farklı snapshot ID/token. Aynı checkedAt/createdAt/expiresAt; çapraz token null, doğru token okundu. GitHub adapter açıkça sentetikti. |
+| Son Atlas: incomplete | Yine üç süreç/tek lider işi/tek puanlama; üç ayrı incomplete snapshot, null puan/tip ve aynı analiz/snapshot zamanları. Complete cache kaydı yoktu. |
+| Son Atlas: lider hatası | Aynı üç süreç, tek permit/README grubu, **0 puanlama /0 snapshot**, üç çağrı network güvenli kodunu aldı. Sonsuz bekleme veya ikinci lider yoktu. |
+| Gerçek kontrol sınırı | Normal Vitest setup/fetch mock'u taşınmadı. Kontrollü sentetik GitHub adapter ve gözlem wrapper'ları kullanıldı. Kullanıcı geliştirme giriş bütçesini değiştirmemek için yalnız bu kontrolün rastgele giriş key'lerinde gerçek rateLimits çağrıldı; scope 60s gerçek modüldü. Bu canlı GitHub hesabı, Vercel, browser/failover/yük testi değildir. |
+| Temizlik | Son başarılı koşunun **6 snapshot /3 run referansı /12 sayaç anahtarı**, kendi scope kilitleri ve kendi boş capacity pool'u kimlikleriyle temizlendi/yokluğu doğrulandı. Önceki iki deneme de ayrı temizlendi. Üç geçici script kaldırıldı; mevcut kayıtlar değiştirilmedi. analysis_run_expiry normal uygulama TTL indeksi kalır; fiziksel TTL silinmesi gözlenmedi. |
+| Gizlilik / diff | Env yalnız runtime yükleyicisiyle kullanıldı; .env.local içeriği/değeri, URI/parola, rapor tokenı/hash'i veya tam kayıt/README çıktıya alınmadı. git diff --check/cached diff ve değişen/yeni dosyalarda LF/trailing-whitespace kontrolü geçti; index boş. Paket/env/build config, motor/adapter/demo/renderer/cache ve UI kaynakları korundu. |
+
+### Açık sınırlar ve sıradaki somut adım
+
+- İstek yalnız canlı scope kilidini gözlediğinde o owner'ın çalışmasına katılır; metadata doğrulaması lider release'inden sonra biterse yeni lock/cooldown yoluna düşebilir. Eski run/cache'i yeni analiz diye kullanmak yerine 60s reddi alır. Bu sınır ikinci README/puanlama işi üretmez.
+- Lider crash/çit kaybı veya failure yayını başarısızlığında katılan en fazla bekleme bütçesinden sonra hâlâ aktif work için busy, owner/lease yoksa analysisExpired alır. Otomatik devralma yoktur. DB/OS/network gecikmeleri ve bütün action için mutlak 20s garantisi hâlâ operasyon açık işidir.
+- Kısa metadata ön doğrulamaları global analiz permit'i dışında; giriş ve client bütçeleri korunur. Daha geniş preflight concurrency, session, gerçek Vercel/hosting/failover ve karışık sürüm geçişi ayrıca doğrulanmalı. Eski sürümle karışık traffic, birleştirme garantisi değildir.
+- Normal cache hit/miss/force-refresh ve kaynak/zaman sunumu, cache yazımında global çit/rapor erişim semantiği açık. Birleştirme bu akışın tamamlanması değildir. PNG cache, karşılaştırma, OG ve A4 bütünü açık.
+- Sonraki somut adım kullanıcı incelemesi/commit ve yeni CI; ardından yeni yetkiyle normal analiz cache entegrasyonunun küçük dilimini belirlemek. Bu tur sonraki dilime geçilmez.
+
+### Commit kapsamı
+
+AGENTS.md, README.md, docs/{PRODUCT,ARCHITECTURE,DECISIONS,STATUS,TASKS}.md; src/config/request-limits.ts; src/features/analysis/actions.ts; src/lib/db/{analysis-locks,analysis-runs,snapshots}.ts; tests/analysis/{coalescing,capacity,locks}.test.ts; tests/db/{analysis-runs,analysis-locks}.test.ts; tests/github/analysis.test.ts; tests/security/actions.test.ts.
+
+Yerel kontrollerle bu paket commit için hazır; kullanıcı incelemesi/yeni uzak CI açık. Öneri: **feat: coalesce concurrent analysis requests**. Yalnız A4.4c paketi; stage/commit/push/yayın yoktur.
 
 ## A4.4b — global analiz kapasitesinin sınırlı dilimi, 7 Kasım 2026
 
@@ -36,7 +75,7 @@ Son güncelleme: 7 Kasım 2026 (Europe/Istanbul).
 - Cache action/UI hit/miss/force-refresh, açık kaynak/gerçek analiz zamanı, cache hit için bağımsız rapor erişimi/snapshot süre semantiği açık. Cache yazımı gerçek akışa bağlanırken global permit çiti ve toplam süre bütçesi de eklenmeli; cache veri katmanı bu tur değişmedi. Entegrasyona tamamlandı denmez.
 - Beş geçerli admission fiziksel olarak durmuş OS/upstream işini anında kesmez. Eski iş 20s/deadline/owner denetiminde ve nihai transaction çitinde reddedilir. Transaction ortak pool belgesini commit/abort'a kadar tutar; cleanup gecikmesi/DB timeout ayrı hata olabilir. Kesin uçtan uca 20s hedefi, session ve gerçek Vercel/Atlas hosting operasyonu açık.
 - Tüm instance'lar aynı DB/pool/limit ve gate'i içeren sürümde olmalı; eski gate'siz kodla karışık trafik koruma garantisi değildir. Kapasite değişimi kontrollü drain/yeniden başlatma gerektirir. Bu tur kullanıcı geliştirme süreci veya deployment durdurulmadı/yayımlanmadı.
-- Kullanıcı incelemesi ve yeni commit/CI açık. Sonraki somut iş, yeni yetkiyle token taşımayan sınırlı istek birleştirme dilimini belirlemek; bu tur uygulanmaz. PNG cache, session, karşılaştırma/OG ve A4 bütünü açık.
+- Kullanıcı bildirimiyle A4.4b 8f3b225 commit/push ve CI #17 kapandı; kaynak GitHub Actions ekran görüntüsü, bağımsız sorgu değil. Sonraki yetkili A4.4c yukarıdadır. PNG cache, session, karşılaştırma/OG ve A4 bütünü açık.
 
 ### Commit kapsamı
 

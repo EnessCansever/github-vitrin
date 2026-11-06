@@ -7,7 +7,8 @@ import {GitHubError} from "../../lib/github/errors";
 import {profileInput} from "../../lib/github/input";
 import {repoName, type Repository} from "../../lib/github/schemas";
 import {acquireAnalysisCapacity, ownsAnalysisCapacity, releaseAnalysisCapacity, type AnalysisPermit} from "../../lib/db/analysis-capacity";
-import {createSnapshot} from "../../lib/db/snapshots";
+import {failAnalysisRun, waitForAnalysis} from "../../lib/db/analysis-runs";
+import {createSnapshot, createJoinedSnapshot} from "../../lib/db/snapshots";
 import {StorageError} from "../../lib/db/errors";
 import {acquireAnalysisLock, analysisScope, ownsAnalysisLock, releaseAnalysisLock, type AnalysisLock} from "../../lib/db/analysis-locks";
 import {limitRequest, limitAnalysis, requestFailure} from "../../lib/security/requests";
@@ -83,11 +84,20 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
   function checkDeadline() {
     if (Date.now() - startedAt >= 20_000) throw new StorageError("lock_lost");
   }
+  async function failed(response: Extract<AnalysisResponse, {status: "error"}>) {
+    if (lock) {
+      try {
+        await failAnalysisRun(lock, RULES_VERSION, response);
+      } catch (cause) {
+        console.warn("analysis_run_failure_unpublished", {
+          errorType: cause instanceof StorageError ? cause.code : "unavailable",
+          correlationId: randomUUID(), durationMs: Date.now() - startedAt,
+        });
+      }
+    }
+    return response;
+  }
   try {
-    const capacity = await acquireAnalysisCapacity();
-    if (!capacity.acquired) return {status: "error", code: "capacity", retryAt: capacity.retryAt};
-    permit = capacity.permit;
-    checkDeadline();
     const client = new GitHubClient();
     const profile = await client.getProfile(parsed.data.username);
     if (profile.id !== parsed.data.profileId || profile.login.toLowerCase() !== parsed.data.username) return {status: "error", code: "selectionChanged"};
@@ -96,8 +106,26 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
     checkDeadline();
     const scope = analysisScope(profile.id, metadata.map(repo => repo.id));
     const acquired = await acquireAnalysisLock(scope);
-    if (!acquired.acquired) return {status: "error", code: "busy", retryAt: acquired.retryAt};
+    if (!acquired.acquired) {
+      const run = await waitForAnalysis(acquired.lock, RULES_VERSION, startedAt + 20_000);
+      checkDeadline();
+      if (!run) {
+        if (Date.parse(acquired.lock.expiresAt) <= Date.now() || !(await ownsAnalysisLock(acquired.lock))) throw new StorageError("lock_lost");
+        return {status: "error", code: "busy", retryAt: acquired.retryAt};
+      }
+      if (run.outcome.status === "error") return run.outcome;
+      try {
+        const saved = await createJoinedSnapshot(acquired.lock, RULES_VERSION);
+        return {status: "success", report: saved.report, snapshot: {status: "saved", id: saved.id, readToken: saved.readToken}};
+      } catch (cause) {
+        if (cause instanceof StorageError && cause.code === "lock_lost") throw cause;
+        return {status: "success", report: run.outcome.report, snapshot: {status: "failed"}};
+      }
+    }
     lock = acquired.lock;
+    const capacity = await acquireAnalysisCapacity();
+    if (!capacity.acquired) return await failed({status: "error", code: "capacity", retryAt: capacity.retryAt});
+    permit = capacity.permit;
     await limitAnalysis(scope);
     checkDeadline();
     const repos = [];
@@ -118,22 +146,23 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
     };
     try {
       checkDeadline();
-      const access = await createSnapshot(report, lock, permit);
+      const access = await createSnapshot(report, lock, permit, true);
       return {status: "success", report, snapshot: {status: "saved", ...access}};
     } catch (error) {
       if (error instanceof StorageError && error.code === "lock_lost") throw error;
+      await failed({status: "error", code: "unavailable"});
       return {status: "success", report, snapshot: {status: "failed"}};
     }
   } catch (error) {
     const limited = requestFailure(error);
-    if (limited) return {status: "error", ...limited};
+    if (limited) return await failed({status: "error", ...limited});
     if (error instanceof StorageError) {
-      return {status: "error", code: error.code === "lock_lost" ? "analysisExpired" : error.code === "configuration" ? "configuration" : "unavailable"};
+      return await failed({status: "error", code: error.code === "lock_lost" ? "analysisExpired" : error.code === "configuration" ? "configuration" : "unavailable"});
     }
     if (error instanceof GitHubError && error.code === "repo_unavailable") {
-      return {status: "error", code: "selectionChanged"};
+      return await failed({status: "error", code: "selectionChanged"});
     }
-    return {status: "error", code: safeError(error)};
+    return await failed({status: "error", code: safeError(error)});
   } finally {
     if (lock) {
       try {

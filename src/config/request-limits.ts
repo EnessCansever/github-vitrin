@@ -11,3 +11,5 @@ export const analysisRefresh = {limit: 1, windowMs: 60_000} as const;
 export const analysisLeaseMs = 45_000;
 
 export const analysisCapacityLimit = 5;
+
+export const analysisJoin = {maxWaitMs: 8_000, checks: 9, intervalMs: 1_000} as const;

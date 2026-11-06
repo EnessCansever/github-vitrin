@@ -4,6 +4,7 @@ import {createSnapshot} from "../../src/lib/db/snapshots";
 import {english} from "../scoring/fixtures";
 import {json, readme, repository, respond} from "./fixtures";
 
+vi.mock("../../src/lib/db/analysis-runs", () => ({failAnalysisRun: vi.fn(async () => {}), waitForAnalysis: vi.fn(async () => null)}));
 vi.mock("../../src/lib/db/analysis-capacity", () => ({
   acquireAnalysisCapacity: vi.fn(async () => ({acquired: true, permit: {
     owner: "22222222-2222-4222-8222-222222222222", expiresAt: new Date(Date.now() + 45000).toISOString(),
@@ -68,7 +69,7 @@ describe("analysis server action", () => {
       expect(serialized).not.toContain(forbidden);
     }
     expect(fetch).toHaveBeenCalledTimes(5);
-    expect(createSnapshot).toHaveBeenCalledExactlyOnceWith(result.report, expect.objectContaining({key: expect.any(String), owner: expect.any(String)}), expect.objectContaining({owner: expect.any(String)}));
+    expect(createSnapshot).toHaveBeenCalledExactlyOnceWith(result.report, expect.objectContaining({key: expect.any(String), owner: expect.any(String)}), expect.objectContaining({owner: expect.any(String)}), true);
     expect(result.snapshot).toMatchObject({status: "saved", id: "11111111-1111-4111-8111-111111111111"});
   });
 
@@ -158,7 +159,7 @@ describe("analysis server action", () => {
     respond(publicProfile(), json(repository()), json(repository()), json({}, 503), noProfileReadme());
     const result = await analyze(selection);
     expect(result).toMatchObject({status: "success", report: {status: "incomplete", score: null, profileType: null}, snapshot: {status: "saved"}});
-    expect(createSnapshot).toHaveBeenCalledWith(expect.objectContaining({status: "incomplete", score: null}), expect.objectContaining({key: expect.any(String)}), expect.objectContaining({owner: expect.any(String)}));
+    expect(createSnapshot).toHaveBeenCalledWith(expect.objectContaining({status: "incomplete", score: null}), expect.objectContaining({key: expect.any(String)}), expect.objectContaining({owner: expect.any(String)}), true);
   });
 
   it("retries by fetching fresh server data, not by accepting the previous client report", async () => {

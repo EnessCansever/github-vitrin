@@ -149,3 +149,10 @@ Güncellemeden sonra çalışan Node/Next sürecini tamamen yeniden başlatın; 
 Merkezi `src/config/request-limits.ts` içindeki `analysisCapacityLimit=5`, aynı MongoDB havuz kaydını kullanan bütün süreçlerde ortak başlangıç korumasıdır; ölçülmüş kapasite garantisi değildir. Analiz IP kotası/strict girdi sonrasında, herhangi bir GitHub çağrısından önce owner'lı 45s permit alır. Kapasite doluysa açık TR/EN hata ve gerçek lease expiry'siyle manuel tekrar deneme vardır; otomatik kuyruk/poll yoktur. İş bitimi/hatası kapasiteyi bırakır, süreç kaybında süre dolumu toparlar. Eski permit snapshot yazamaz. Var olan scope kilidi ve ayrı 60s bekleme korunur.
 
 Bütün instance'larda aynı limit gerekir; etkin permit varken farklı ayar configuration verir. Değişimi kontrollü drain/yeniden başlatmayla yapın. Yeni secret/env/dependency yoktur. Cache veri katmanı henüz action'da kullanılmaz; sonuç birleştirme ve cache hit/miss/force-refresh entegrasyonu sonraki dilimdir. Gerçek Vercel/hosting kapasitesi ayrıca doğrulanmalı; bu dilim public deployment değildir.
+
+
+## A4.4c — eşzamanlı aynı analizi birleştirme
+
+Güncel analyze sırası A4.4b'den şu noktada farklıdır: her çağrının kendi giriş kotası ve GitHub kimlik/repo uygunluk metadata kontrolünden sonra mevcut scope kilidi lider seçer. Yalnız lider global permit ve 60s scope hakkını tüketir; README/puanlama işi tekrarlanmaz. Metadata ön kontrolü global permit dışında kaldığı için tüm GitHub çağrılarının global beşle sınırlı olduğu söylenmez.
+
+Katılanlar owner/scope/rulesVersion'a bağlı tokensız analysisRuns sonucunu max8s/9 kontrol ile bekler. Bu kayıt en fazla mevcut lease bitimine (45s) kadar yaşar; analysisCache değildir. Complete/incomplete/error politikası ve arıza ayrımı ARCHITECTURE A4.4c'dedir. Ayrı rapor tokenları üretilir; analiz zamanı ve snapshot bitişi yenilenmez. Yeni env/dependency yoktur; bütün süreçlerin aynı sürüm/DB/kurallarla çalışması gerekir. Normal cache/force-refresh arayüzü, hosting/failover ve yayın hâlâ açık.

@@ -34,7 +34,7 @@ export function lockFilter(input: AnalysisLock): Filter<LockRecord> {
 }
 
 export async function acquireAnalysisLock(key: string): Promise<
-  {acquired: true; lock: AnalysisLock} | {acquired: false; retryAt: string}
+  {acquired: true; lock: AnalysisLock} | {acquired: false; retryAt: string; lock: AnalysisLock}
 > {
   if (!keySchema.safeParse(key).success) throw new StorageError("invalid_lock");
   const owner = randomUUID();
@@ -60,7 +60,7 @@ export async function acquireAnalysisLock(key: string): Promise<
     const expiresAt = parsed.data.expiresAt.toISOString();
     return parsed.data.owner === owner
       ? {acquired: true, lock: {key, owner, expiresAt}}
-      : {acquired: false, retryAt: expiresAt};
+      : {acquired: false, retryAt: expiresAt, lock: {key, owner: parsed.data.owner, expiresAt}};
   } catch (error) {
     if (error instanceof StorageError) throw error;
     throw new StorageError("unavailable");

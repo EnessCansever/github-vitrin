@@ -10,6 +10,7 @@ import {input, repo} from "../scoring/fixtures";
 
 const state = vi.hoisted(() => ({permits: new Map<string, number>(), sequence: 0}));
 const github = vi.hoisted(() => ({profile: vi.fn(), repository: vi.fn(), readme: vi.fn(), profileReadme: vi.fn()}));
+vi.mock("../../src/lib/db/analysis-runs", () => ({failAnalysisRun: vi.fn(async () => {}), waitForAnalysis: vi.fn(async () => null)}));
 vi.mock("../../src/lib/github/client", () => ({GitHubClient: vi.fn(function () {
   return {getProfile: github.profile, getRepository: github.repository, getReadme: github.readme, getProfileReadme: github.profileReadme};
 })}));
@@ -47,20 +48,21 @@ beforeEach(() => {
   vi.mocked(createSnapshot).mockReset().mockResolvedValue({id: "11111111-1111-4111-8111-111111111111", readToken: "synthetic-access"});
 });
 
-it("admits five different scopes and rejects the sixth before any extra GitHub call", async () => {
-  const ready = Promise.withResolvers<void>(), finish = Promise.withResolvers<ReturnType<typeof input>["profile"]>();
-  github.profile.mockImplementation(() => {
-    if (github.profile.mock.calls.length === 5) ready.resolve();
+it("admits five different scopes and rejects the sixth before extra README/scoring work", async () => {
+  const ready = Promise.withResolvers<void>(), finish = Promise.withResolvers<ReturnType<typeof input>["profileReadme"]>();
+  github.profileReadme.mockImplementation(() => {
+    if (github.profileReadme.mock.calls.length === 5) ready.resolve();
     return finish.promise;
   });
   const calls = Array.from({length: 5}, (_, i) => analyze({...selection, repos: [{id: 10 + i, name: `project-${10 + i}`}]}));
   await ready.promise;
   expect(await analyze(selection)).toEqual({status: "error", code: "capacity", retryAt: "2026-11-07T00:00:45.000Z"});
-  expect(github.profile).toHaveBeenCalledTimes(5);
-  expect(github.repository).not.toHaveBeenCalled();
+  expect(github.profile).toHaveBeenCalledTimes(6);
+  expect(github.repository).toHaveBeenCalledTimes(6);
+  expect(github.readme).toHaveBeenCalledTimes(5);
   expect(createSnapshot).not.toHaveBeenCalled();
   expect(limitRequest).toHaveBeenCalledTimes(6);
-  finish.resolve(input().profile);
+  finish.resolve(input().profileReadme);
   const results = await Promise.all(calls);
   expect(results.every(result => result.status === "success")).toBe(true);
   expect(limitAnalysis).toHaveBeenCalledTimes(5);
@@ -79,7 +81,7 @@ it.each(["network", "configuration"] as const)("releases capacity after a %s ups
 it.each(["configuration", "unavailable"] as const)("distinguishes capacity %s failure from a full pool", async code => {
   vi.mocked(acquireAnalysisCapacity).mockRejectedValue(new StorageError(code));
   expect(await analyze(selection)).toEqual({status: "error", code});
-  expect(github.profile).not.toHaveBeenCalled();
+  expect(github.profile).toHaveBeenCalledTimes(1);
 });
 
 it("does not acquire capacity for invalid input, but still consumes its own entry quota", async () => {
