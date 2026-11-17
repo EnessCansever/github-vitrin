@@ -10,6 +10,7 @@ import {loadReport} from "./actions";
 import {RefreshReport} from "./refresh-report";
 import {CopyLink} from "./copy-link";
 import {CardStudio} from "../cards/card-studio";
+import {ComparePanel} from "./compare-panel";
 import {RetryNotice} from "../../components/retry-notice";
 
 export function ReportAccess({id}: {id: string}) {
@@ -73,6 +74,7 @@ export function ReportAccess({id}: {id: string}) {
             <CardStudio id={id} complete={response.report.status === "complete"} />
           </div>
           <RefreshReport key={id} report={response.report} />
+          <ComparePanel id={id} report={response.report} expiresAt={response.expiresAt} />
           <LiveReport report={response.report} stored />
         </>
       )}

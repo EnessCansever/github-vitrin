@@ -406,7 +406,7 @@
     "line": "Satır {line}",
     "sha": "Dosya SHA: {sha}",
     "scope": "{count} seçili public proje incelendi",
-    "checkedAt": "Veri alınma zamanı: {time} UTC",
+    "checkedAt": "Veri alınma zamanı: {time}",
     "temporary": "Bu sonuç kaydedilmedi; yalnız bu sayfadaki oturumda tutulur ve tam yenilemede kaybolur.",
     "status": {
       "pass": "Koşul sağlandı",
@@ -572,5 +572,52 @@
     "rateLimitText": "Bu işlem için kısa bir ara gerekiyor. Rapor bağlantın değişmedi.",
     "configurationTitle": "İşlem şu anda kullanılamıyor",
     "configurationText": "Sunucu yapılandırması kontrol edilmeli. Daha sonra yeniden deneyebilirsin."
+  },
+  "Comparison": {
+    "title": "Önceki raporla karşılaştır",
+    "intro": "Bu profilin önceki kayıtlı raporunu seç. Karşılaştırma yeni analiz başlatmaz.",
+    "historyNote": "Bu cihazda son 10 raporun erişimi tutulur; rapor içeriği saklanmaz. Cihazlar arası geçmiş yoktur. Ortak cihaz kullanıyorsan geçmişi temizle.",
+    "previous": "Önceki rapor",
+    "paste": "Rapor bağlantısı yapıştır",
+    "linkLabel": "Önceki raporun tam bağlantısı",
+    "linkHint": "Bu sitedeki rapor bağlantısını, #token bölümünü de içerecek şekilde yapıştır. Bağlantı erişim yetkisi taşır.",
+    "invalid": "Geçerli bir rapor bağlantısı gir; tam bağlantıyı değiştirmeden kopyala.",
+    "clear": "Bu cihazın rapor geçmişini temizle",
+    "storageFailed": "Cihaz geçmişine erişilemedi. Önceki rapor bağlantısını yapıştırarak devam edebilirsin.",
+    "compare": "Kayıtlı sonuçları karşılaştır",
+    "pending": "İki raporun erişimi doğrulanıyor…",
+    "ready": "Karşılaştırma sonucu hazır.",
+    "failed": "Karşılaştırma açılamadı.",
+    "result": "Önce → sonra",
+    "delta": "{points} puan",
+    "increased": "Bu kapsamın portfolyo sunumu puanı arttı.",
+    "decreased": "Bu kapsamın portfolyo sunumu puanı azaldı.",
+    "unchanged": "Yeni bir analiz yapıldı; toplam puan değişmedi.",
+    "before": "Önceki analiz",
+    "after": "Bu rapordaki analiz",
+    "score": "{points} / 100",
+    "categories": "Kategori farkları",
+    "checks": "Değişen kontroller",
+    "noChange": "Değişmedi",
+    "improved": "İyileşen sinyal · Geçmedi → Geçti",
+    "regressed": "Gerileyen sinyal · Geçti → Geçmedi",
+    "detectionNote": "Bunlar kayıtlı yapısal kontrol sinyalleridir; dosyanın düzenlendiğini veya içeriğin teknik kalitesini kanıtlamaz.",
+    "noCheckChanges": "Geçti/geçmedi durumları arasında değişen kontrol yok.",
+    "evidence": "İki analizdeki kanıtı incele",
+    "blocked": {
+      "profile": "Bu raporlar farklı GitHub profillerine ait. Karşılaştırılamaz; bu raporu yeni başlangıç olarak kullan.",
+      "scope": "Seçilen proje kümesi farklı. Puan farkı karşılaştırılamaz; bu rapor yeni başlangıçtır.",
+      "rules": "Puanlama sürümleri farklı. Puan farkı karşılaştırılamaz; bu rapor yeni başlangıçtır.",
+      "incomplete": "En az bir analiz eksik. Belirsiz verilerle anlamlı toplam puan farkı hesaplanamaz. Bilinen bulgular kendi raporlarında korunur.",
+      "same": "İki rapor aynı analiz zamanını taşıyor. Önbellek veya aynı çalışmadan alınan ayrı erişimler ikinci ölçüm ya da gelişim değildir.",
+      "order": "Seçtiğin rapor bu rapordan daha yeni. Önceki analiz olarak daha eski bir rapor seç."
+    },
+    "errors": {
+      "missing": "İki rapordan en az birinin erişimi geçersiz, bulunamadı veya süresi doldu. Tam bağlantıları kontrol et.",
+      "unavailable": "Rapor deposuna şu an erişilemiyor. Raporun silindiği anlamına gelmez; tekrar deneyebilirsin.",
+      "configuration": "Sunucu yapılandırmasının kontrol edilmesi gerekiyor. Daha sonra tekrar dene.",
+      "rateLimit": "Rapor okuma sınırına ulaşıldı. Belirtilen zamandan sonra tekrar dene."
+    },
+    "timeZone": "Saat dilimi: {zone}"
   }
 }

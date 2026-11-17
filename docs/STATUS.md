@@ -4,7 +4,50 @@ Son güncelleme: 17 Kasım 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A6 — dar Next.js güvenlik güncellemesi; yerel incelemeye hazır.** A4.4d **6ce406f** main commit/push ve **CI #19 başarısı kullanıcının GitHub Actions ekran görüntüsüne dayanır**; bağımsız uzak sorgu yapılmadı. Başlangıç HEAD 6ce406f0bee31e0cb33b082d7e0c63cb6896b2b6 ve temiz çalışma ağacı/index yerelde doğrulandı. Yeni yamanın commit/uzak CI'ı ve A4/A6 bütünü açık.
+**A4.5 — özel kayıtlı rapor karşılaştırmasının ilk kullanıcı akışı; kullanıcı incelemesi açık.** Next.js yaması **bc5f086** main commit/push ve **CI #20 başarısı kullanıcının GitHub Actions ekran görüntüsüne dayanır**; bağımsız uzak sorgu yapılmadı. Başlangıç HEAD bc5f086 ve temiz çalışma ağacı/index yerelde doğrulandı. Minimatch geliştirme bağımlılığı bulgusu yayın öncesi takipte; A4/A6 bütünü açık.
+
+## A4.5 zaman gösterimi revizyonu — 17 Kasım 2026
+
+- Başlangıç HEAD bc5f086; önceki A4.5 değişiklikleri commitlenmemişti ve korundu. Yalnız web analiz zamanı sunumu revize edildi.
+- Ortak report-time modülü: locale TR/EN, browser IANA bölgesi, 24 saat ve görünür kısa/IANA etiket. LiveReport özeti, history select ve ComparisonView aynı formatı kullanır; select altında tam bölge etiketi ayrıca görünür. Sunucu/ilk hydration UTC snapshot, sonra tarayıcı bölgesi; suppressHydrationWarning yoktur.
+- **34 dosya/583 test**, lint, typecheck ve varsayılan build geçti. Beş yeni test iki dil/iki bölge, DST ve sunucu UTC fallback'inin ortak görünümlerde deterministik kalmasını doğrular. UTC veri/sıra/karşılaştırma değişmedi; mevcut karşılaştırma testleri geçti.
+- Gerçek temiz Chrome + aynı iki sentetik Atlas snapshot'ı: **17 Kasım 2026 12:45Z/12:47Z → Europe/Istanbul15:45/15:47; America/New_York07:45/07:47**. Her iki dilde rapor özeti, geçmiş seçimi ve karşılaştırma eşleşti; TR/EN'de saatler aynı, ay adı Kas/Nov. Tam bölge etiketi ve390px taşmasızlık doğrulandı. Locale geçişinde yalnız locale POST'u oluştu; hydration error/runtime exception0. Bölge emülasyonudur, fiziksel iki cihaz testi değildir.
+- Görüntüler gerçekten açıldı: /tmp/repovitrin-timezone-20261117/istanbul-tr-390.png ve new-york-en-390.png; diğer TR/EN görüntüleri aynı klasörde. İki sentetik kayıt yalnız kendi kimlikleriyle temizlendi; geçici runner/erişim dosyası/Chrome profili kaldırıldı. Kullanıcı dev sunucusu ve mevcut kayıtlar korundu; env yalnız runtime yüklendi, secret/token çıktısı yoktur.
+- Diff/cached diff ve yeni dosya LF/whitespace kontrolü geçti; index boş. DB ISO UTC'leri, history kayıtları/sırası, motor/karşılaştırma ve PNG değişmedi. Rapor expiry/retry UTC gösterimi bu analiz zamanı revizyonunun dışında korundu.
+- Kullanıcı görsel/işlev kabulü ve yeni paketin commit/CI sonucu açık. Minimatch yayın öncesi takipte; A4 bütünü kapanmadı. Bu revizyon aşağıdaki A4.5 paketine dahildir: ek dosyalar src/components/report-time.ts, src/features/analysis/live-report.tsx ve tests/analysis/report-time.test.tsx; mevcut üç web görünümü/mesajlar ve ilgili belgeler güncellendi. Birleşik öneri **feat: compare private analysis reports**; stage/commit/push/deploy yoktur.
+
+## A4.5 — özel karşılaştırma, 17 Kasım 2026
+
+### Tamamlanan kapsam
+
+- Sözleşme §6 ve TASKS sıra4, mevcut cache/yenileme/snapshot/report erişimi incelendi; cache entegrasyonu bağımlılığı sağlandığından sonraki küçük dikey akış uygulandı (D044).
+- Kayıtlı raporda açılır karşılaştırma: önceki raporu bu cihazın sınırlı geçmişinden seçme veya aynı-site tam özel bağlantısını yapıştırma. Başarılı yenilemenin yeni raporunda önceki erişim seçilebilir; analiz/yenileme action'ı değiştirilmedi. TR/EN seçim ve sonuç korunur.
+- Tek sunucu action'ı önce mevcut report kotasını bir kez tüketir, strict iki erişimi ayrı readSnapshot üzerinden doğrular, iki okuma sonrasında expiry'yi tekrar denetler. Token/hash/adres veya tam rapor karşılaştırma çıktısına girmez. DB/config hataları erişim yokluğu değildir. GitHub/motor/snapshot yazma/cache çağrısı yoktur.
+- Saf karşılaştırma aynı profil ID/sırasız repo seti/rulesVersion ve iki complete ister. Aynı checkedAt ikinci ölçüm değildir; ters tarih reddedilir. Geçerli source'suz eski rapor çalışır; depolama yalnız mevcut kural sürümünü desteklemeye devam eder. Uyumsuz kapsam/sürüm/profil yeni başlangıçtır; incomplete için sayısal fark yoktur.
+- Kayıtlı toplam/kategori farkları ve aynı check ID fail→pass / pass→fail, iki taraftaki açılır kanıtla gösterilir. Eşit/azalan puana başarı anlatısı eklenmez; düzenlenen dosya sayısı veya teknik kalite iddiası yoktur.
+- Son açılan en fazla 10 erişim kimliği/tokenı + login/analiz zamanı/expiry seçim etiketi localStorage'da; rapor gövdesi/puan yoktur. Bozuk/büyük/süresi bitmiş kayıtlar kullanılmaz. Cihaz geçmişini temizleme ve storage yoksa elle giriş vardır; DB silme/hesap geçmişi değildir.
+
+### Kontrol sonuçları
+
+| Kontrol | Sonuç ve sınır |
+| --- | --- |
+| Deterministik testler | **33 dosya /578 test geçti** (14 yeni). Puan artışı/azalışı, kategoriler/check kanıtı, eşit yeni analiz/aynı cache-joined-legacy ölçümü, kullanıcı/kapsam/sürüm/incomplete/tarih sırası, repo sırası/kimlik adı değişimi, iki ayrı erişim, okuma sırasında expiry, giriş kotası/gate/DB hatası, güvenli çıktı, geçmiş sınırı/expiry ve link doğrulaması, TR/EN. Normal test/CI secret veya gerçek ağ kullanmaz. |
+| Lint / typecheck | İkisi exit 0. İlk typecheck test snapshot literal tipini yakaladı; test sınırında mevcut reportSchema ve literal sürümle düzeltildi, any/ignore eklenmedi. İlk lint'teki effect-state uyarısı geçmiş listesini native panel açılma olayında okuyarak düzeltildi; kural kapatılmadı. |
+| Varsayılan build | npm run build exit 0; varsayılan Turbopack, TypeScript ve 6 sayfa. Process GitHub/Mongo/signing değerleri boş; config/script/paket değişmedi. |
+| Gerçek Chrome + Atlas | Mevcut createSnapshot/readSnapshot/action ile yalnız sentetik kayıtlar. 90→95 (+5), repo açıklaması fail→pass ve bio pass→fail; eşit puanlı yeni analiz, aynı-cache zamanı, farklı repo kümesi, incomplete ve yanlış token ekranları gerçek tarayıcıda doğrulandı. Yeni canlı GitHub analizi veya gerçek kullanıcı gelişimi değildir. |
+| TR/EN / etkileşim | Dil değişiminde seçim/+5 sonuç korundu; yalnız locale action POST'u oluştu, ek rapor/karşılaştırma isteği yoktu. Geç yanıt seçim değişikliğinden sonra gösterilmedi; cihaz geçmişini temizleme doğrulandı. Native Tab select odağı focus-visible/1px outline; kayıtlı sonuç yenilemesi mevcut akışta korunur. |
+| Görsel sınır | TR390×844 ve EN1440×900 görüntüleri gerçekten açıldı; uzun 39 karakter login/97 karakter repo, açılmış iki-taraf kanıtlı tam mobil görüntü incelendi. 320/390/768/1440 yatay taşma yok; uzun durumda320 de geçti. Bu kullanıcı görsel kabulü, fiziksel telefon, otomatik axe veya kalıcı Playwright E2E değildir. CDP runtime exception sayısı0; geliştirme göstergesi ayrıca hata paneli testi sayılmaz. |
+| Temizlik | Bu turun **7 sentetik snapshot'ı** yalnız kendi kimlikleriyle temizlendi; collection/veritabanı veya eski kullanıcı kaydı silinmedi. Geçici runner'lar/özel erişim dosyası ve geçici Chrome profili kaldırıldı; ekran görüntüleri /tmp altında kalır. Mevcut kullanıcı dev sunucusu kapatılmadı. Env dosyası açılmadı/değişmedi; yalnız runtime loader kullanıldı, token/URI/parola/hash/ham README loglanmadı. |
+| Diff / kapsam | git diff --check/cached diff ve yeni dosya whitespace/LF kontrolleri; index boş. Motor/adapter/snapshot/cache/kota/kilit/renderer/fixture/paket/build config korunur. Stage/commit/push/deploy yapılmadı. |
+
+### Açıklar ve inceleme
+
+- Kullanıcı görsel/işlev kabulü ve bu yeni paketin commit/uzak CI sonucu bekleniyor. CI #20 yalnız önceki Next yamasına aittir. Gerçek GitHub içeriğini değiştirerek iki ölçüm alma, fiziksel telefon, deployment/Vercel/failover ve kalıcı E2E/axe bu tur doğrulanmadı.
+- Public shareReports, OG, gelişim/karşılaştırma PNG'si, görsel cache, session/operasyon süre kontrolleri ve TASKS'taki diğer ilk yayın işleri açık. Minimatch/ESLint yayın öncesi takibi sürer; A4/A6 bütünü kapanmaz.
+- İnceleme yolu: kayıtlı raporu aç → “Önceki raporla karşılaştır” → cihazdan önceki erişimi seç veya eski tam bağlantıyı yapıştır → “Kayıtlı sonuçları karşılaştır”. Yeni analiz için mevcut yeniden analiz eylemi kullanılır; kotalar/60s aynen kalır. Önceki raporun süresi geçmemiş ve bağlantısı erişilebilir olmalı. Sentetik kayıtlar tutulmadı.
+- Açılmış sentetik inceleme görüntüleri: /tmp/repovitrin-comparison-20261117/comparison-tr-390.png, comparison-en-1440.png ve comparison-long-en-390.png.
+
+**Commit kapsamı:** AGENTS.md; docs/{PRODUCT,ARCHITECTURE,DESIGN,DECISIONS,STATUS,TASKS}.md; src/app/globals.css ve src/app/reports/[id]/page.tsx; src/features/reports/{actions.ts,report-access.tsx,compare-panel.tsx,comparison.ts,comparison-view.tsx,history.ts}; src/messages/{tr,en}.json; tests/analysis/{comparison.test.tsx,history.test.ts}. Yerel kontrollerle inceleme/commit için hazır; kullanıcı kabulü açık. Öneri: **feat: compare private analysis reports**.
 
 ## A6 — Next.js güvenlik yaması, 17 Kasım 2026
 
@@ -21,7 +64,7 @@ Son güncelleme: 17 Kasım 2026 (Europe/Istanbul).
 | Diff / kapsam | git diff --check ve cached diff kontrolü; paket değişiklikleri izinli Next/env/SWC kayıtlarıyla sınırlı. Index boş; stage/commit/push/deploy yok. |
 | Yapılmayanlar | Bu dar yamada tarayıcı, exploit, gerçek GitHub/Atlas veya deployment kontrolü tekrarlanmadı; önceki kanıtlar tarihsel olarak korunur. |
 
-**Açıklar:** Yeni paket için kullanıcı yerel incelemesi/commit/uzak CI; geliştirme minimatch zinciri ve ESLint destek/uyumluluk incelemesi; TASKS'taki diğer A4/A6 ve yayın işleri. Çalışan Next süreçleri yamayı kullanmak için yeniden başlatılmalı. A4.4d commit/CI kapısı kullanıcı kaynağıyla kapandı; yeni görsel kabul varsayılmaz.
+**Kapanış:** bc5f086 main commit/push ve CI #20 başarısı kullanıcı GitHub Actions ekran görüntüsüyle bildirildi; bağımsız sorgu yapılmadı. **Kalanlar:** geliştirme minimatch zinciri ve ESLint destek/uyumluluk incelemesi; TASKS'taki diğer A4/A6 ve yayın işleri. Çalışan Next süreçleri yamayı kullanmak için yeniden başlatılmalı. A4.4d commit/CI kapısı kullanıcı kaynağıyla kapandı; yeni görsel kabul varsayılmaz.
 
 **Birleşik commit kapsamı:** package.json, package-lock.json, AGENTS.md, README.md, docs/{ARCHITECTURE,DECISIONS,STATUS,TASKS}.md. Yerel kontrollerle inceleme/commit için hazır. Öneri: **fix: upgrade Next.js to 16.4.5**. Bu dilimden sonra durulur.
 

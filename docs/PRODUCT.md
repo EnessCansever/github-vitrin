@@ -88,3 +88,12 @@ Aynı doğrulanmış profil/repo kümesi ve mevcut kural sürümünde eşzamanl�
 Geçerli complete analiz 15 dakika aynı doğrulanmış GitHub kimliği, repo kümesi ve kural sürümü için kullanılabilir; IP/uygunluk doğrulaması sürer, hit yeni analiz veya 60s/global kapasite tüketmez. Yeni private erişim üretilir, orijinal veri zamanı ve snapshot geçerliliği uzatılmaz. Miss ve zorunlu yenileme mevcut kota/kilit/birleştirme/global kurallarından geçer. Yenileme başarısızsa eski rapor erişilebilir kalır; incomplete/error complete cache'e yazılmaz.
 
 Kaynak (yeni/cache/yenilenmiş/eşzamanlı çalışma) raporla saklanır, TR/EN ve yeniden açmada korunur. Eski raporda kaynak bilinmiyor olarak gösterilir. Geçmiş sonuç yenileme yüzünden değiştirilmez; karşılaştırma veya gelişim iddiası bu dilimde eklenmedi.
+
+
+## A4.5 — özel kayıtlı sonuçları karşılaştırma
+
+Kayıtlı raporda “Önceki raporla karşılaştır” alanı vardır. Kullanıcı bu cihazda daha önce açılmış bir raporu seçebilir veya aynı sitedeki tam özel rapor bağlantısını yapıştırabilir. Yenileme yeni rapora geçtiğinde önceki erişim cihaz geçmişinde kalır; başarısız yenileme önceki raporu değiştirmez. Giriş/sahiplik doğrulaması veya cihazlar arası hesap geçmişi değildir.
+
+Sunucu iki raporun tokenını ve süresini ayrı doğrular. Aynı GitHub ID, sırasız repo kümesi ve kural sürümündeki iki complete analiz için kayıtlı toplam/kategori farkları ve yalnız aynı kontrolün fail→pass / pass→fail değişimleri gösterilir. Kaynak kanıtları iki ölçüm için açılır; dosya düzenleme/teknik kalite iddiası üretilmez. Puan aynıysa nötr, azalmışsa azalma dili kullanılır. Aynı veri zamanı cache/birleşen çalışma/aynı rapor için ikinci ölçüm değildir; daha yeni rapor “önce” seçilemez. Uyumsuz profil/kapsam/sürüm yeni başlangıçtır; incomplete için anlamlı toplam farkı hesaplanmaz, kendi raporları korunur.
+
+Cihaz geçmişi son açılan en fazla 10 erişim kimliği/tokenı ve kısa seçim etiketi (login/analiz zamanı/expiry) içerir; puan veya rapor içeriği saklanmaz. Süresi bitmiş erişimler ayıklanır, temizleme eylemi yalnız cihaz geçmişini kaldırır; sunucu raporunu silmez. Yerel depolama kullanılamıyorsa elle bağlantı girişi çalışır. Bu ilk akış public paylaşım, kalıcı karşılaştırma adresi, OG veya gelişim kartı oluşturmaz.

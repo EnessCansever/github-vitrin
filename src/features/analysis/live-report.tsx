@@ -3,6 +3,7 @@
 import {Check as CheckIcon, ChevronDown, FileText, FolderGit2, HelpCircle, Minus, UserRound, Zap} from "lucide-react";
 import {useFormatter, useTranslations} from "next-intl";
 import {IdentityCard} from "../../components/identity-card";
+import {useReportTime} from "../../components/report-time";
 import type {Report} from "./report";
 
 type ReportCheck = Report["checks"][number];
@@ -38,6 +39,7 @@ export function LiveReport({report, stored = false}: {report: Report; stored?: b
   const card = useTranslations("Identity");
   const common = useTranslations("Common");
   const format = useFormatter();
+  const {formatTime} = useReportTime();
   const type = report.profileType;
   const title = type ? t(`types.${type.id}.title`) : t("incompleteTitle");
 
@@ -64,7 +66,7 @@ export function LiveReport({report, stored = false}: {report: Report; stored?: b
       </IdentityCard>
       {report.status === "incomplete" && <p className="selection-notice report-incomplete" role="status">{t("incompleteText")}</p>}
       <p className="report-meta">{t(`sources.${report.source ?? "legacy"}`)}<br />{t("scope", {count: report.repoCount})} · {common("rule", {version: report.rulesVersion})}<br />
-        {t("checkedAt", {time: format.dateTime(new Date(report.checkedAt), {dateStyle: "medium", timeStyle: "short", timeZone: "UTC"})})}
+        {t("checkedAt", {time: formatTime(report.checkedAt)})}
       </p>
       <div className="result-body">
         <div className="result-content">

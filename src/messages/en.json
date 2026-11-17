@@ -406,7 +406,7 @@
     "line": "Line {line}",
     "sha": "File SHA: {sha}",
     "scope": "{count} selected public projects inspected",
-    "checkedAt": "Data retrieved: {time} UTC",
+    "checkedAt": "Data retrieved: {time}",
     "temporary": "This result was not saved. It stays in this page session and is lost on a full reload.",
     "status": {
       "pass": "Condition met",
@@ -572,5 +572,52 @@
     "rateLimitText": "This operation needs a short pause. Your report link has not changed.",
     "configurationTitle": "This operation is currently unavailable",
     "configurationText": "The server configuration needs checking. Please try again later."
+  },
+  "Comparison": {
+    "title": "Compare with an earlier report",
+    "intro": "Choose an earlier saved report for this profile. Comparing does not start a new analysis.",
+    "historyNote": "Access to the last 10 reports is kept on this device; report contents are not stored. History does not sync across devices. Clear it on a shared device.",
+    "previous": "Earlier report",
+    "paste": "Paste a report link",
+    "linkLabel": "Full link to the earlier report",
+    "linkHint": "Paste a report link from this site, including its #token fragment. The link grants access.",
+    "invalid": "Enter a valid report link; copy the complete link without changing it.",
+    "clear": "Clear report history on this device",
+    "storageFailed": "Device history is unavailable. Paste the earlier report link to continue.",
+    "compare": "Compare saved results",
+    "pending": "Checking access to both reports…",
+    "ready": "Comparison is ready.",
+    "failed": "The comparison could not be opened.",
+    "result": "Before → after",
+    "delta": "{points} points",
+    "increased": "The portfolio presentation score increased for this scope.",
+    "decreased": "The portfolio presentation score decreased for this scope.",
+    "unchanged": "This is a new analysis; the total score is unchanged.",
+    "before": "Earlier analysis",
+    "after": "Analysis in this report",
+    "score": "{points} / 100",
+    "categories": "Category changes",
+    "checks": "Changed checks",
+    "noChange": "Unchanged",
+    "improved": "Improved signal · Failed → Passed",
+    "regressed": "Regressed signal · Passed → Failed",
+    "detectionNote": "These are saved structural check signals; they do not prove a file was edited or assess technical quality.",
+    "noCheckChanges": "No checks changed between passed and failed.",
+    "evidence": "Inspect evidence from both analyses",
+    "blocked": {
+      "profile": "These reports belong to different GitHub profiles. They cannot be compared; use this report as a new baseline.",
+      "scope": "The selected project sets differ. Scores cannot be compared; this report is a new baseline.",
+      "rules": "The scoring versions differ. Scores cannot be compared; this report is a new baseline.",
+      "incomplete": "At least one analysis is incomplete. Uncertain data cannot provide a meaningful total score difference. Known findings remain in each report.",
+      "same": "Both reports have the same analysis time. Separate access from cache or the same run is not a second measurement or improvement.",
+      "order": "The selected report is newer than this one. Choose an older report as the earlier analysis."
+    },
+    "errors": {
+      "missing": "Access to at least one report is invalid, missing or expired. Check both full links.",
+      "unavailable": "Report storage cannot be reached right now. This does not mean a report was deleted; you can retry.",
+      "configuration": "The server configuration needs checking. Please try again later.",
+      "rateLimit": "The report reading limit has been reached. Retry after the indicated time."
+    },
+    "timeZone": "Time zone: {zone}"
   }
 }

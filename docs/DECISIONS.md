@@ -522,3 +522,25 @@ Bağımsız npm audit (salt okunur, fix değil) ve [resmî GHSA](https://github.
 **Paket sınırı:** package.json yalnız next16.4.3→16.4.5. Lock'ta zorunlu @next/env ve sekiz platform @next/swc-* aynı yamaya çıktı; başka paket/root alanı değişmedi. npm install platformda üç paket değiştiğini bildirdi (Next/env/aktif SWC), lock tüm platformları taşır. Metadata Node>=20.9/React peer'ları mevcut22.13.0/19.3.1 ile uyumludur. eslint-config-next ve eklentisi16.4.3 runtime Next'e exact peer bağlamaz; gereksiz lint/React/tool güncellemesi yapılmadı, force/override yoktur.
 
 **Doğrulama ve kalanlar:** 564 test/lint/typecheck/varsayılan build geçti; uygulama/config/env aynı. Audit8→7 moderate paket kaydı, Next bulgusu kalktı; kalan7 aynı minimatch GHSA-g3hv-75wg-m249 kaynaklı dev-only TypeScript-ESLint zinciridir, yedi farklı Next açığı değildir. Bu tur kapsam dışı zincir değiştirilmedi. Global güvenlik temizliği/exploit veya browser/gerçek bağlantı testi iddia edilmez. Etkilenenler package.json/package-lock.json, AGENTS/README ve docs ARCHITECTURE/DECISIONS/STATUS/TASKS.
+
+
+## D044 — özel karşılaştırmanın ilk akışı ve sınırlı cihaz geçmişi (17 Kasım 2026)
+
+Kullanıcı bc5f086 main commit/push ve CI #20 başarısını GitHub Actions ekran görüntüsüyle bildirdi; kaynak kullanıcı doğrulamasıdır. Yerel HEAD ve temiz çalışma ağacı doğrulandı. Dar Next yaması kapandı; minimatch/ESLint yayın öncesi takibi devam eder. Yeni kapsam TASKS sıra4, cache entegrasyonu sonrası **A4.5 özel karşılaştırma**; public shareReports/OG/gelişim PNG ayrı kalır.
+
+Mevcut tokenlı report action/snapshot katmanı kullanılır; iki erişim ve süresi sunucuda ayrı doğrulanır. Tek kullanıcı eylemi mevcut report giriş kotasını bir kez tüketir; iki helper okuması çift kota değildir. Yeni kota/servis/bağımlılık yoktur. Karşılaştırma yalnız kayıtlı raporun ID'leri/puanları/kanıtlarından üretilir; motor/GitHub veya yeni snapshot çağrılmaz. Sonuç token/hash/adres içermez.
+
+Sözleşme §6 aynen: aynı profil ID/repo kümesi/rulesVersion/iki complete. Eşit checkedAt aynı ölçüm olarak ihtiyatla reddedilir; cache/joined kaynaklı ayrı erişim yeni ölçüm değildir. “Önce” daha eski olmalıdır; uyumsuzluk yeni başlangıç, incomplete sayısal fark üretmez. Kategori/total farkı kayıtlı bir ondalık değerlerdir; yalnız fail→pass ve pass→fail kontrol sinyalleri anlatılır, düzenlenen dosya sayısı uydurulmaz. Eski source'suz geçerli raporlar tarih/kimlik üzerinden çalışır; farklı sürüm snapshot migration'ı eklenmez.
+
+Sözleşmede sayısı verilmemiş sınırlı cihaz geçmişi için geri alınabilir küçük uygulama sınırı **son açılan 10 erişim** seçildi: id/token + login/checkedAt/expiry seçim etiketi; rapor/puan/README yok. Süresi bitmişler ayıklanır, kullanıcı cihaz geçmişini silebilir. Bu DB silme veya cihazlar arası hesap geçmişi değildir; yerel depolama hatasında aynı-site tam bağlantı yapıştırma kalır. Tokenlar özel rapor fragment sözleşmesindedir; karşılaştırma için public veya kalıcı yeni adres yoktur. Kullanıcı görsel kabulü/commit/CI açık; A4/A6 bütünü kapanmaz.
+
+Etkilenenler: reports comparison/history/action/UI ve mevcut rapor provider'ı, TR/EN mesajları, sınırlı CSS, davranış testleri, AGENTS ve ilgili ürün/mimari/tasarım/durum/görev belgeleri. Motor/adapter/snapshot/cache/kota/kilit/renderer/paket/build config korunur.
+
+
+## D045 — web analiz zamanını tarayıcı saat diliminde göster (17 Kasım 2026)
+
+Kullanıcı rapor özeti/geçmiş seçimi/önce–sonra için tek biçim, locale'e göre TR/EN tarih ve tarayıcı saat dilimini istedi. Mevcut commitlenmemiş A4.5 paketi korundu; yeni aşama değildir. Ortak Intl biçimlendirici locale + tarayıcı IANA bölgesi kullanır, saatler iki dilde de 24 saatliktir. Kısa bölge işareti ve IANA etiketi görünür; select altında ayrıca tam bölge adı bulunur.
+
+SSR'da browser bölgesi bilinmediği için useSyncExternalStore server snapshot UTC'dir; ilk hydration bunu eşler, sonra tarayıcı bölgesine günceller. UTC'nin ilk kısa gösterimi etiketlidir; yanlış yerel saat iddiası veya hydration uyarısı gizleme yoktur. UTC kayıtlar/analiz sırası/karşılaştırma/motor/cache/token/PNG değişmez. Pencere focus'u sistem bölgesi değişimini yeniden okur; saat dilimi için ağ isteği veya kalıcı veri yazımı eklenmez.
+
+Aynı 12:45Z/12:47Z sentetik snapshot'lar gerçek Chrome bölge emülasyonunda Europe/Istanbul için15:45/15:47, America/New_York için07:45/07:47 verdi. Her iki dilde üç görünüm eşleşti; locale geçişinde yalnız locale action isteği, hydration error/runtime exception0. Bu fiziksel cihaz kontrolü değildir. İki Atlas test kaydı kimlikleriyle temizlendi. Etkilenenler ortak time modülü, LiveReport/ComparePanel/ComparisonView, iki mesaj dosyası, zaman testleri ve ilgili belgeler.

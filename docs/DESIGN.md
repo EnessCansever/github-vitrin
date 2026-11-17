@@ -208,3 +208,13 @@ TR/EN dört tip, 39 karakter kullanıcı, 100 karakter repo, ondalıklı/100 ve 
 ## A4.4d — kaynak ve yenileme durumu
 
 Mevcut Developer ID/kart/renk/CSS korunur. LiveReport meta alanında TR/EN kaynak açıklaması ve mevcut UTC veri zamanı görünür; cache yeni analiz gibi etiketlenmez. Kayıtlı rapora mevcut secondary button stiliyle açık GitHub yenileme eylemi eklendi. Pending disabled/ref guard, hata için polite status/gerçek retry zamanı; başarısızlıkta eski rapor yerinde kalır. Eski kayıtta kaynak bilgisi yok açıklaması kullanılır. Yeni görünüm için kullanıcı kabulü henüz verilmedi; Chrome 390/1440 incelemesi bunun yerine geçmez.
+
+
+## A4.5 özel karşılaştırma
+
+Mevcut rapor içinde belirgin ikincil çerçeveli native açılır alan; aynı dolu kobalt ana eylem, görünür input/select/summary odağı. Mobilde tarihler alt alta, genişte yan yana; kategori önce→sonra değerleri ve fark ayrı okunur. İyileşme mint ile birlikte “Geçmedi→Geçti”, gerileme “Geçti→Geçmedi” metni taşır; renk tek gösterge değildir. Kanıtlar açılır; uzun kimlikler satır kırar. Kimlik kartı/afiş/header/animasyonlar yeniden tasarlanmadı; yeni hareket eklenmedi. Kullanıcı görsel kabulü beklenir.
+
+
+### Web analiz tarihi gösterimi
+
+Rapor özeti, cihaz geçmişi ve karşılaştırma aynı yerel tarih/saat biçimini kullanır; TR/EN tarih dilini değiştirir, saatler24 saatlik kalır. Tarayıcının kısa saat dilimi ve IANA adı görünür; dar native seçicide ayrıca bölge etiketi vardır. İlk SSR/hydration UTC fallback'i açık UTC etiketlidir, tarayıcı hazır olduğunda yerel bölgeye geçer. PNG ve mevcut kart kompozisyonu değişmez.
