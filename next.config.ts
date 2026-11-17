@@ -6,11 +6,11 @@ const config: NextConfig = {
   logging: {serverFunctions: false},
   experimental: {serverActions: {bodySizeLimit: "8kb"}},
   async headers() {
-    return [{source: "/reports/:path*", headers: [
+    return ["/reports/:path*", "/share/:path*"].map(source => ({source, headers: [
       {key: "Referrer-Policy", value: "no-referrer"},
       {key: "X-Robots-Tag", value: "noindex, nofollow, noarchive"},
       {key: "Cache-Control", value: "private, no-store, max-age=0"},
-    ]}];
+    ]}));
   },
 };
 

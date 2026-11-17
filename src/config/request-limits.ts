@@ -4,6 +4,8 @@ export const requestLimits = {
   search: {limit: 20, windowMs: 600_000},
   analysis: {limit: 10, windowMs: 600_000},
   report: {limit: 60, windowMs: 60_000},
+  shareRead: {limit: 60, windowMs: 60_000},
+  shareMutation: {limit: 60, windowMs: 60_000},
   card: {limit: 10, windowMs: 600_000},
 } as const;
 

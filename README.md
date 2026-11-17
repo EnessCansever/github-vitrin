@@ -168,3 +168,12 @@ Yeni env/dependency gerekmez. Server Function otomatik argüman logu read token 
 ## Next.js güvenlik yaması — 17 Kasım 2026
 
 Runtime Next.js16.4.5 ve zorunlu env/SWC eşlikçileri kullanılır; önceki16.4.3 için açık Next patch maddesi D043 ile kapandı. Uygulama, React ve lint zinciri değiştirilmedi. Yeni bağımlılığın kullanılması için çalışan Node/Next süreçlerini yeniden başlatın. Audit'teki dev-only minimatch zinciri/ESLint destek değerlendirmesi ve diğer yayın kontrolleri hâlâ açıktır; bu yerel yama yayın yapıldığı veya tüm güvenliğin doğrulandığı anlamına gelmez.
+
+
+## A5.2 — ayrı public paylaşım bağlantısı
+
+Yerelde `npm run dev` ile kayıtlı özel raporu açın. “Herkese açık bağlantı oluştur” alanı public olacak minimum bilgileri açıklar; onay ve açık eylem ayrı90 günlük salt okunur `/share/[id]` kopyası üretir. Özel rapor tokenı, cihaz geçmişi ve ham README paylaşılmaz. GET/dil değişimi GitHub verisi çekmez/yeniden puanlamaz; otomatik sosyal OG ve yeni PNG formatı henüz yoktur.
+
+Public bağlantıyı paylaşın; **gizli yönetim bağlantısını ayrı kaydedin ve paylaşmayın**. Yönetim `/share/manage` sayfasında fragment yetkisiyle yapılır; linki tam saklamak gerekir. Cihazda da tutulur, fakat cihaz verisi/yönetim linki kaybında hesap kurtarma vaat edilmez. Yönetim bağlantısı özel30 günlük rapor bittikten sonra da90 günlük public kopyayı kalıcı kapatabilir veya fiziksel silebilir. Bu işlemler özel raporu değiştirmez; önceden indirilmiş kopyaları geri alamaz. Public sayfa noindex/no-referrer/no-store kullanır; listelenebilir profil dizini yoktur.
+
+Merkezi config'te özel rapor okuma, public okuma ve paylaşım mutasyonları ayrı IP60/1dk bütçeleridir. Create/close/delete tek mutation sayacını paylaşır; mevcut doğrudan Vercel/yerel geliştirme HMAC kimlik yaklaşımı sürer. Yeni dependency veya env gerekmez; yayın yetkisi verilmedi. Kontrol sonuçları ve sentetik veri/gerçek servis ayrımı STATUS'tadır.

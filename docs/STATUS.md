@@ -1,10 +1,49 @@
 # Güncel durum
 
-Son güncelleme: 17 Kasım 2026 (Europe/Istanbul).
+Son güncelleme: 18 Kasım 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A4.5 — özel kayıtlı rapor karşılaştırmasının ilk kullanıcı akışı; kullanıcı incelemesi açık.** Next.js yaması **bc5f086** main commit/push ve **CI #20 başarısı kullanıcının GitHub Actions ekran görüntüsüne dayanır**; bağımsız uzak sorgu yapılmadı. Başlangıç HEAD bc5f086 ve temiz çalışma ağacı/index yerelde doğrulandı. Minimatch geliştirme bağımlılığı bulgusu yayın öncesi takipte; A4/A6 bütünü açık.
+**A5.2 — ayrı public paylaşım ve yönetim akışı uygulandı; gizli sekme/dil/kapatma/silme için kullanıcı yerel doğrulaması alındı.** Başlangıç HEAD888767d feat: compare private analysis reports ve temiz çalışma ağacı/index yerelde doğrulandı. Bu commit için yeni CI veya kullanıcı görsel kabul kaynağı iletilmedi; varsayılmadı. Kullanıcı kota/yaşam döngüsü kararları D046'da kayıtlı; minimatch yayın öncesi takibi devam eder. A5 bütünü kapanmadı.
+
+## A5.2 kullanıcı yerel doğrulaması — 18 Kasım 2026
+
+Kullanıcı herkese açık bağlantıyı gizli sekmede açtığını, TR/EN geçişini denediğini, paylaşımı kapatma ve silme işlemlerini denediğini ve bağlantının artık açılmadığını bildirdi. Bunlar **kullanıcı tarafından sağlanan yerel doğrulamalardır**; bu tur Codex tarayıcı/DB kontrolü yapılmadı. Bildirim, fiziksel DB silinmesinin bağımsız ölçümü, özel rapor expiry sonrası yönetim, gerçek90 gün bekleme, kota aşımı/yük/Vercel veya genel görsel kabul kanıtı olarak genişletilmez. Önceki sentetik Atlas/Chrome ve624 test kanıtlarının sınırı korunur.
+
+Bu tur yalnız STATUS/TASKS güncellendi ve belge diff kontrolü yapıldı; uygulama kodu veya yapılandırma değişmedi, rutin testler tekrarlanmadı. Mevcut birleşik A5.2 paketi commit için hazır; henüz yeni commit/push/uzak CI yok. Genel görsel kabul, diğer açık cihaz/yayın kontrolleri ve A5 bütünü açık kalır.
+
+## A5.2 — public paylaşım ve bağımsız yönetim, 17 Kasım 2026
+
+### Tamamlanan kapsam
+
+- TASKS sıra5 bağımlılığı/sözleşme/ilgili belgeler incelendi. Yeni paylaşımlar yalnız özel raporda alan açıklaması, onay kutusu ve açık submit ile üretilir. Server Action özel id/token/expiry'yi yeniden doğrular; strict consent:true ve yalnız server Report'undan ayrı immutable minimum kopya. İstemci score/summary/history kabul edilmez.
+- Ayrı shareReports version1,192-bit random ID,90 gün expiry/TTL,256-bit management capability ve yalnız hash'i; şema yaz/okumada doğrulanır. Public alan listesi login/repo adları/orijinal checkedAt/rulesVersion/status/toplam/kategoriler/profil tipi/ilk görev key-hedef-etki. Unknown null korunur. Özel snapshot kimliği/token/hash, cihaz geçmişi, ham README/API/tam check kanıtları ve yönetim hash'i public response'a girmez.
+- /share/[id] salt okunur SSR minimum özet; aynı Developer ID/saat dilimi/TR–EN. GET/dil/read GitHub/motor/yeni analiz veya süre uzatımı başlatmaz. Generic metadata/noindex/no-referrer/no-store, kullanıcı dizini/OG/PNG endpointi yoktur.
+- Public ve gizli yönetim bağlantısı ayrı kopyalanır; clipboard yoksa elle kopyalama vardır. Management capability cihazda ayrı kayıt/source pointer'da saklanır; public DTO'ya gönderilmez. Storage başarısızlığında yönetim linki oturumda kalır ve ayrı kaydetme uyarısı vardır. Kayıp ağ cevabı/sekme terkinde token teslimine exactly-once/kurtarma garantisi verilmez.
+- Kullanıcı onayı: report/shareRead/shareMutation ayrı IP60/1dk. Public read shareRead, oluşturma/kapatma/silme ortak shareMutation; mevcut report değişmedi. Yardımcı snapshot okuması ikinci kota tüketmez. Cross-origin/missing Origin DB'den önce reddedilir; aynı-origin invalid girdi/yanlış token ilgili giriş bütçesindedir. DB/config ve kota dolumu ayrı güvenli kodlardır.
+- /share/manage#id=…&token=… ayrı yetkidir; token yalnız fragment ve action POST gövdesinde. Özel rapor30 gün dolunca da yönetim çalışır. Close yalnız aynı public linki kalıcı kapatır; tekrar close ilk zamanı değiştirmez, reopen yoktur. Delete id+managementHash ile tek public kopyayı fiziksel kaldırır. Snapshot/cache/diğer kayıtlar değişmez; public90 gün özel30 günden bağımsızdır. Önceden indirilmiş kopyalar geri alınamaz.
+
+### Doğrulama
+
+| Kontrol | Sonuç ve sınır |
+| --- | --- |
+| Test | **41 dosya/624 test geçti**; önceki583 üzerine41 yeni share/schema/storage/action/origin/read/render/links/quota davranış kontrolü. consent/server kaynak, strict payload, üç ayrı60/1dk, complete/incomplete/null, public alan listesi/token-geçmiş ayrımı,90 gün/TTL expiry, close/delete/hash ve private31. gün sonrası bağımsız yönetim. Gerçek ağ/secret normal CI'a girmez. |
+| Lint/typecheck/build | Son kaynakta hepsi exit0; varsayılan Turbopack/TypeScript/8 sayfa. İlk geniş test dört bütçe beklediğinden yeni iki onaylı bütçe için güncellendi. İlk typecheck kota mock'unun resetAt/allowed union alanını yakaladı; mevcut sonuç sözleşmesine uyarlandı. Force/ignore/rule-disable veya kontrol için config değişimi yoktur. Header genişlemesi ürün güvenliğidir. |
+| Gerçek Chrome/Atlas | Mevcut private action→createShare→anonim cookie'siz HTTP GET/public sayfa; onaysız buton disabled, açık onayla iki ayrı ID. Özel fixture'ın zamanları kontrollü biçimde geçmişe alınınca private read reddi, public okumaya devam, ayrı management link ile yanlış token reddi/close/delete geçti. Gerçek30/90 gün bekleme veya GitHub hesabında değişiklik değildir. |
+| Süre/kapama/silme | İki başarılı akışta expired public kayıt okuma anında DB'de hâlâ mevcuttu ve uygulama reddetti. Kapalı link yeni okumada reddedildi; UI delete sonrası kendi unexpired public kopyasının fiziksel yokluğu DB count ile doğrulandı. share_expiry index expiresAt:1/expireAfterSeconds:0 doğrulandı; TTL daemon zamanı ayrıca izlenmedi. |
+| Gizlilik | Ham public HTML'de gerçek test private id/token, management token ve sentetik cihaz-geçmişi işareti yoktu. no-store/noindex/no-referrer gerçek dev yanıtında doğrulandı. Genel management SSR kabuğuna fragment/token gitmez; public ID tek başına management yetkisi değildir. Env yalnız runtime loader, URI/parola/token/hash/ham kayıt çıktısı yoktur. |
+| Görsel/etkileşim | TR390/EN1440 görüntüleri gerçekten açıldı;320/390/768/1440 yatay taşma yok. TR/EN public içerik geçişi ve management button3px focus; hydration error/runtime exception0. İlk sürücü CSS uppercase etiketi yüzünden bekledi; lower-case karşılaştırmasıyla düzeltildi. Tekrar turunda eski locale cookie'si açık TR başlangıcıyla düzeltildi; bunlar ürün hatası/başarılı ilk deneme diye sunulmadı. |
+| Temizlik | Toplam **2 sentetik private snapshot/4 public kopya** yalnız bu kontrol içindi. İki public kopya UI'dan fiziksel silindi. İlk tur kalan1 snapshot/1 public kopya kimlikleriyle temizlendi. Son tur kalan expired kayıtlar temizlik çağrısından önce zaten yoktu; own share count0 doğrulandı. Mevcut kayıt/koleksiyon/veritabanı silinmedi; normal TTL indeksi kaldı. Geçici runner/erişim dosyası/Chrome profili kaldırıldı, kullanıcı dev sunucusu korundu. |
+| Diff/kapsam | Diff/cached diff ve yeni dosyalarda LF/whitespace geçti; index boş. Motor/adapter/snapshot/cache/puanlama/fixture/PNG/paket/env korunur. Stage/commit/push/deploy yapılmadı. |
+
+### Açıklar / inceleme
+
+- Gizli sekme public erişim, TR/EN ve kapatma/silme sonrası erişimin kapanması kullanıcı yerel bildirimiyle doğrulandı (18 Kasım). Genel görsel kabul ve yeni commit/uzak CI bekleniyor. Fiziksel telefon/sosyal platform paylaşımı, clipboard'ın cihazlar arası davranışı, gerçek Vercel origin/IP/ingress, failover/yük ve secret/ağsız kalıcı E2E/axe bu kontrolün kanıtı değildir. Browser kontrolü sentetik veriyle gerçek yerel app+Atlas'tır; Github canlı analizi değildir.
+- Otomatik OG/SSR sosyal metadata,1080×1350/gelişim PNG'si, görsel cache ve TASKS'taki diğer ilk yayın işleri açık; minimatch/ESLint takipte. A5/A6 bütünü kapanmadı. Yeni auth/list/search veya public deployment yoktur.
+- İnceleme: kayıtlı özel rapor→Herkese açık bağlantı oluştur→onay→kopya. Public URL ve gizli yönetim bağlantısını ayrı kaydet; public bağlantıda yönetim yetkisi yoktur. Test erişimleri temizlendi; gerçek token/tam link rapor çıktısına eklenmez.
+- Görüntüler /tmp/repovitrin-public-share-20261117/{public-tr-390.png,public-en-1440.png,manager-closed-en-1440.png}. Kullanıcı kabulü yerine geçmez.
+
+**Birleşik commit kapsamı:** AGENTS.md, README.md, next.config.ts; docs/{PRODUCT,ARCHITECTURE,DESIGN,DECISIONS,STATUS,TASKS}.md; src/app/globals.css, src/app/reports/[id]/page.tsx, src/app/share/{[id],manage}/page.tsx; src/config/request-limits.ts; src/features/reports/report-access.tsx; src/features/shares/{types,read,public-report,actions,links,share-panel,manager}.ts(x); src/lib/db/{share-schema,share-reports}.ts; src/lib/security/share-origin.ts; src/messages/{tr,en}.json; tests/security/requests.test.ts; tests/shares/{storage,origin,read,actions,quotas,links}.test.ts ve public-report.test.tsx. Yerel kontrollerle incelemeye/commit'e hazır. Öneri **feat: add public report sharing**. Kullanıcının bildirdiği işlev kontrolleri yukarıda ayrı kaynakla kaydedildi; genel görsel kabul/yeni commit/uzak CI beklenir.
 
 ## A4.5 zaman gösterimi revizyonu — 17 Kasım 2026
 

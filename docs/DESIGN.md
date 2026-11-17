@@ -218,3 +218,10 @@ Mevcut rapor içinde belirgin ikincil çerçeveli native açılır alan; aynı d
 ### Web analiz tarihi gösterimi
 
 Rapor özeti, cihaz geçmişi ve karşılaştırma aynı yerel tarih/saat biçimini kullanır; TR/EN tarih dilini değiştirir, saatler24 saatlik kalır. Tarayıcının kısa saat dilimi ve IANA adı görünür; dar native seçicide ayrıca bölge etiketi vardır. İlk SSR/hydration UTC fallback'i açık UTC etiketlidir, tarayıcı hazır olduğunda yerel bölgeye geçer. PNG ve mevcut kart kompozisyonu değişmez.
+
+
+## A5.2 public özet ve ayrı yönetim
+
+Public özet mevcut Developer ID kartını aynı renk/font/sticky header ile kullanır. “Herkese açık kopya” etiketi, minimum alanlar/ilk görev, puan kapsamı ve90 gün bitişi görünür. Özel rapor geçmişi/karşılaştırma/yenileme/PNG/yönetim eylemleri bu içerikte yoktur. Özel raporda native açılır paylaşım alanı, alan açıklaması ve gerçek onay kutusu vardır; yalnız açık eylem kopya üretir. Public ve gizli yönetim bağlantısı ayrı adlandırılır, clipboard yoksa elle kopyalama sunulur.
+
+Yönetim sayfasında kalıcı kapatma ve fiziksel silme ayrı açıklanır; pending disabled ve kısa role=status/alert bildirimleri vardır. Public sayfa salt okunur kalır. TR390/EN1440 görüntüleri açıldı,320/390/768/1440 taşma ve3px button focus kontrol edildi; yeni kullanıcı görsel kabulü değildir. Yeni animasyon/renk/font/PNG tasarımı yoktur.

@@ -1851,3 +1851,17 @@ details[open] > .category-content {
   border-bottom: 1px solid var(--color-border);
 }
 .comparison-checks > li { padding-block: 12px; border-bottom: 1px solid var(--color-border); }
+
+.share-repos {
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  overflow-wrap: anywhere;
+}
+
+.share-first-step { margin-block: 28px; }
+.share-first-step p { margin-top: 12px; overflow-wrap: anywhere; }
+
+.share-consent { display: flex; align-items: flex-start; gap: 12px; }
+.comparison-panel .share-consent input { width: 20px; height: 20px; flex: 0 0 20px; margin-top: 3px; }

@@ -11,6 +11,7 @@ import {RefreshReport} from "./refresh-report";
 import {CopyLink} from "./copy-link";
 import {CardStudio} from "../cards/card-studio";
 import {ComparePanel} from "./compare-panel";
+import {SharePanel} from "../shares/share-panel";
 import {RetryNotice} from "../../components/retry-notice";
 
 export function ReportAccess({id}: {id: string}) {
@@ -71,6 +72,7 @@ export function ReportAccess({id}: {id: string}) {
           <div className="saved-report-info">
             <p>{t("expires", {time: format.dateTime(new Date(response.expiresAt), {dateStyle: "medium", timeStyle: "short", timeZone: "UTC"})})}</p>
             <CopyLink />
+            <SharePanel id={id} />
             <CardStudio id={id} complete={response.report.status === "complete"} />
           </div>
           <RefreshReport key={id} report={response.report} />

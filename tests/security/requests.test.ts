@@ -25,15 +25,15 @@ beforeEach(() => {
   vi.mocked(consumeRateLimit).mockReset().mockResolvedValue({allowed: true, remaining: 9, resetAt: retryAt, retryAt: null});
 });
 
-it("uses four separate approved budgets with opaque HMAC keys and no raw identity in storage", async () => {
-  for (const operation of ["search", "analysis", "report", "card"] as const) await limitRequest(operation);
+it("uses six separate approved budgets with opaque HMAC keys and no raw identity in storage", async () => {
+  for (const operation of ["search", "analysis", "report", "shareRead", "shareMutation", "card"] as const) await limitRequest(operation);
   const calls = vi.mocked(consumeRateLimit).mock.calls.map(([input]) => input);
   expect(calls).toEqual(Object.entries(requestLimits).map(([operation, policy]) => ({
     ...policy, key: createHmac("sha256", signingSecret).update(JSON.stringify([
       "request-v1", operation, Math.floor(Date.now() / policy.windowMs), "192.0.2.10",
     ])).digest("hex"),
   })));
-  expect(new Set(calls.map(value => (value as {key: string}).key)).size).toBe(4);
+  expect(new Set(calls.map(value => (value as {key: string}).key)).size).toBe(6);
   expect(JSON.stringify(calls)).not.toContain("192.0.2.10");
   expect(JSON.stringify(calls)).not.toContain(signingSecret);
 });
