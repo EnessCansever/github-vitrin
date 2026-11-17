@@ -497,3 +497,28 @@ Her istek kendi IP giriş bütçesini tüketir; invalid parse permit almaz, kapa
 Gerçek cache browser smoke'unun sonunda framework development logger'ının bir test raporunun okuma tokenını argümanla çıktıya aldığı görüldü. Snapshot'lar o sırada temizlenmişti; bu özel test erişimleri geçersiz, GitHub/Atlas/signing secret sızıntısı gözlenmedi. Değerler tekrar yazdırılmaz. Kurulu Next config tipleri logging.serverFunctions=false desteğini doğruladı; yalnız otomatik invocation argüman logu kapatıldı. Safe uygulama hata logları değişmez. Bu mevcut token gizliliği kuralının dar düzeltmesidir; build testini geçirmek için araç zinciri değiştirilmedi. Runtime sentetik-marker regresyonu STATUS'ta ayrı sonuçla tutulur.
 
 Bağımsız npm audit (salt okunur, fix değil) ve [resmî GHSA](https://github.com/advisories/GHSA-mfr8-8qww-v76h) Next 16.4.3 için moderate CVE-2026-119790 gösterdi. Belirtilen use cache/unstable_cache kök-param koşulu uygulamada bulunmadı; istismar doğrulandığı veya bütün riskin yok olduğu söylenmez. Next dar patch incelemesi A6'da açık; bu cache diliminde başka paket güncellenmedi. Etkilenen dosya next.config.ts ve güvenlik/durum/görev belgeleridir.
+
+
+## D043 — En küçük uyumlu Next güvenlik yaması 16.4.5 (17 Kasım 2026)
+
+**Kaynak/yetki:** Kullanıcı A4.4d 6ce406f main commit/push ve CI #19 başarısını ekran görüntüsüyle bildirdi; başlangıç HEAD6ce406f0bee31e0cb33b082d7e0c63cb6896b2b6 ve temiz git/index yerelde doğrulandı. Yeni yetki yalnız Next güvenlik güncellemesidir; A4/A6 bütünü kapanmaz.
+
+**Ana bulgu:** [GHSA-mfr8-8qww-v76h](https://github.com/vercel/next.js/security/advisories/GHSA-mfr8-8qww-v76h), use cache fonksiyonunun unstable_cache içinden çağrılıp root param okumasındaki disclosure yarışıdır. Lockfile/runtime16.4.3 etkilenen >=16.3.0 <=16.4.4 içindedir; doğrulanmış patch16.4.5. src ve next.config taramasında use cache/unstable_cache/cacheComponents kullanımı yoktur; Mongo cache bu mekanizma değildir. Kodda tetikleyici desen bulunmadı, exploit veya bütünüyle risksiz iddiası üretilmedi.
+
+[Resmî 16.4.5 release'i](https://github.com/vercel/next.js/releases/tag/v16.4.5) ve ayrı duyurular karşılaştırıldı; aşağıdaki yedisi de kurulu16.4.3'ü sürüm aralığına alır ve16.4.5 ile düzelir:
+
+| Duyuru | Konu / uygulamadaki gözlem |
+| --- | --- |
+| [mfr8-8qww-v76h](https://github.com/vercel/next.js/security/advisories/GHSA-mfr8-8qww-v76h) | use cache/unstable_cache root-param; iki API de uygulamada yok. |
+| [vc7v-qv4w-wrv8](https://github.com/vercel/next.js/security/advisories/GHSA-vc7v-qv4w-wrv8) | İç içe use cache bağımlılık yayını; kullanım yok. |
+| [vvgp-ww4w-46vf](https://github.com/vercel/next.js/security/advisories/GHSA-vvgp-ww4w-46vf) | Self-hosted Cache Components fallback param poisoning; cacheComponents açık değil. |
+| [rhh4-g77r-r9qj](https://github.com/vercel/next.js/security/advisories/GHSA-rhh4-g77r-r9qj) | use cache binary argümanları; kullanım yok. |
+| [pc58-hwjq-p385](https://github.com/vercel/next.js/security/advisories/GHSA-pc58-hwjq-p385) | Self-hosted upstream Response forward/framing; bu tür route handler/yanıt iletimi bulunmadı, hedef doğrudan Vercel. |
+| [7qx7-33qx-rqx2](https://github.com/vercel/next.js/security/advisories/GHSA-7qx7-33qx-rqx2) | Self-hosted image optimizer SVG reddi; app next/image önizlemesi PNG data URL + unoptimized kullanır. Bu gözlem built-in optimizer'ın her koşulda erişilemezliği kanıtı değildir. |
+| [f3mh-rxg3-f5g2](https://github.com/vercel/next.js/security/advisories/GHSA-f3mh-rxg3-f5g2) | Edge runtime NextResponse cookie/header; Edge/NextResponse route kullanımı bulunmadı. |
+
+[16.4.6](https://github.com/vercel/next.js/releases/tag/v16.4.6) backport bugfix sürümüdür; doğrulanan ek güvenlik düzeltmesi gerektirmediğinden kullanıcı talebine uygun minimum **16.4.5** seçildi. Registry audit yalnız ana Next duyurusunu listelemişti; diğer altı düzeltmenin doğrulama kaynağı release/ayrı resmî GHSA'lardır, audit bunların yerine geçmez.
+
+**Paket sınırı:** package.json yalnız next16.4.3→16.4.5. Lock'ta zorunlu @next/env ve sekiz platform @next/swc-* aynı yamaya çıktı; başka paket/root alanı değişmedi. npm install platformda üç paket değiştiğini bildirdi (Next/env/aktif SWC), lock tüm platformları taşır. Metadata Node>=20.9/React peer'ları mevcut22.13.0/19.3.1 ile uyumludur. eslint-config-next ve eklentisi16.4.3 runtime Next'e exact peer bağlamaz; gereksiz lint/React/tool güncellemesi yapılmadı, force/override yoktur.
+
+**Doğrulama ve kalanlar:** 564 test/lint/typecheck/varsayılan build geçti; uygulama/config/env aynı. Audit8→7 moderate paket kaydı, Next bulgusu kalktı; kalan7 aynı minimatch GHSA-g3hv-75wg-m249 kaynaklı dev-only TypeScript-ESLint zinciridir, yedi farklı Next açığı değildir. Bu tur kapsam dışı zincir değiştirilmedi. Global güvenlik temizliği/exploit veya browser/gerçek bağlantı testi iddia edilmez. Etkilenenler package.json/package-lock.json, AGENTS/README ve docs ARCHITECTURE/DECISIONS/STATUS/TASKS.

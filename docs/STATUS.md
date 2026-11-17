@@ -4,7 +4,26 @@ Son güncelleme: 17 Kasım 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A4.4d — normal cache/force-refresh/kaynak sunumu uygulandı; kullanıcı incelemesi ve yeni CI açık.** A4.4c **0050265 — feat: coalesce concurrent analysis requests** main commit/push ve **CI #18 başarısı kullanıcı ekran görüntüsüne dayanır**; bağımsız uzak sorgu yapılmadı. Başlangıç git status/diff/cached diff temizdi, HEAD 0050265; yarım cache diff'i yoktu. A4 bütünü ve yayın açık.
+**A6 — dar Next.js güvenlik güncellemesi; yerel incelemeye hazır.** A4.4d **6ce406f** main commit/push ve **CI #19 başarısı kullanıcının GitHub Actions ekran görüntüsüne dayanır**; bağımsız uzak sorgu yapılmadı. Başlangıç HEAD 6ce406f0bee31e0cb33b082d7e0c63cb6896b2b6 ve temiz çalışma ağacı/index yerelde doğrulandı. Yeni yamanın commit/uzak CI'ı ve A4/A6 bütünü açık.
+
+## A6 — Next.js güvenlik yaması, 17 Kasım 2026
+
+- Next.js **16.4.3 → 16.4.5**. GHSA-mfr8-8qww-v76h etkilenen aralığına giriyordu; src/config içinde use cache veya unstable_cache kullanımı bulunmadı. Uygulamada tetikleyici desen bulunmaması tüm riskin yokluğu veya exploit testi değildir.
+- Resmî release ve ayrı GHSA'lar aynı sürümü etkileyen toplam yedi düzeltmeyi doğruladı (D043). 16.4.6'da doğrulanan ek güvenlik düzeltmesi olmadığından en küçük uyumlu kararlı 16.4.5 seçildi.
+- Manifest yalnız next; lock yalnız next, zorunlu @next/env ve sekiz platform @next/swc-* kaydı değişti. React19.3.1 ve lint config/plugin16.4.3 korundu; peer/engine metadata mevcut Node22.13.0 ile uyumlu. Uygulama/config/env/motor/adapter/DB/renderer değişmedi.
+
+| Kontrol | Sonuç ve sınır |
+| --- | --- |
+| Test | 31 dosya / **564 test geçti**; gerçek servis veya secret gerektirmeyen mevcut testler. |
+| Lint / typecheck | İkisi exit 0. |
+| Varsayılan build | npm run build exit 0; varsayılan Turbopack, TypeScript ve 6 sayfa. Process GitHub/Mongo/signing değerleri boş; build yapılandırması değişmedi. |
+| Bağımlılık taraması | Tam npm audit: 8→7 moderate paket kaydı; Next bulgusu kalktı. Kalanların tamamı aynı minimatch GHSA-g3hv-75wg-m249 kaynaklı geliştirme TypeScript-ESLint zinciri; yedi ayrı Next açığı değildir. Audit kalan bulgular nedeniyle exit 1; genel güvenlik temizliği iddia edilmez, kapsam dışı paketler güncellenmedi. |
+| Diff / kapsam | git diff --check ve cached diff kontrolü; paket değişiklikleri izinli Next/env/SWC kayıtlarıyla sınırlı. Index boş; stage/commit/push/deploy yok. |
+| Yapılmayanlar | Bu dar yamada tarayıcı, exploit, gerçek GitHub/Atlas veya deployment kontrolü tekrarlanmadı; önceki kanıtlar tarihsel olarak korunur. |
+
+**Açıklar:** Yeni paket için kullanıcı yerel incelemesi/commit/uzak CI; geliştirme minimatch zinciri ve ESLint destek/uyumluluk incelemesi; TASKS'taki diğer A4/A6 ve yayın işleri. Çalışan Next süreçleri yamayı kullanmak için yeniden başlatılmalı. A4.4d commit/CI kapısı kullanıcı kaynağıyla kapandı; yeni görsel kabul varsayılmaz.
+
+**Birleşik commit kapsamı:** package.json, package-lock.json, AGENTS.md, README.md, docs/{ARCHITECTURE,DECISIONS,STATUS,TASKS}.md. Yerel kontrollerle inceleme/commit için hazır. Öneri: **fix: upgrade Next.js to 16.4.5**. Bu dilimden sonra durulur.
 
 ## A4.4d — cache entegrasyonu, 17 Kasım 2026
 
@@ -27,12 +46,12 @@ Son güncelleme: 17 Kasım 2026 (Europe/Istanbul).
 | Tarayıcı sınırı | Gerçek 15 dakika bekleme/fiziksel TTL silinmesi yapılmadı; expiry fake-clock testidir. Server-side README çağrı sayısı gerçek browser smoke'ta ayrıca instrument edilmedi; hit'te skip domain testleriyle kanıtlandı. İlk otomasyon yükleme/hydration öncesi forma dokunduğu için uygulama isteği oluşmadan başarısızdı; geçici driver yükleme/hydration bekleyerek düzeltildi, ürün hatası gibi sunulmaz. |
 | Görsel/klavye | 390×844 TR/1440×900 EN görüntüleri gerçekten açıldı; mevcut kimlik/kart korundu. Refresh kaynak satırı ayrıca mobilde açıldı. 390/320 yatay taşma yok; native Tab SUMMARY odağı focus-visible ve 3px outline verdi. Kullanıcı görsel kabulü değildir; fiziksel telefon veya platform paylaşımı doğrulanmadı. |
 | Gizlilik sorunu / düzeltme | Dev process kapatılırken otomatik Next Server Function argüman logger'ının bir test read tokenını çıktıya aldığı görüldü. O üç snapshot zaten temizlenmişti, erişimler geçersiz. D042 logging.serverFunctions=false yalnız framework invocation argüman logunu kapatır; safe uygulama logları kalır. Env/GitHub/signing/URI sızıntısı gözlenmedi. Son runtime kontrolünde gerçek loadReport çalıştı, sentetik erişim işareti ve invocation argümanları logda bulunmadı. İlk regresyon denemesinde sunucu security reminder nedeniyle durduğu için kontrol yapılamamıştı; aynı komut tekrar çalışınca doğrulandı. |
-| Audit | Salt okunur npm audit --omit=dev: **1 moderate Next bulgusu**; [GHSA-mfr8-8qww-v76h](https://github.com/advisories/GHSA-mfr8-8qww-v76h) resmî kaynakla doğrulandı. Kurulu16.4.3 aralıkta; duyurudaki use cache/unstable_cache kalıbı src/config taramasında yok. Exploit veya tamamen risksiz iddiası yoktur; patch incelemesi A6'da açık. Package/lock değişmedi. |
+| Audit | Salt okunur npm audit --omit=dev: **1 moderate Next bulgusu**; [GHSA-mfr8-8qww-v76h](https://github.com/advisories/GHSA-mfr8-8qww-v76h) resmî kaynakla doğrulandı. Kurulu16.4.3 aralıkta; duyurudaki use cache/unstable_cache kalıbı src/config taramasında yok. Exploit veya tamamen risksiz iddiası yoktur; Bu tarihsel kontrolde patch incelemesi açıktı; yukarıdaki A6/D043 ile 16.4.5 yaması uygulandı. |
 | Temizlik | Gerçek browser smoke'un **3 kendi snapshot'ı**, matching scope/run/cache ve yalnız önceden var olmayan test sayaçları temizlendi; eski raporlar/önceden var olan kayıtlar silinmedi. Kayıtlar görsel inceleme için tutulmadı; gerçek token/tam link rapora eklenmez. Yalnız bu turun Chrome/dev süreçleri kapatıldı; üç geçici çalıştırıcı ve iki geçici Chrome profili kaldırıldı. PNG inceleme dosyaları /tmp altında bırakıldı. |
 
 ### Açık işler / durma noktası
 
-- Kullanıcı incelemesi/yeni commit/uzak CI açık; A4.4c CI #18 yeni paketin CI sonucu değildir. Eski instance'lar optional yeni source alanını tanımayabilir; birlikte sürüm geçişi/restart gerekir.
+- A4.4d 6ce406f main commit/push ve CI #19 kullanıcı GitHub Actions ekran görüntüsüyle bildirildi; bağımsız sorgu yapılmadı. Açık kullanıcı görsel incelemesi otomatik kapanmaz; önceki CI #18 bu paketin kanıtı değildir. Eski instance'lar optional yeni source alanını tanımayabilir; birlikte sürüm geçişi/restart gerekir.
 - Cache hit/miss/force core yerel doğrulaması tamam; gerçek Atlas 15dk TTL/failover, geniş hesap matrisi, bütün action mutlak20s/session/global metadata preflight ve gerçek Vercel güveni/hosting kontrolleri açık.
 - TASKS'taki ilk yayın için karşılaştırma/cihaz geçmişi, shareReports90gün/silme, otomatik SSR OG, 1080×1350 ve gelişim kartı, görsel cache, gizlilik/metodoloji sayfaları, A6 kalıcı E2E/erişilebilirlik/security/Next patch incelemesi, farklı hesap/final README, fiziksel telefon ve yetkili deployment/domain/env smoke işleri açık. A7 pilot/anonim ölçümler deploy sonrası işidir, ilk deployment öncesi tamamlandı sayılmaz.
 - PNG cache/session/karşılaştırma/OG veya yayın eklenmedi; A4'ün bütünü kapanmaz. Sonraki somut adım kullanıcı incelemesi ve bu paketin commit/CI'ı; yeni uygulama dilimine otomatik geçilmez.
