@@ -4,7 +4,7 @@ import type {ShareAccess} from "./types";
 const accessSchema = z.strictObject({id:z.string().regex(/^[a-f\d]{48}$/),managementToken:z.string().regex(/^[a-f\d]{64}$/),expiresAt:z.iso.datetime()});
 export const managementKey = (id:string) => `repovitrin.share.${id}`;
 export const sourceKey = (id:string) => `repovitrin.share.source.${id}`;
-export const shareHref = (id:string) => `/share/${id}`;
+export const shareHref = (id:string, locale?:"tr" | "en") => `/share/${id}${locale ? `?lang=${locale}` : ""}`;
 export const managementHref = (access:ShareAccess) => `/share/manage#id=${access.id}&token=${access.managementToken}`;
 
 export function savedShare(value:string | null): ShareAccess | null {

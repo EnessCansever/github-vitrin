@@ -4,13 +4,47 @@ Son güncelleme: 18 Kasım 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A5.2 — ayrı public paylaşım ve yönetim akışı uygulandı; gizli sekme/dil/kapatma/silme için kullanıcı yerel doğrulaması alındı.** Başlangıç HEAD888767d feat: compare private analysis reports ve temiz çalışma ağacı/index yerelde doğrulandı. Bu commit için yeni CI veya kullanıcı görsel kabul kaynağı iletilmedi; varsayılmadı. Kullanıcı kota/yaşam döngüsü kararları D046'da kayıtlı; minimatch yayın öncesi takibi devam eder. A5 bütünü kapanmadı.
+**A5.3 — public bağlantı önizlemesine kullanıcı görsel kabulü verildi; paket commit/push ve uzak CI sonucu bekleniyor.** A5.2, 2dd4ead089baeef5b8af65085a9e5b11621dc5ac commit'iyle gönderildi; temiz başlangıç doğrulandı. CI #22 completed/success, 18 Kasım'da kimlik doğrulamasız GitHub public API üzerinden bağımsız salt okunur sorguyla doğrulandı: [çalışma 44179304819](https://github.com/EnessCansever/github-vitrin/actions/runs/44179304819). Bu, yeni A5.3 paketinin CI sonucu değildir. A5/A6 bütünü ve minimatch yayın öncesi takibi açık.
+
+## A5.3 — otomatik public bağlantı önizlemesi, 18 Kasım 2026
+
+### Tamamlanan kapsam
+
+- TASKS sıra 6: yalnız erişilebilir public paylaşım kopyasından kullanıcı adı, puan ve profil tipiyle TR/EN SSR başlık/açıklama, Open Graph ve Twitter Card metadata'sı. Ayrı anonim `/share/[id]/image/[locale]` rotası mevcut onaylı renderer ile tam 1200×630 PNG üretir. GitHub, yeniden puanlama, snapshot değişikliği veya süre uzatma yoktur.
+- Public URL'de `?lang=tr/en`, görsel yolunda aynı dil kullanılır; dilsiz eski link TR'dir. Header seçimi, gövde ve metadata aynı dilde; cookie farklı olsa da public dil sabittir. Yönetim/private fragment davranışı korunur. Çift/geçersiz lang aynı güvenli varsayılana döner.
+- `SITE_URL` server-only canonical origin ayarıdır. Üretimde gerçek HTTPS origin ayrıca kurulmalı; domain seçilmedi. Development localhost:3000 varsayılanı vardır. Host header'dan URL üretilmez, import/build secret gerektirmez. Yanlış/eksik üretim ayarı nötr metadata verir; `.env.example` ve README açıklar.
+- Sayfa+metadata aynı render içinde tek `shareRead` tüketir; React request-cache kalıcı cache değildir. Ayrı görsel isteği public okuma bütçesine, complete render mevcut `card` bütçesine tabidir. Render sonrası güncel erişim yeniden kontrol edilir; ek giriş kotası tüketmez. Kota/config/DB hatası bulunamadı veya cache hit sayılmaz.
+- Force-dynamic/private no-store; CDN-Cache-Control ve Vercel-CDN-Cache-Control no-store. Uygulama kalıcı PNG/metadata cache'i, ETag veya Last-Modified üretmez. Kapalı/silinmiş/expired/missing için raporsuz metadata ve görsel404; incomplete puansız metadata/görsel422. Render sırasında kapanırsa PNG atılır. Dış sosyal platformların önceden aldığı kopyalar geri çağrılamaz; oluşturma/yönetim açıklaması eklendi.
+- Motor, adapter, depolama şeması, puanlar ve kabul edilmiş `image.tsx` renderer'ı aynıdır; yeni bağımlılık veya format yoktur. Public summary ile private Report yalnız ortak güvenli CardContent eşlemesini kullanır.
+
+### Doğrulama ve sınırları
+
+| Kontrol | Sonuç ve sınır |
+| --- | --- |
+| Deterministik kontroller | 44 dosya/642 test; önceki 624 üzerine 18 yeni metadata/görsel/dil testi. Active/incomplete/closed/deleted/expired/missing, render sırasında revoke, DB/config/kota, gerçek Retry-After, canonical URL, duplicate locale, token sızıntısı ve no-store kapsamı. Son test/lint/typecheck/varsayılan build ve diff sonuçları aşağıdaki kapanış kaydındadır. |
+| Yerel production + gerçek Atlas | Bu tur oluşturulan sentetik 1 private snapshot ve 6 public kopya ile cookie'siz Twitterbot HTTP. TR/EN metadata HTML head içinde; image PNG200 ve 1200×630. Sayfa+metadata public sayaç farkı tam 1. Kapatma→silme sonrası eski URL ve koşullu isteklerde kişisel metadata/görsel veya stale304 yok. Expired/missing404, incomplete422. Gerçek Vercel header güveni/CDN testi değildir; yalnız yerel sunucuda kontrollü sentetik header kullanıldı. |
+| Gizlilik | Ham HTML'de private ID/read token, yönetim tokenları ve sentetik cihaz geçmişi işareti yok. Env yalnız runtime loader; URI/parola/token/hash/ham kayıt veya README çıktısı yoktur. Public renderer'a yalnız minimum summary aktarılır. |
+| Chrome ve görseller | Public URL dili cookie'den bağımsız: EN→TR→EN, metadata/image dili birlikte değişti. 390px taşma yok; hydration/runtime hata 0. Sekiz tam PNG (TR/EN × dört tip), 39 karakter kullanıcı/97 karakter repo, 62,3 ve 77,5 gibi kesirler ve önerisiz 100 kontrol edildi; 390px galeri açıldı. İlk tam görüntü aktarımındaki eksik metin şüphesi yakın kırpım/piksel ve browser galerisiyle doğrulanmadı; geçici tasarım denemeleri tutulmadı. Renderer HEAD ile aynı, private TR Story ve EN yatay kontrol çıktıları byte-identical. |
+| Dağıtım varlıkları | Build trace içinde mevcut üç yerel font ve letterpress-paper.jpg doğrulandı. Gerçek Vercel dosya dağıtımı henüz test edilmedi. |
+| Temizlik | Yalnız bu turdaki kimlikler: 6 public kaydın 2'si senaryo içinde silindi; son cleanup 3 public/1 private/1 geçici sayaç kaydı sildi, diğer expired kayıt zaten yoktu. TTL fiziksel silme zamanlaması ölçülmedi. Mevcut kullanıcı kayıtları korundu. Kendi production sunucusu ve Chrome kapatıldı; kullanıcının dev sunucusu korundu. Geçici çalıştırıcılar kaldırılır; PNG'ler inceleme için korunur. |
+
+### Son kapanış kontrolleri
+
+Son kaynakta **npm test: 44 dosya / 642 test**, **npm run lint**, **npm run typecheck** ve **varsayılan npm run build** başarılı (exit 0, Turbopack/9 rota). Build komutunda servis env değerleri boş bırakıldı; import/build gerçek GitHub/Atlas bağlantısı gerektirmedi. Diff/cached diff ve eklenen dosyalarda LF/satır sonu boşluk kontrolü geçti; index boş. Geçici çalıştırıcılar ve Chrome profili kaldırıldı; inceleme PNG'leri tutuldu. Uzak CI yalnız A5.2 commit'i için doğrulanmıştır.
+
+### Açıklar ve inceleme
+
+- Kullanıcı, TR/EN OG örneklerini ve 390 px galerisini incelediğini bildirerek görsel kabul verdi (18 Kasım 2026). Bu kullanıcı tarafından sağlanan görsel doğrulamadır; bu tur bağımsız tarayıcı/PNG incelemesi tekrarlanmadı. Uzun ad örneklerinde ikincil metinlerin küçük kalması **bilinen görsel sınırlama** olarak kabul kaydına eklendi; tasarım değiştirilmedi. Paket commit/push ve uzak CI sonucu bekleniyor. Gerçek sosyal platform botu/önizleme yenilemesi, fiziksel telefon, gerçek Vercel/CDN/origin/IP ve kapasite testi yapılmadı. Yerel sentetik header testi bunların yerine geçmez. Yayın öncesinde gerçek `SITE_URL` kurulmalı; sosyal platform kendi cache'ini tutabilir.
+- Yeni PNG formatı, gelişim kartı, görsel cache ve TASKS'ın diğer yayın işleri açık; bu dilim bunları kapatmaz.
+- İnceleme PNG'leri `/tmp/repovitrin-og-20261118/`: `synthetic-tr-hiddenGem.png`, `synthetic-en-hiddenGem.png`, `synthetic-en-inProgress.png` (uzun ad), `synthetic-tr-ready.png` (100/önerisiz), `review-390.png`, `public-preview-tr-390.png`. Tüm içerik sentetiktir; tam public/özel erişim bağlantıları çıktıya eklenmez.
+
+**Commit kapsamı:** `.env.example`, AGENTS.md, README.md, next.config.ts; docs/{PRODUCT,ARCHITECTURE,DESIGN,DECISIONS,STATUS,TASKS}.md; src/app/share/[id]/page.tsx ve image/[locale]/route.ts; src/components/{site-header,locale-switch}.tsx; src/config/public-url.ts; src/features/cards/content.ts; src/features/shares/{metadata,og-image,links}.ts ve {manager,share-panel}.tsx; src/i18n/actions.ts; src/messages/{tr,en}.json; tests/shares/{preview,locale}.test.ts ve locale-switch.test.tsx. Öneri **feat: add public report link previews**. Yerel kontroller ve kullanıcı görsel kabulüyle commit için hazır. Bu kabul kaydı turunda yalnız STATUS/TASKS güncellendi; belge diff kontrolü yapıldı, rutin testler tekrarlanmadı. Stage/commit/push/deploy yok; sonraki dilime geçilmez.
 
 ## A5.2 kullanıcı yerel doğrulaması — 18 Kasım 2026
 
 Kullanıcı herkese açık bağlantıyı gizli sekmede açtığını, TR/EN geçişini denediğini, paylaşımı kapatma ve silme işlemlerini denediğini ve bağlantının artık açılmadığını bildirdi. Bunlar **kullanıcı tarafından sağlanan yerel doğrulamalardır**; bu tur Codex tarayıcı/DB kontrolü yapılmadı. Bildirim, fiziksel DB silinmesinin bağımsız ölçümü, özel rapor expiry sonrası yönetim, gerçek90 gün bekleme, kota aşımı/yük/Vercel veya genel görsel kabul kanıtı olarak genişletilmez. Önceki sentetik Atlas/Chrome ve624 test kanıtlarının sınırı korunur.
 
-Bu tur yalnız STATUS/TASKS güncellendi ve belge diff kontrolü yapıldı; uygulama kodu veya yapılandırma değişmedi, rutin testler tekrarlanmadı. Mevcut birleşik A5.2 paketi commit için hazır; henüz yeni commit/push/uzak CI yok. Genel görsel kabul, diğer açık cihaz/yayın kontrolleri ve A5 bütünü açık kalır.
+Önceki kabul kaydı turunda yalnız STATUS/TASKS güncellendi ve belge diff kontrolü yapıldı; uygulama kodu veya yapılandırma değişmedi, rutin testler tekrarlanmadı. Ardından A5.2 commit/push ve CI #22 yukarıdaki kaynakla doğrulandı. Genel görsel kabul, diğer açık cihaz/yayın kontrolleri ve A5 bütünü açık kalır.
 
 ## A5.2 — public paylaşım ve bağımsız yönetim, 17 Kasım 2026
 

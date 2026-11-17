@@ -225,3 +225,8 @@ Rapor özeti, cihaz geçmişi ve karşılaştırma aynı yerel tarih/saat biçim
 Public özet mevcut Developer ID kartını aynı renk/font/sticky header ile kullanır. “Herkese açık kopya” etiketi, minimum alanlar/ilk görev, puan kapsamı ve90 gün bitişi görünür. Özel rapor geçmişi/karşılaştırma/yenileme/PNG/yönetim eylemleri bu içerikte yoktur. Özel raporda native açılır paylaşım alanı, alan açıklaması ve gerçek onay kutusu vardır; yalnız açık eylem kopya üretir. Public ve gizli yönetim bağlantısı ayrı adlandırılır, clipboard yoksa elle kopyalama sunulur.
 
 Yönetim sayfasında kalıcı kapatma ve fiziksel silme ayrı açıklanır; pending disabled ve kısa role=status/alert bildirimleri vardır. Public sayfa salt okunur kalır. TR390/EN1440 görüntüleri açıldı,320/390/768/1440 taşma ve3px button focus kontrol edildi; yeni kullanıcı görsel kabulü değildir. Yeni animasyon/renk/font/PNG tasarımı yoktur.
+
+
+## A5.3 OG görünümü
+
+Yeni görsel yön veya indirilebilir format yoktur: OG, onaylı1200×630 kobalt afişin aynı renderer/font/mühür/doku kompozisyonudur. Public DTO'nun gerçek kullanıcı adı, toplamı, profil tipi, kategorileri ve ilk görevi aynı veri eşlemesinden gelir. Tarih PNG'de mevcut UTC sözleşmesindedir; web raporu browser zone göstermeye devam eder. TR/EN dört tip,39 karakter kullanıcı,97 karakter repo,77,5/62,3/100 ve önerisiz complete sentetik tam PNG'lerde/390px galeride incelendi. Ana odak kimlik/tip/puan; destek metinleri küçük kaldığından fiziksel cihaz/gerçek sosyal platform görünümü ayrıca doğrulanmalıdır. Kullanıcı görsel kabulü açık.

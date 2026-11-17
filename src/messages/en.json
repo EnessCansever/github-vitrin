@@ -662,6 +662,16 @@
     "changing": "Updating the share…",
     "closed": "This public link is permanently closed. The private report is unchanged.",
     "deleted": "The share copy was deleted from the database. The private report is unchanged.",
-    "localCleanupFailed": "The public copy was deleted, but old management access could not be cleared on this device."
+    "localCleanupFailed": "The public copy was deleted, but old management access could not be cleared on this device.",
+    "previewCacheNotice": "Closing and deleting stop subsequent access in this application. Social platforms may retain a previously fetched link preview in their own caches; we cannot recall those copies here."
+  },
+  "Preview": {
+    "title": "@{username} · {score}/100 · {type} | {brand}",
+    "description": "GitHub portfolio presentation for {username}: {score}/100 · {type}. This score does not measure code quality or hiring prospects.",
+    "alt": "{username} · {type} · GitHub portfolio score {score}/100",
+    "unavailableTitle": "Share unavailable | {brand}",
+    "unavailableDescription": "A preview is currently unavailable for this link. Open the share page to check its current status.",
+    "incompleteTitle": "Incomplete analysis | {brand}",
+    "incompleteDescription": "Some analysis data is missing; no total score or scored link preview was produced."
   }
 }

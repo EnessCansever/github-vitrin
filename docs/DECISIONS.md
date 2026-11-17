@@ -559,3 +559,18 @@ Kaynak sözleşme §2/§7/§9, PRODUCT ve TASKS sıra5: yalnız açık işlemle 
 **Sınırlar:** Yeni paket/servis/auth, otomatik OG/yeni PNG/görsel cache/yayın eklenmedi. Sekme/ağ cevabı kaybında insert sonrası token teslimi idempotent kurtarma garantisi taşımaz; mevcut pending/ref koruması dağıtık exactly-once değildir. Gerçek Vercel/Atlas failover, yük ve fiziksel telefon açık kalır. Kullanıcı görsel kabulü/yeni CI beklenir; A5 bütünü kapanmaz.
 
 Etkilenenler: shares type/schema/storage/action/read/UI/links ve iki rota; request config/origin; private rapora açık share alanı; TR/EN/CSS; tests/shares ve güvenlik bütçe testi; ilgili proje belgeleri/README. Motor/adapter/snapshot/cache/puanlama/PNG korunur. Gerçek sentetik Atlas/Chrome ve deterministik kanıtların ayrıntısı STATUS'tadır.
+
+
+## D047 — public kopyadan locale-sabit otomatik OG (18 Kasım 2026)
+
+Kapsam TASKS sıra6/A5.3'tür. Temiz HEAD2dd4ead089baeef5b8af65085a9e5b11621dc5ac doğrulandı. A5.2 CI #22 completed/success,18 Kasım'da kimlik doğrulamasız GitHub public API'den bağımsız salt okunur sorguyla doğrulandı: [run44179304819](https://github.com/EnessCansever/github-vitrin/actions/runs/44179304819). Yeni paketin CI sonucu değildir; kullanıcı A5.2 commit/push ve önceki yerel işlev doğrulamalarını sağlamıştır.
+
+Public dil cookie'ye bırakılmaz: ?lang=tr/en ve PNG path LOCALE. Dilsiz eski URL TR; duplicate/invalid lang aynı varsayılanla header/body/metadata'da ele alınır. Public locale action doğrulanmış48-hex ID'yle relative redirect eder, private/manage davranışı aynı kalır. Locale'i snapshot'a yazma/yeniden analiz yoktur. main lang ve provider locale açıkça atanır; root shell'in genel locale cookie'si korunur.
+
+SITE_URL yeni server-only canonical origin ayarıdır; production HTTPS ve query/path/credential'sız, development localhost3000 fallback. Gerçek domain bilinmediğinden seçilmedi; host header'a güvenilmez. Eksik config'te nötr metadata vardır, import/build secret gerektirmez. .env.example/README yayın öncesi ayarı açıklar. OG/Twitter alanları ve1200×630 image URL yalnız minimum PublicShare verisidir; incomplete puansız nötr preview/görsel422, inactive/error raporsuz metadata/görsel404 veya güvenli503/429.
+
+Kota sayıları değiştirilmez: page+metadata React request-cache ile tek shareRead; ayrı image isteği shareRead, complete render varsa mevcut card10/10dk. Internal post-render state okuması ek kota değildir. Bu measured capacity garantisi veya yeni public render bypass değildir. Mutation60/1dk/private report60/1dk sayaçları değişmez.
+
+Cross-request PNG/metadata cache'i yok; force-dynamic/no-store/özel CDN no-store ve response öncesi share kontrolü revoke/expiry'ye uyar. ETag üzerinden eski304 verilmez. Sosyal platformun kendi önizleme cache'i kontrol edilemez; kullanıcı açıklaması bunu belirtir. Local production sentetik Vercel/IP header testi gerçek Vercel güveni/CDN veya sosyal platform doğrulaması değildir.
+
+Onaylı renderer aynen kullanılır; public/private veri eşlemesi paylaşılır, sahte Report/check üretilmez. İlk tam görüntü aktarımındaki bazı metinler kayıp gibi görünmüş, PNG yakın kırpım/piksel ve390px browser galerisi bunların varlığını doğrulamıştır; geçici layout denemeleri kalıcı koda alınmadı. image.tsx HEAD ile aynıdır, private kontrol PNG'leri byte-identical. Yeni bağımlılık/PNG boyutu/auth/cache/engine/adapter/snapshot değişikliği veya deploy yoktur. Kullanıcı görsel kabulü ve yeni CI açık; A5 bütünü kapanmaz.

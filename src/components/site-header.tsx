@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
-import { setLocale } from "@/i18n/actions";
+import {Suspense} from "react";
+import {LocaleSwitch} from "./locale-switch";
 import { site } from "@/config/site";
 
 export async function SiteHeader() {
@@ -16,23 +17,7 @@ export async function SiteHeader() {
             <span className="diamond" aria-hidden="true" />
             {site.name}
           </Link>
-          <form action={setLocale}>
-            <fieldset className="language-switch">
-              <legend className="sr-only">{t("language")}</legend>
-              {(["tr", "en"] as const).map((language) => (
-                <button
-                  key={language}
-                  name="locale"
-                  value={language}
-                  type="submit"
-                  lang={language}
-                  aria-pressed={locale === language}
-                >
-                  {language.toUpperCase()}
-                </button>
-              ))}
-            </fieldset>
-          </form>
+          <Suspense><LocaleSwitch locale={locale} label={t("language")} /></Suspense>
         </div>
       </header>
     </>

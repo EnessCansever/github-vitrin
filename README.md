@@ -177,3 +177,12 @@ Yerelde `npm run dev` ile kayıtlı özel raporu açın. “Herkese açık bağl
 Public bağlantıyı paylaşın; **gizli yönetim bağlantısını ayrı kaydedin ve paylaşmayın**. Yönetim `/share/manage` sayfasında fragment yetkisiyle yapılır; linki tam saklamak gerekir. Cihazda da tutulur, fakat cihaz verisi/yönetim linki kaybında hesap kurtarma vaat edilmez. Yönetim bağlantısı özel30 günlük rapor bittikten sonra da90 günlük public kopyayı kalıcı kapatabilir veya fiziksel silebilir. Bu işlemler özel raporu değiştirmez; önceden indirilmiş kopyaları geri alamaz. Public sayfa noindex/no-referrer/no-store kullanır; listelenebilir profil dizini yoktur.
 
 Merkezi config'te özel rapor okuma, public okuma ve paylaşım mutasyonları ayrı IP60/1dk bütçeleridir. Create/close/delete tek mutation sayacını paylaşır; mevcut doğrudan Vercel/yerel geliştirme HMAC kimlik yaklaşımı sürer. Yeni dependency veya env gerekmez; yayın yetkisi verilmedi. Kontrol sonuçları ve sentetik veri/gerçek servis ayrımı STATUS'tadır.
+
+
+## A5.3 — otomatik public bağlantı önizlemesi
+
+Aktif complete `/share/[id]?lang=tr` veya `?lang=en`, o dilde SSR başlık/açıklama/Open Graph/Twitter metadata'sı ve1200×630 PNG sunar. Dilsiz eski link TR'dir; public dil seçimi URL'yi günceller. Görsel `/share/[id]/image/tr` veya `/image/en` yolundadır; oturum/private token istemez, yalnız public kopyayı okur. Kapatılmış/silinmiş/expired kopya kişisel preview/görsel sunmaz; incomplete için toplam/tip uydurulmaz ve scored image üretilmez. GET GitHub veya motor çağırmaz.
+
+**Yayın öncesi:** `SITE_URL` değerini gerçek canonical HTTPS origin olarak yapılandırın; path/query/hash/credential eklemeyin. Development boşsa http://localhost:3000; farklı local portta SITE_URL'yi o porta ayarlayın. `.env.local` değerlerini rapor/çıktıya eklemeyin. Domain/Instagram adresi bu projede henüz seçilmedi. Production'da bu ayar olmadan kişisel OG metadata'sı hazırlanmaz; build ise secret/URL gerektirmez.
+
+Page+metadata tek public okuma, ayrı PNG isteği bir public okuma ve mevcut render bütçesi kullanır. Uygulama/CDN yanıtları no-store'dur ve PNG teslimden önce share durumu tekrar okunur; otomatik sosyal platform post'u veya sosyal cache temizleme vaadi yoktur. Sosyal platformlar önceden aldıkları preview'yi kendi cache'lerinde tutabilir. Gerçek public domain/TLS/Vercel/CDN ve sosyal platform testleri yetkili yayın sonrasında yapılmalıdır. Yerel sentetik kanıtlar STATUS'tadır; yeni PNG formatı/görsel cache/deploy eklenmedi.

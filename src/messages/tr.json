@@ -662,6 +662,16 @@
     "changing": "Paylaşım güncelleniyor…",
     "closed": "Bu public bağlantı kalıcı olarak kapatıldı. Özel rapor korundu.",
     "deleted": "Paylaşım kopyası veritabanından silindi. Özel rapor korundu.",
-    "localCleanupFailed": "Public kopya silindi; bu cihazdaki eski yönetim bilgisini otomatik temizlemek mümkün olmadı."
+    "localCleanupFailed": "Public kopya silindi; bu cihazdaki eski yönetim bilgisini otomatik temizlemek mümkün olmadı.",
+    "previewCacheNotice": "Kapatma ve silme bu uygulamadaki sonraki erişimleri durdurur. Sosyal platformlar daha önce aldıkları bağlantı önizlemesini kendi önbelleklerinde tutabilir; bu kopyaları buradan geri alamayız."
+  },
+  "Preview": {
+    "title": "@{username} · {score}/100 · {type} | {brand}",
+    "description": "{username} için GitHub portfolyo sunumu: {score}/100 · {type}. Bu puan kod kalitesi veya işe alınma ihtimali değildir.",
+    "alt": "{username} · {type} · GitHub vitrin puanı {score}/100",
+    "unavailableTitle": "Paylaşım kullanılamıyor | {brand}",
+    "unavailableDescription": "Bu bağlantının önizlemesi şu an sunulamıyor. Güncel durum için paylaşım sayfasını aç.",
+    "incompleteTitle": "Eksik analiz | {brand}",
+    "incompleteDescription": "Bu analizde bazı veriler eksik; toplam puan ve puanlı bağlantı önizlemesi oluşturulmadı."
   }
 }

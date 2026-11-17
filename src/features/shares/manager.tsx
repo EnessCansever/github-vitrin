@@ -2,7 +2,7 @@
 
 import {useEffect, useRef, useState, useSyncExternalStore} from "react";
 import Link from "next/link";
-import {useTranslations} from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
 import {changeShare} from "./actions";
 import {managementAccess, managementKey, shareHref} from "./links";
 import type {ShareFailure} from "./types";
@@ -19,6 +19,7 @@ export function ShareManager() {
 
 function ManageControls({access}:{access:{id:string;token:string}}) {
   const t=useTranslations("Sharing");
+  const locale=useLocale()==="en"?"en":"tr";
   const [pending,setPending]=useState(false);
   const [storageFailed,setStorageFailed]=useState(false);
   const [result,setResult]=useState<"close" | "delete" | null>(null);
@@ -42,11 +43,11 @@ function ManageControls({access}:{access:{id:string;token:string}}) {
   }
 
   return <section aria-busy={pending}>
-    <p>{t("manageIntro")}</p><p className="small muted">{t("manageLifetime")}</p>
+    <p>{t("manageIntro")}</p><p className="small muted">{t("previewCacheNotice")}</p><p className="small muted">{t("manageLifetime")}</p>
     <div className="report-actions">
       <button type="button" className="button button-secondary" disabled={pending || result!==null} onClick={()=>void change("close")}>{t("close")}</button>
       <button type="button" className="button button-secondary" disabled={pending || result==="delete"} onClick={()=>void change("delete")}>{t("delete")}</button>
-      {result===null && <Link className="text-link" href={shareHref(access.id)} prefetch={false}>{t("openPublic")}</Link>}
+      {result===null && <Link className="text-link" href={shareHref(access.id,locale)} prefetch={false}>{t("openPublic")}</Link>}
     </div>
     <p role="status">{pending?t("changing"):result?t(result==="close"?"closed":"deleted"):""}</p>
     {failure && <><p role="alert">{t(`errors.${failure.code}`)}</p><RetryNotice retryAt={failure.retryAt}/></>}

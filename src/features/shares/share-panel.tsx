@@ -2,7 +2,7 @@
 
 import {useEffect, useRef, useState} from "react";
 import Link from "next/link";
-import {useTranslations} from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
 import {publishShare} from "./actions";
 import {managementHref, managementKey, savedShare, shareHref, sourceKey} from "./links";
 import type {ShareAccess, ShareFailure} from "./types";
@@ -10,6 +10,7 @@ import {RetryNotice} from "../../components/retry-notice";
 
 export function SharePanel({id}:{id:string}) {
   const t=useTranslations("Sharing");
+  const locale=useLocale()==="en"?"en":"tr";
   const [consent,setConsent]=useState(false);
   const [access,setAccess]=useState<ShareAccess | null>(null);
   const [pending,setPending]=useState(false);
@@ -48,7 +49,7 @@ export function SharePanel({id}:{id:string}) {
 
   async function copy(kind:"public" | "management") {
     if(!access)return;
-    const url=new URL(kind==="public"?shareHref(access.id):managementHref(access),window.location.origin).href;
+    const url=new URL(kind==="public"?shareHref(access.id,locale):managementHref(access),window.location.origin).href;
     setCopied(null);setManual("");
     try{await navigator.clipboard.writeText(url);setCopied(kind);}catch{setManual(url);}
   }
@@ -62,12 +63,13 @@ export function SharePanel({id}:{id:string}) {
     </form> : <>
       <p role="status">{t("created")}</p>
       <div className="report-actions">
-        <Link className="button button-secondary" href={shareHref(access.id)} prefetch={false}>{t("openPublic")}</Link>
+        <Link className="button button-secondary" href={shareHref(access.id,locale)} prefetch={false}>{t("openPublic")}</Link>
         <button type="button" className="button button-secondary" onClick={()=>void copy("public")}>{t("copyPublic")}</button>
         <button type="button" className="text-link" onClick={()=>void copy("management")}>{t("copyManagement")}</button>
         <Link className="text-link" href={managementHref(access)} prefetch={false}>{t("manage")}</Link>
       </div>
       <p className="small muted">{t("managementNote")}</p>
+      <p className="small muted">{t("previewCacheNotice")}</p>
       <button type="button" className="text-link" onClick={()=>{setAccess(null);setConsent(false);setCopied(null);setManual("");}}>{t("newCopy")}</button>
     </>}
     {storageFailed && <p role="status">{t("storageFailed")}</p>}
