@@ -2,6 +2,7 @@ import "server-only";
 
 import {createHash} from "node:crypto";
 import {z} from "zod";
+import {StorageError} from "./errors";
 import {analysisScope} from "./analysis-locks";
 import {reportSchema, scopeHash} from "./snapshot-schema";
 
@@ -26,7 +27,7 @@ export const cacheSchema = z.strictObject({
   _id: z.string().regex(/^[a-f\d]{64}$/), cacheVersion: z.literal(CACHE_VERSION),
   profileId: id, selectedRepoIds: z.array(id).min(1).max(3),
   scopeHash: z.string().regex(/^[a-f\d]{64}$/), rulesVersion: z.string().max(64),
-  fetchedAt: z.date(), expiresAt: z.date(), report: reportSchema.refine(report => report.status === "complete"),
+  fetchedAt: z.date(), expiresAt: z.date(), snapshotCreatedAt: z.date().optional(), report: reportSchema.refine(report => report.status === "complete"),
 }).superRefine((record, ctx) => {
   const ids = [...new Set(record.report.checks.filter(check => check.scope.kind === "repo").map(check => check.scope.id))].sort((a, b) => a - b);
   const scope = cacheScope.safeParse({profileId: record.profileId, repoIds: ids, rulesVersion: record.rulesVersion});
@@ -40,9 +41,26 @@ export const cacheSchema = z.strictObject({
     ctx.addIssue({code: "custom", message: "Invalid cache scope"});
   }
   if (record.fetchedAt.getTime() !== Date.parse(record.report.checkedAt) ||
-    record.expiresAt.getTime() - record.fetchedAt.getTime() !== ANALYSIS_CACHE_TTL_MS) {
+    record.expiresAt.getTime() - record.fetchedAt.getTime() !== ANALYSIS_CACHE_TTL_MS ||
+    (record.snapshotCreatedAt && record.snapshotCreatedAt < record.fetchedAt)) {
     ctx.addIssue({code: "custom", message: "Invalid cache dates"});
   }
 });
 
 export type CacheRecord = z.infer<typeof cacheSchema>;
+
+export function makeCacheRecord(input: unknown, snapshotCreatedAt?: Date): CacheRecord {
+  const parsed = reportSchema.safeParse(input);
+  if (!parsed.success || parsed.data.status !== "complete") throw new StorageError("invalid_report");
+  const report = parsed.data;
+  const ids = [...new Set(report.checks.filter(check => check.scope.kind === "repo").map(check => check.scope.id))].sort((a, b) => a - b);
+  const fetchedAt = new Date(report.checkedAt);
+  const record = cacheSchema.safeParse({
+    _id: cacheKey({profileId: report.profile.id, repoIds: ids, rulesVersion: report.rulesVersion}),
+    cacheVersion: CACHE_VERSION, profileId: report.profile.id, selectedRepoIds: ids,
+    scopeHash: scopeHash(ids), rulesVersion: report.rulesVersion, fetchedAt,
+    expiresAt: new Date(fetchedAt.getTime() + ANALYSIS_CACHE_TTL_MS), ...(snapshotCreatedAt ? {snapshotCreatedAt} : {}), report,
+  });
+  if (!record.success) throw new StorageError("invalid_report");
+  return record.data;
+}

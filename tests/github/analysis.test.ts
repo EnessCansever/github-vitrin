@@ -4,6 +4,7 @@ import {createSnapshot} from "../../src/lib/db/snapshots";
 import {english} from "../scoring/fixtures";
 import {json, readme, repository, respond} from "./fixtures";
 
+vi.mock("../../src/lib/db/analysis-cache", () => ({readAnalysisCache: vi.fn(async () => ({status: "miss"}))}));
 vi.mock("../../src/lib/db/analysis-runs", () => ({failAnalysisRun: vi.fn(async () => {}), waitForAnalysis: vi.fn(async () => null)}));
 vi.mock("../../src/lib/db/analysis-capacity", () => ({
   acquireAnalysisCapacity: vi.fn(async () => ({acquired: true, permit: {

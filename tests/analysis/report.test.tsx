@@ -70,3 +70,10 @@ it.each(["tr", "en"] as const)("renders stored complete/incomplete reports in %s
     expect(html).toContain(incomplete ? '<strong>—</strong>' : '<strong>100</strong>');
   }
 });
+
+it.each(["fresh", "cache", "refresh", "joined"] as const)("renders persisted %s provenance in TR/EN without changing score/time", source => {
+  const value = {...report(), source};
+  expect(render(value, "tr")).toContain(tr.Report.sources[source]);
+  expect(render(value, "en")).toContain(en.Report.sources[source]);
+  expect(value.checkedAt).toBe("2026-10-28T12:00:00Z");
+});

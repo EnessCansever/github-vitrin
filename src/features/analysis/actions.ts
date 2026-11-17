@@ -1,5 +1,6 @@
 "use server";
 
+import {readAnalysisCache} from "../../lib/db/analysis-cache";
 import {z} from "zod";
 import {randomUUID} from "node:crypto";
 import {GitHubClient} from "../../lib/github/client";
@@ -8,7 +9,7 @@ import {profileInput} from "../../lib/github/input";
 import {repoName, type Repository} from "../../lib/github/schemas";
 import {acquireAnalysisCapacity, ownsAnalysisCapacity, releaseAnalysisCapacity, type AnalysisPermit} from "../../lib/db/analysis-capacity";
 import {failAnalysisRun, waitForAnalysis} from "../../lib/db/analysis-runs";
-import {createSnapshot, createJoinedSnapshot} from "../../lib/db/snapshots";
+import {createSnapshot, createJoinedSnapshot, createCachedSnapshot} from "../../lib/db/snapshots";
 import {StorageError} from "../../lib/db/errors";
 import {acquireAnalysisLock, analysisScope, ownsAnalysisLock, releaseAnalysisLock, type AnalysisLock} from "../../lib/db/analysis-locks";
 import {limitRequest, limitAnalysis, requestFailure} from "../../lib/security/requests";
@@ -61,6 +62,7 @@ function safeError(error: unknown): SearchError {
 }
 
 const analysisInput = z.object({
+  force: z.boolean().optional(),
   username: z.string().max(256).refine(value => Buffer.byteLength(value, "utf8") <= 256).pipe(profileInput),
   profileId: z.number().int().positive().safe(),
   repos: z.array(z.object({id: z.number().int().positive().safe(), name: repoName}).strict()).min(1).max(3)
@@ -105,6 +107,18 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
     for (const selected of parsed.data.repos) metadata.push(await client.getRepository(profile, selected.name, selected.id));
     checkDeadline();
     const scope = analysisScope(profile.id, metadata.map(repo => repo.id));
+    const cacheScope = {profileId: profile.id, repoIds: metadata.map(repo => repo.id), rulesVersion: RULES_VERSION};
+    async function reuseCache(): Promise<AnalysisResponse | null> {
+      const cached = await readAnalysisCache(cacheScope);
+      checkDeadline();
+      if (cached.status !== "hit") return null;
+      const saved = await createCachedSnapshot(cacheScope);
+      return {status: "success", report: saved.report, snapshot: {status: "saved", id: saved.id, readToken: saved.readToken}};
+    }
+    if (!parsed.data.force) {
+      const cached = await reuseCache();
+      if (cached) return cached;
+    }
     const acquired = await acquireAnalysisLock(scope);
     if (!acquired.acquired) {
       const run = await waitForAnalysis(acquired.lock, RULES_VERSION, startedAt + 20_000);
@@ -123,6 +137,10 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
       }
     }
     lock = acquired.lock;
+    if (!parsed.data.force) {
+      const cached = await reuseCache();
+      if (cached) return cached;
+    }
     const capacity = await acquireAnalysisCapacity();
     if (!capacity.acquired) return await failed({status: "error", code: "capacity", retryAt: capacity.retryAt});
     permit = capacity.permit;
@@ -137,7 +155,7 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
     const checkedAt = new Date().toISOString();
     const result = scoreAnalysis({rulesVersion: RULES_VERSION, profile, profileReadme, repos, checkedAt});
     const report: Report = {
-      ...result, profile: {id: profile.id, login: profile.login}, checkedAt, repoCount: repos.length,
+      ...result, source: parsed.data.force ? "refresh" : "fresh", profile: {id: profile.id, login: profile.login}, checkedAt, repoCount: repos.length,
       checks: result.checks.map(check => ({...check, evidence: check.evidence.map(evidence => ({
         sourceUrl: evidence.sourceUrl, field: evidence.field, path: evidence.path,
         branch: evidence.branch, sha: evidence.sha, line: evidence.line,

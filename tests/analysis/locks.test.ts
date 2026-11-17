@@ -11,6 +11,7 @@ import {input, repo} from "../scoring/fixtures";
 
 const state = vi.hoisted(() => ({locks: new Map<string, {key: string; owner: string; expiresAt: string}>(), sequence: 0}));
 const github = vi.hoisted(() => ({profile: vi.fn(), repository: vi.fn(), readme: vi.fn(), profileReadme: vi.fn()}));
+vi.mock("../../src/lib/db/analysis-cache", () => ({readAnalysisCache: vi.fn(async () => ({status: "miss"}))}));
 vi.mock("../../src/lib/db/analysis-runs", () => ({failAnalysisRun: vi.fn(async () => {}), waitForAnalysis: vi.fn(async () => null)}));
 vi.mock("../../src/lib/db/analysis-capacity", () => ({
   acquireAnalysisCapacity: vi.fn(async () => ({acquired: true, permit: {

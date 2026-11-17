@@ -12,6 +12,7 @@ import {input, repo} from "../scoring/fixtures";
 
 const state = vi.hoisted(() => ({locks: new Map<string, AnalysisLock>(), runs: new Map<string, AnalysisRun>(), sequence: 0, access: 0,
   profile: vi.fn(), repository: vi.fn(), readme: vi.fn(), profileReadme: vi.fn(), find: vi.fn()}));
+vi.mock("../../src/lib/db/analysis-cache", () => ({readAnalysisCache: vi.fn(async () => ({status: "miss"}))}));
 vi.mock("../../src/lib/github/client", () => ({GitHubClient: vi.fn(function () {
   return {getProfile: state.profile, getRepository: state.repository, getReadme: state.readme, getProfileReadme: state.profileReadme};
 })}));

@@ -4,6 +4,7 @@ import type {SearchError} from "./selection";
 export type Report = Omit<AnalysisResult, "checks"> & {
   profile: {id: number; login: string};
   checkedAt: string;
+  source?: "fresh" | "cache" | "refresh" | "joined";
   repoCount: number;
   checks: (Omit<Check, "evidence"> & {
     evidence: Pick<Evidence, "sourceUrl" | "field" | "path" | "branch" | "sha" | "line" | "availability" | "detailKey">[];

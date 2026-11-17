@@ -203,3 +203,8 @@ Story küçültülmez veya kırpılmaz; 1200×630 için ayrı HTML/SVG kompozisy
 - Katılım çağrısı ve geliştirici imzası 672/408px alanlar ve 48px arayla; tarih/kapsam sonraki satırda 624/400px alanlar ve 104px arayla yerleşir. Kapsam 20px, tarih 20px mono. Yeni küçük etiket eklenmedi; alanlar üst üste binmez.
 
 TR/EN dört tip, 39 karakter kullanıcı, 100 karakter repo, ondalıklı/100 ve önerisiz complete örnekleri tam PNG olarak açıldı; 390px gösterimde tip/puan/kullanıcı ana hiyerarşisi incelendi. Tarih/kapsam/mühür iç metni telefon ölçeğinde küçük ikincil bilgidir; fiziksel cihaz/sosyal platform garantisi verilmez. Story aynı 16 sentetik girdide önceki renderer ile byte eşittir; tasarımı yeniden yapılmadı. A5.1 genel kullanıcı görsel kabulü açık kalır.
+
+
+## A4.4d — kaynak ve yenileme durumu
+
+Mevcut Developer ID/kart/renk/CSS korunur. LiveReport meta alanında TR/EN kaynak açıklaması ve mevcut UTC veri zamanı görünür; cache yeni analiz gibi etiketlenmez. Kayıtlı rapora mevcut secondary button stiliyle açık GitHub yenileme eylemi eklendi. Pending disabled/ref guard, hata için polite status/gerçek retry zamanı; başarısızlıkta eski rapor yerinde kalır. Eski kayıtta kaynak bilgisi yok açıklaması kullanılır. Yeni görünüm için kullanıcı kabulü henüz verilmedi; Chrome 390/1440 incelemesi bunun yerine geçmez.

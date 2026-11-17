@@ -63,7 +63,7 @@ export function LiveReport({report, stored = false}: {report: Report; stored?: b
         )}
       </IdentityCard>
       {report.status === "incomplete" && <p className="selection-notice report-incomplete" role="status">{t("incompleteText")}</p>}
-      <p className="report-meta">{t("scope", {count: report.repoCount})} · {common("rule", {version: report.rulesVersion})}<br />
+      <p className="report-meta">{t(`sources.${report.source ?? "legacy"}`)}<br />{t("scope", {count: report.repoCount})} · {common("rule", {version: report.rulesVersion})}<br />
         {t("checkedAt", {time: format.dateTime(new Date(report.checkedAt), {dateStyle: "medium", timeStyle: "short", timeZone: "UTC"})})}
       </p>
       <div className="result-body">

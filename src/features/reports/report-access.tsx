@@ -7,6 +7,7 @@ import {StatePanel} from "../analysis/analysis-states";
 import {LiveReport} from "../analysis/live-report";
 import type {StoredReportResponse} from "../analysis/report";
 import {loadReport} from "./actions";
+import {RefreshReport} from "./refresh-report";
 import {CopyLink} from "./copy-link";
 import {CardStudio} from "../cards/card-studio";
 import {RetryNotice} from "../../components/retry-notice";
@@ -71,6 +72,7 @@ export function ReportAccess({id}: {id: string}) {
             <CopyLink />
             <CardStudio id={id} complete={response.report.status === "complete"} />
           </div>
+          <RefreshReport key={id} report={response.report} />
           <LiveReport report={response.report} stored />
         </>
       )}

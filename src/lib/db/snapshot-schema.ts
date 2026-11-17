@@ -53,6 +53,7 @@ const category = z.strictObject({
 export const reportSchema = z.strictObject({
   rulesVersion: z.literal("1.0.0"), status: z.enum(["complete", "incomplete"]), score: score.nullable(),
   profile: z.strictObject({id, login: loginSchema}), checkedAt: z.iso.datetime(),
+  source: z.enum(["fresh", "cache", "refresh", "joined"]).optional(),
   repoCount: z.number().int().min(1).max(3),
   checks: z.array(check).min(13).max(33),
   categories: z.array(category).length(3),

@@ -1,10 +1,47 @@
 # Güncel durum
 
-Son güncelleme: 7 Kasım 2026 (Europe/Istanbul).
+Son güncelleme: 17 Kasım 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A4.4c — aynı kapsam/sürümde eşzamanlı analizleri birleştirme uygulandı; kullanıcı incelemesi/yeni CI açık.** A4.4b **8f3b225 — feat: limit concurrent analyses across processes** commit/push ve **CI #17 başarısı kullanıcı GitHub Actions ekran görüntüsüne dayanır**; bağımsız uzak sorgu yapılmadı. Başlangıç HEAD 8f3b225a99d9a2e33da70cd40a23c68866560bc2, çalışma ağacı/index temizdi. A4 bütünü ve yayın açık.
+**A4.4d — normal cache/force-refresh/kaynak sunumu uygulandı; kullanıcı incelemesi ve yeni CI açık.** A4.4c **0050265 — feat: coalesce concurrent analysis requests** main commit/push ve **CI #18 başarısı kullanıcı ekran görüntüsüne dayanır**; bağımsız uzak sorgu yapılmadı. Başlangıç git status/diff/cached diff temizdi, HEAD 0050265; yarım cache diff'i yoktu. A4 bütünü ve yayın açık.
+
+## A4.4d — cache entegrasyonu, 17 Kasım 2026
+
+### Tamamlanan kapsam
+
+- AGENTS/sözleşme/ilgili ürün-mimari-karar-durum-görevler ve mevcut action/kilit/permit/cache/run/snapshot incelendi. Bu yeni kullanıcı talimatıyla hit için önceki lock/60s taslağı D041'de açıkça güncellendi.
+- Her çağrı kendi IP girişi ve gerçek profil/repo kimlik/uygunluk ön kontrolünden geçer. Normal hit aynı doğrulanmış userId/repo kümesi/rulesVersion, complete ve veri zamanından 15dk'dır; readonly, süre yenilenmez. README/motor/global permit/scope kilidi/60s tüketimi atlanır. Miss/force mevcut lider/katılan/global5/60s yolundadır; force cache okumaz. DB hatası miss sayılmaz.
+- Complete lider cache+run+snapshot'ı mevcut global/scope çitli tek transaction'da yazar; incomplete/error complete cache'i değiştirmez. Cache factory doğrulama/aritmetiği mevcut writer ile paylaşır. Hit ayrı ID/token/hash üretir ama yeni snapshotCreatedAt anchor'ı ile eski checkedAt/createdAt/30 günlük bitişi korur. Anchor olmayan eski cache reuse edilmez; eski private snapshot'lar geçerlidir.
+- Optional Report.source fresh/cache/refresh/joined raporla saklanır. Eski rapor unknown-source metniyle okunur; puan/motor/kart/fixture ve snapshot biçim sürümü değişmez. TR/EN kaynak ve UTC zaman reload'da korunur.
+- Mevcut stilde kayıtlı rapor force eylemi; pending/ref guard/geç yanıt/başarılı yeni adrese geçiş, başarısızlıkta eski raporun/adresin korunması. LiveAnalysis yeniden analiz eylemi de force kullanır. RetryNotice provider'larında eksik Requests mesajları tamamlandı. CSS/renderer/tasarım revizyonu yapılmadı.
+
+### Kontrol sonuçları
+
+| Kontrol | Sonuç ve sınır |
+| --- | --- |
+| Test | **31 dosya /564 test geçti.** İlk/cache/expiry/force/60s/DB hatası/incomplete, izole erişim/zaman/atomic cache, legacy anchor ve future anchor, TR/EN kalıcı kaynak dahil 13 yeni davranış kontrolü. Önceki domain action testlerinde cache sınırı açık miss mock'udur; normal test/CI gerçek GitHub/secret gerektirmez. |
+| Lint / typecheck | Son kaynakta ikisi exit 0. |
+| Varsayılan build | **npm run build exit 0**, varsayılan Turbopack/TypeScript/6 sayfa. Process GitHub/Mongo/signing değerleri boş. İlk deneme Next güvenlik hatırlatıcısında durdu; aynı komut paket değiştirmeden tekrar geçti. Webpack veya kontrol geçirmek için config değişikliği yoktur; D042 gizlilik config'i ayrı kapsamdır. |
+| Gerçek Chrome + Atlas/GitHub | Temiz headless Chrome, gerçek EnessCansever/jobfit-tr+fixora, gerçek form→seçim→ilk complete rapor→cache reuse→reload→TR/EN→offline başarısız refresh→gerçek 60s bekleme→başarılı force. Üç ayrı erişim; hit checkedAt/createdAt/expiresAt ve DB cache kaydı değişmedi, cross token null, eski linkler force sonrası okunabildi. Yenilenmiş source reload/TR–EN'de korundu. Gerçek skor sabit hedefe zorlanmadı. |
+| Tarayıcı sınırı | Gerçek 15 dakika bekleme/fiziksel TTL silinmesi yapılmadı; expiry fake-clock testidir. Server-side README çağrı sayısı gerçek browser smoke'ta ayrıca instrument edilmedi; hit'te skip domain testleriyle kanıtlandı. İlk otomasyon yükleme/hydration öncesi forma dokunduğu için uygulama isteği oluşmadan başarısızdı; geçici driver yükleme/hydration bekleyerek düzeltildi, ürün hatası gibi sunulmaz. |
+| Görsel/klavye | 390×844 TR/1440×900 EN görüntüleri gerçekten açıldı; mevcut kimlik/kart korundu. Refresh kaynak satırı ayrıca mobilde açıldı. 390/320 yatay taşma yok; native Tab SUMMARY odağı focus-visible ve 3px outline verdi. Kullanıcı görsel kabulü değildir; fiziksel telefon veya platform paylaşımı doğrulanmadı. |
+| Gizlilik sorunu / düzeltme | Dev process kapatılırken otomatik Next Server Function argüman logger'ının bir test read tokenını çıktıya aldığı görüldü. O üç snapshot zaten temizlenmişti, erişimler geçersiz. D042 logging.serverFunctions=false yalnız framework invocation argüman logunu kapatır; safe uygulama logları kalır. Env/GitHub/signing/URI sızıntısı gözlenmedi. Son runtime kontrolünde gerçek loadReport çalıştı, sentetik erişim işareti ve invocation argümanları logda bulunmadı. İlk regresyon denemesinde sunucu security reminder nedeniyle durduğu için kontrol yapılamamıştı; aynı komut tekrar çalışınca doğrulandı. |
+| Audit | Salt okunur npm audit --omit=dev: **1 moderate Next bulgusu**; [GHSA-mfr8-8qww-v76h](https://github.com/advisories/GHSA-mfr8-8qww-v76h) resmî kaynakla doğrulandı. Kurulu16.4.3 aralıkta; duyurudaki use cache/unstable_cache kalıbı src/config taramasında yok. Exploit veya tamamen risksiz iddiası yoktur; patch incelemesi A6'da açık. Package/lock değişmedi. |
+| Temizlik | Gerçek browser smoke'un **3 kendi snapshot'ı**, matching scope/run/cache ve yalnız önceden var olmayan test sayaçları temizlendi; eski raporlar/önceden var olan kayıtlar silinmedi. Kayıtlar görsel inceleme için tutulmadı; gerçek token/tam link rapora eklenmez. Yalnız bu turun Chrome/dev süreçleri kapatıldı; üç geçici çalıştırıcı ve iki geçici Chrome profili kaldırıldı. PNG inceleme dosyaları /tmp altında bırakıldı. |
+
+### Açık işler / durma noktası
+
+- Kullanıcı incelemesi/yeni commit/uzak CI açık; A4.4c CI #18 yeni paketin CI sonucu değildir. Eski instance'lar optional yeni source alanını tanımayabilir; birlikte sürüm geçişi/restart gerekir.
+- Cache hit/miss/force core yerel doğrulaması tamam; gerçek Atlas 15dk TTL/failover, geniş hesap matrisi, bütün action mutlak20s/session/global metadata preflight ve gerçek Vercel güveni/hosting kontrolleri açık.
+- TASKS'taki ilk yayın için karşılaştırma/cihaz geçmişi, shareReports90gün/silme, otomatik SSR OG, 1080×1350 ve gelişim kartı, görsel cache, gizlilik/metodoloji sayfaları, A6 kalıcı E2E/erişilebilirlik/security/Next patch incelemesi, farklı hesap/final README, fiziksel telefon ve yetkili deployment/domain/env smoke işleri açık. A7 pilot/anonim ölçümler deploy sonrası işidir, ilk deployment öncesi tamamlandı sayılmaz.
+- PNG cache/session/karşılaştırma/OG veya yayın eklenmedi; A4'ün bütünü kapanmaz. Sonraki somut adım kullanıcı incelemesi ve bu paketin commit/CI'ı; yeni uygulama dilimine otomatik geçilmez.
+
+İnceleme görüntüleri: /tmp/repovitrin-cache-flow-20261117/{cache-tr-390.png,cache-en-1440.png,refresh-tr-390.png,refresh-source-tr-390.png}. Tam dosya listesi final commit kapsamındadır.
+
+Commit kapsamı: AGENTS.md, README.md, next.config.ts (yalnız D042 logging); docs/{PRODUCT,ARCHITECTURE,DESIGN,DECISIONS,STATUS,TASKS}.md; src/app/page.tsx ve src/app/reports/[id]/page.tsx; src/features/analysis/{actions.ts,live-analysis.tsx,live-report.tsx,report.ts}; src/features/reports/{report-access.tsx,refresh-report.tsx}; src/lib/db/{analysis-cache-schema,analysis-cache,snapshot-schema,snapshots}.ts; src/messages/{tr,en}.json; tests/analysis/{cache,report,capacity,coalescing,locks}.test.{ts,tsx}; tests/db/{analysis-cache,analysis-runs}.test.ts; tests/github/analysis.test.ts; tests/security/actions.test.ts.
+
+Son diff/cached diff/LF/whitespace ve korunan kapsam kontrolleri geçti; index boş. Yeni kod sade ad/yorum/tekrar/soyutlama açısından gözden geçirildi. Yerel kontrollerle paket inceleme/commit için hazır; gerçek15dk/hosting/Next patch ve kullanıcı kabulü/uzak CI açık. Öneri: **feat: integrate analysis cache and refresh flow**. Stage/commit/push/deploy yoktur; kullanıcı incelemesi için durulur.
 
 ## A4.4c — aynı analiz çalışmasını birleştirme, 7 Kasım 2026
 
@@ -37,7 +74,7 @@ Son güncelleme: 7 Kasım 2026 (Europe/Istanbul).
 - Lider crash/çit kaybı veya failure yayını başarısızlığında katılan en fazla bekleme bütçesinden sonra hâlâ aktif work için busy, owner/lease yoksa analysisExpired alır. Otomatik devralma yoktur. DB/OS/network gecikmeleri ve bütün action için mutlak 20s garantisi hâlâ operasyon açık işidir.
 - Kısa metadata ön doğrulamaları global analiz permit'i dışında; giriş ve client bütçeleri korunur. Daha geniş preflight concurrency, session, gerçek Vercel/hosting/failover ve karışık sürüm geçişi ayrıca doğrulanmalı. Eski sürümle karışık traffic, birleştirme garantisi değildir.
 - Normal cache hit/miss/force-refresh ve kaynak/zaman sunumu, cache yazımında global çit/rapor erişim semantiği açık. Birleştirme bu akışın tamamlanması değildir. PNG cache, karşılaştırma, OG ve A4 bütünü açık.
-- Sonraki somut adım kullanıcı incelemesi/commit ve yeni CI; ardından yeni yetkiyle normal analiz cache entegrasyonunun küçük dilimini belirlemek. Bu tur sonraki dilime geçilmez.
+- Kullanıcı A4.4c 0050265 main commit/push ve CI #18 başarısını ekran görüntüsü kaynağıyla bildirdi; bağımsız sorgu yapılmadı. Yeni yetkili A4.4d yukarıdadır.
 
 ### Commit kapsamı
 

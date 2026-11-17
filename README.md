@@ -156,3 +156,10 @@ Bütün instance'larda aynı limit gerekir; etkin permit varken farklı ayar con
 Güncel analyze sırası A4.4b'den şu noktada farklıdır: her çağrının kendi giriş kotası ve GitHub kimlik/repo uygunluk metadata kontrolünden sonra mevcut scope kilidi lider seçer. Yalnız lider global permit ve 60s scope hakkını tüketir; README/puanlama işi tekrarlanmaz. Metadata ön kontrolü global permit dışında kaldığı için tüm GitHub çağrılarının global beşle sınırlı olduğu söylenmez.
 
 Katılanlar owner/scope/rulesVersion'a bağlı tokensız analysisRuns sonucunu max8s/9 kontrol ile bekler. Bu kayıt en fazla mevcut lease bitimine (45s) kadar yaşar; analysisCache değildir. Complete/incomplete/error politikası ve arıza ayrımı ARCHITECTURE A4.4c'dedir. Ayrı rapor tokenları üretilir; analiz zamanı ve snapshot bitişi yenilenmez. Yeni env/dependency yoktur; bütün süreçlerin aynı sürüm/DB/kurallarla çalışması gerekir. Normal cache/force-refresh arayüzü, hosting/failover ve yayın hâlâ açık.
+
+
+## A4.4d — cache, yenileme ve rapor kaynağı
+
+Normal analiz IP/kimlik/repo uygunluk doğrulamasından sonra 15dk complete cache kullanabilir. Hit README/motor/global permit/60s tüketmez; ayrı private erişimi orijinal analiz/snapshot süresiyle üretir. Miss/force mevcut lider/kilit/permit/60s yolundadır. Kayıtlı rapordaki “GitHub verileriyle yeniden analiz et” cache'i atlar, hata durumunda mevcut raporu/adresi korur. Kaynak ve UTC zaman raporda saklanır; reload/TR–EN yeni analiz başlatmaz. Eski raporlar kaynak bilgisi yok etiketiyle okunur; eski cache'te snapshot zaman anchor'ı yoksa yeniden kullanmak yerine gerçek analiz gerekir.
+
+Yeni env/dependency gerekmez. Server Function otomatik argüman logu read token gizliliği için kapalıdır; safe hata logları sürer. Çalışan Next sürecini yeniden başlatın. Yerel dev/build uyarısının Next patch incelemesi TASKS A6'da açıktır; bu tur package sürümü değiştirilmedi. Deployment yetkisi veya bütün A4 kapanışı yoktur.

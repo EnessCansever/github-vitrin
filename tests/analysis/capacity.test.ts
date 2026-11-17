@@ -10,6 +10,7 @@ import {input, repo} from "../scoring/fixtures";
 
 const state = vi.hoisted(() => ({permits: new Map<string, number>(), sequence: 0}));
 const github = vi.hoisted(() => ({profile: vi.fn(), repository: vi.fn(), readme: vi.fn(), profileReadme: vi.fn()}));
+vi.mock("../../src/lib/db/analysis-cache", () => ({readAnalysisCache: vi.fn(async () => ({status: "miss"}))}));
 vi.mock("../../src/lib/db/analysis-runs", () => ({failAnalysisRun: vi.fn(async () => {}), waitForAnalysis: vi.fn(async () => null)}));
 vi.mock("../../src/lib/github/client", () => ({GitHubClient: vi.fn(function () {
   return {getProfile: github.profile, getRepository: github.repository, getReadme: github.readme, getProfileReadme: github.profileReadme};

@@ -1,13 +1,13 @@
 import {beforeEach, expect, it, vi} from "vitest";
 import {waitForAnalysis, failAnalysisRun, runSchema, type AnalysisRun} from "../../src/lib/db/analysis-runs";
-import {createSnapshot, createJoinedSnapshot} from "../../src/lib/db/snapshots";
+import {createSnapshot, createJoinedSnapshot, createCachedSnapshot} from "../../src/lib/db/snapshots";
 import {analysisScope} from "../../src/lib/db/analysis-locks";
 import {analysisJoin, analysisLeaseMs} from "../../src/config/request-limits";
 import {reportSchema} from "../../src/lib/db/snapshot-schema";
 import {StorageError} from "../../src/lib/db/errors";
 import {report} from "./fixtures";
 
-const db = vi.hoisted(() => ({get: vi.fn(), index: vi.fn(), find: vi.fn(), fence: vi.fn(), insert: vi.fn(), runInsert: vi.fn(), update: vi.fn(), capacity: vi.fn(), start: vi.fn(), commit: vi.fn(), abort: vi.fn(), end: vi.fn(), active: false}));
+const db = vi.hoisted(() => ({get: vi.fn(), index: vi.fn(), cache: vi.fn(), find: vi.fn(), fence: vi.fn(), insert: vi.fn(), runInsert: vi.fn(), update: vi.fn(), capacity: vi.fn(), start: vi.fn(), commit: vi.fn(), abort: vi.fn(), end: vi.fn(), active: false}));
 vi.mock("../../src/lib/db/client", async original => ({...await original<typeof import("../../src/lib/db/client")>(), getDatabase: db.get}));
 const lock = {key: analysisScope(1, [10]), owner: "11111111-1111-4111-8111-111111111111", expiresAt: "2026-11-07T00:00:45.000Z"};
 const permit = {owner: "22222222-2222-4222-8222-222222222222", expiresAt: lock.expiresAt};
@@ -21,12 +21,13 @@ beforeEach(() => {
   db.start.mockReset().mockImplementation(() => {db.active = true;});
   db.commit.mockReset().mockImplementation(async () => {db.active = false;});
   db.abort.mockReset().mockImplementation(async () => {db.active = false;}); db.end.mockReset().mockResolvedValue(undefined);
-  for (const name of ["index", "insert", "runInsert", "update"] as const) db[name].mockReset().mockResolvedValue({acknowledged: true});
+  for (const name of ["index", "cache", "insert", "runInsert", "update"] as const) db[name].mockReset().mockResolvedValue({acknowledged: true});
   db.find.mockReset().mockResolvedValue(null);
   db.fence.mockReset().mockResolvedValue(lock); db.capacity.mockReset().mockResolvedValue({acknowledged: true, matchedCount: 1});
   db.get.mockReset().mockResolvedValue({client: {startSession: () => session}, collection: (name: string) => {
     if (name === "requestLocks") return {findOneAndUpdate: db.fence};
     if (name === "analysisCapacity") return {updateOne: db.capacity};
+    if (name === "analysisCache") return {createIndex: db.index, replaceOne: db.cache, findOne: db.find};
     if (name === "analysisRuns") return {createIndex: db.index, findOne: db.find, insertOne: db.runInsert, updateOne: db.update};
     if (name === "analysisSnapshots") return {createIndex: db.index, insertOne: db.insert};
     throw new Error("Unexpected collection");
@@ -50,7 +51,7 @@ it.each([false, true])("gives joined callers distinct access with the original d
   vi.advanceTimersByTime(2000);
   const first = await createJoinedSnapshot(lock, "1.0.0"), second = await createJoinedSnapshot(lock, "1.0.0");
   expect(first.id).not.toBe(second.id); expect(first.readToken).not.toBe(second.readToken);
-  expect(first.report).toEqual(value.outcome.status === "success" ? value.outcome.report : null);
+  expect(first.report).toEqual(value.outcome.status === "success" ? {...value.outcome.report, source: "joined"} : null);
   expect(db.insert.mock.calls[0][0].createdAt).toEqual(value.completedAt);
   expect(db.insert.mock.calls[0][0].expiresAt).toEqual(db.insert.mock.calls[1][0].expiresAt);
   expect(db.capacity).not.toHaveBeenCalled(); expect(db.fence).not.toHaveBeenCalled();
@@ -122,4 +123,21 @@ it("sanitizes read/write errors and cannot publish success if either atomic inse
   expect(db.abort).toHaveBeenCalledTimes(1); expect(db.commit).not.toHaveBeenCalled();
   db.get.mockRejectedValue(new StorageError("configuration"));
   await expect(waitForAnalysis(lock, "1.0.0", Date.now() + 20000)).rejects.toMatchObject({code: "configuration"});
+});
+
+
+it("atomically writes anchored cache and creates isolated cache access without extending snapshot expiry", async () => {
+  const original = await createSnapshot({...report(), source: "fresh", checkedAt: new Date().toISOString()}, lock, permit, true);
+  const stored = db.insert.mock.calls[0][0];
+  const cached = db.cache.mock.calls[0][1];
+  expect(cached.snapshotCreatedAt).toEqual(stored.createdAt);
+  expect(cached.expiresAt.getTime() - Date.parse(cached.report.checkedAt)).toBe(900000);
+  db.find.mockResolvedValue(cached); db.capacity.mockClear(); db.fence.mockClear();
+  vi.advanceTimersByTime(2000);
+  const next = await createCachedSnapshot({profileId: 1, repoIds: [10], rulesVersion: "1.0.0"});
+  expect(next.report).toEqual({...stored.report, source: "cache"});
+  expect(next.id).not.toBe(original.id); expect(next.readToken).not.toBe(original.readToken);
+  expect(db.insert.mock.calls[1][0].createdAt).toEqual(stored.createdAt);
+  expect(db.insert.mock.calls[1][0].expiresAt).toEqual(stored.expiresAt);
+  expect(db.capacity).not.toHaveBeenCalled(); expect(db.fence).not.toHaveBeenCalled();
 });

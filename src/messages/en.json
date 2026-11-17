@@ -478,7 +478,14 @@
         "description": "Other analyses are running. Try again when capacity becomes available; this request has not been queued."
       }
     },
-    "partialSummary": "Known findings and category details remain available below."
+    "partialSummary": "Known findings and category details remain available below.",
+    "sources": {
+      "fresh": "Fresh analysis",
+      "cache": "From cache · No new analysis",
+      "refresh": "Refreshed from GitHub",
+      "joined": "Shared concurrent analysis result",
+      "legacy": "Stored analysis · Source unavailable"
+    }
   },
   "SavedReport": {
     "title": "Analysis report",
@@ -498,7 +505,12 @@
     "accessNote": "Anyone with the full link can open this report. Share it only with people you want to grant access.",
     "copied": "Report link copied.",
     "manual": "Automatic copying failed. Select the link below and copy it manually.",
-    "manualLabel": "Full report link"
+    "manualLabel": "Full report link",
+    "refresh": "Reanalyze with fresh GitHub data",
+    "refreshPending": "Refreshing…",
+    "refreshHint": "Bypassing cache. This report stays available while refreshing.",
+    "originalKept": "Your current report and link are unchanged.",
+    "refreshSaveFailed": "The new result could not be saved."
   },
   "Card": {
     "title": "Share card",

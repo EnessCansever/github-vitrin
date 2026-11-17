@@ -81,3 +81,10 @@ Bu tur yalnız veri katmanıdır; gerçek analiz hâlâ mevcut GitHub/motor/snap
 ## A4.4c — eşzamanlı çalışmanın paylaşılması
 
 Aynı doğrulanmış profil/repo kümesi ve mevcut kural sürümünde eşzamanlı çağrılar tek liderin README/puanlama sonucunu paylaşabilir. Her çağrı kendi giriş kotası/doğrulamasından geçer; katılan ikinci global analiz permit'i veya yeni ölçüm üretmez. Minimal kimlik/uygunluk metadata doğrulaması tekrarlanabilir; yalnız tek lider gerçek analiz verisini getirip puanlar. Katılanlar birbirlerinin rapor erişimini almaz, ayrı snapshot/token üretilir; checkedAt, snapshot kayıt zamanı ve 30 günlük bitiş aynı kalır. Incomplete sonuç mevcut null/bilinen kanıtlarıyla aktarılabilir, complete cache'e girmez. Bekleme sınırlıdır; sonuç yayınlanamıyorsa yeni analiz yapılmış gibi davranılmaz. Normal 15 dakikalık cache ve force-refresh kullanıcı akışı henüz bağlanmadı.
+
+
+## A4.4d — normal kullanım ve zorunlu yenileme
+
+Geçerli complete analiz 15 dakika aynı doğrulanmış GitHub kimliği, repo kümesi ve kural sürümü için kullanılabilir; IP/uygunluk doğrulaması sürer, hit yeni analiz veya 60s/global kapasite tüketmez. Yeni private erişim üretilir, orijinal veri zamanı ve snapshot geçerliliği uzatılmaz. Miss ve zorunlu yenileme mevcut kota/kilit/birleştirme/global kurallarından geçer. Yenileme başarısızsa eski rapor erişilebilir kalır; incomplete/error complete cache'e yazılmaz.
+
+Kaynak (yeni/cache/yenilenmiş/eşzamanlı çalışma) raporla saklanır, TR/EN ve yeniden açmada korunur. Eski raporda kaynak bilinmiyor olarak gösterilir. Geçmiş sonuç yenileme yüzünden değiştirilmez; karşılaştırma veya gelişim iddiası bu dilimde eklenmedi.

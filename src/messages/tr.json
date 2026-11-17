@@ -478,7 +478,14 @@
         "description": "Şu an başka analizler çalışıyor. Bir yer açıldığında yeniden deneyebilirsin; otomatik sıraya alınmadın."
       }
     },
-    "partialSummary": "Bilinen bulguları ve kategori ayrıntılarını aşağıda inceleyebilirsin."
+    "partialSummary": "Bilinen bulguları ve kategori ayrıntılarını aşağıda inceleyebilirsin.",
+    "sources": {
+      "fresh": "Yeni analiz",
+      "cache": "Önbellekten · Yeni analiz yapılmadı",
+      "refresh": "GitHub verileri yeniden alınarak yenilendi",
+      "joined": "Eşzamanlı analiz sonucu kullanıldı",
+      "legacy": "Kayıtlı analiz · Kaynak bilgisi mevcut değil"
+    }
   },
   "SavedReport": {
     "title": "Analiz raporu",
@@ -498,7 +505,12 @@
     "accessNote": "Tam bağlantıya sahip kişiler bu raporu açabilir. Bağlantıyı yalnız erişmesini istediğin kişilerle paylaş.",
     "copied": "Rapor bağlantısı kopyalandı.",
     "manual": "Otomatik kopyalama yapılamadı. Aşağıdaki bağlantıyı seçip elle kopyalayabilirsin.",
-    "manualLabel": "Tam rapor bağlantısı"
+    "manualLabel": "Tam rapor bağlantısı",
+    "refresh": "GitHub verileriyle yeniden analiz et",
+    "refreshPending": "Yenileniyor…",
+    "refreshHint": "Önbellek atlanıyor. Bu rapor yenileme sırasında erişilebilir kalır.",
+    "originalKept": "Mevcut raporun ve bağlantısı korundu.",
+    "refreshSaveFailed": "Yeni sonuç kaydedilemedi."
   },
   "Card": {
     "title": "Paylaşım kartı",

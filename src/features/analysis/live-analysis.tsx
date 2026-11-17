@@ -51,7 +51,7 @@ export function LiveAnalysis({selection, onProfile}: {selection: Selection; onPr
     setView("select");
   }
 
-  async function run(ids: string[]) {
+  async function run(ids: string[], force = false) {
     if (busy.current) return;
     const id = ++requestId.current;
     selected.current = [...ids];
@@ -61,7 +61,7 @@ export function LiveAnalysis({selection, onProfile}: {selection: Selection; onPr
     setPending(true);
     let next: AnalysisResponse;
     try {
-      next = await analyze({username: selection.profile.login, profileId: selection.profile.id,
+      next = await analyze({force, username: selection.profile.login, profileId: selection.profile.id,
         repos: selection.repos.filter(repo => ids.includes(repo.id)).map(repo => ({id: Number(repo.id), name: repo.name}))});
     } catch {
       next = {status: "error", code: "network"};
@@ -119,7 +119,7 @@ export function LiveAnalysis({selection, onProfile}: {selection: Selection; onPr
             </>
           )}
           {!pending && response && (
-            <button type="button" className="button button-secondary report-retry" onClick={() => run(selected.current)}>
+            <button type="button" className="button button-secondary report-retry" onClick={() => run(selected.current, response?.status === "success" || unsaved !== null)}>
               <RotateCcw size={16} aria-hidden="true" />{unsaved ? saved("retrySave") : t(response.status === "error" || response.report.status === "incomplete" ? "retry" : "reanalyze")}
             </button>
           )}

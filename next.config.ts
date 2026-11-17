@@ -3,6 +3,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const config: NextConfig = {
   agentRules: false,
+  logging: {serverFunctions: false},
   experimental: {serverActions: {bodySizeLimit: "8kb"}},
   async headers() {
     return [{source: "/reports/:path*", headers: [

@@ -21,7 +21,7 @@ function record(): CacheRecord {
   return {
     _id: cacheKey(scope), cacheVersion: 1, profileId: 1, selectedRepoIds: [10],
     scopeHash: scopeHash([10]), rulesVersion: "1.0.0", fetchedAt: now,
-    expiresAt: new Date(now.getTime() + ANALYSIS_CACHE_TTL_MS), report: freshReport(),
+    expiresAt: new Date(now.getTime() + ANALYSIS_CACHE_TTL_MS), snapshotCreatedAt: now, report: freshReport(),
   };
 }
 
@@ -71,7 +71,7 @@ it("returns a distinct miss without touching locks, snapshots or counters", asyn
 it("returns unchanged report time, recommendations and evidence without renewing cache expiry", async () => {
   const value = record(); db.find.mockResolvedValue(value);
   vi.advanceTimersByTime(120_000);
-  expect(await readAnalysisCache(scope)).toEqual({status: "hit", report: value.report, expiresAt: value.expiresAt.toISOString()});
+  expect(await readAnalysisCache(scope)).toEqual({status: "hit", report: value.report, expiresAt: value.expiresAt.toISOString(), snapshotCreatedAt: now.toISOString()});
   expect(db.find.mock.calls[0][0]).toMatchObject({_id: cacheKey(scope), $expr: {$and: [
     {$gt: ["$expiresAt", "$$NOW"]}, {$lte: ["$fetchedAt", "$$NOW"]},
   ]}});
@@ -103,7 +103,7 @@ it("reads the same three-repo entry for either order without mutating either rep
   const value = freshReport(3);
   const ids = [...new Set(value.checks.filter(check => check.scope.kind === "repo").map(check => check.scope.id))];
   const lease = {...lock, key: analysisScope(1, ids)};
-  await writeAnalysisCache(value, lease);
+  await writeAnalysisCache(value, lease, now);
   const stored = db.replace.mock.calls[0][1]; db.find.mockResolvedValue(stored);
   const reversed = [...ids].reverse();
   const result = await readAnalysisCache({...scope, repoIds: reversed});
@@ -126,8 +126,8 @@ it("writes only safe analysis data; cache sharing grants no stored-report creden
   expect(db.replace.mock.calls[0][2]).toMatchObject({session, upsert: true, maxTimeMS: 4000, ignoreUndefined: true});
   expect(db.fence.mock.calls[0][2].session).toBe(session);
   expect(db.commit).toHaveBeenCalledTimes(1);
-  db.find.mockResolvedValue(stored);
-  expect(Object.keys(await readAnalysisCache(scope)).sort()).toEqual(["status", "report", "expiresAt"].sort());
+  db.find.mockResolvedValue({...stored, snapshotCreatedAt: now});
+  expect(Object.keys(await readAnalysisCache(scope)).sort()).toEqual(["status", "report", "expiresAt", "snapshotCreatedAt"].sort());
 });
 
 it("anchors expiry to data collection rather than the later insertion time", async () => {
@@ -201,4 +201,16 @@ it("preserves configuration errors distinctly and rejects unacknowledged writes"
   db.replace.mockResolvedValue({acknowledged: false});
   await expect(writeAnalysisCache(freshReport(), lock)).rejects.toMatchObject({code: "unavailable"});
   expect(db.commit).not.toHaveBeenCalled();
+});
+
+
+it("does not reuse a legacy cache entry whose original snapshot creation time is unavailable", async () => {
+  const value = record(); delete value.snapshotCreatedAt; db.find.mockResolvedValue(value);
+  expect(await readAnalysisCache(scope)).toEqual({status: "miss"});
+});
+
+
+it("rejects a future snapshot anchor instead of extending cached report access", async () => {
+  db.find.mockResolvedValue({...record(), snapshotCreatedAt: new Date(now.getTime() + 1)});
+  await expect(readAnalysisCache(scope)).rejects.toMatchObject({code: "invalid_record"});
 });

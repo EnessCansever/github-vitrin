@@ -1,15 +1,16 @@
 import "server-only";
 
+import type {ClientSession} from "mongodb";
 import {randomUUID} from "node:crypto";
 import type {Report} from "../../features/analysis/report";
 import {getDatabase, dbMaxTimeMs, dbWriteConcern} from "./client";
 import {analysisScope, lockFilter, type AnalysisLock, type LockRecord} from "./analysis-locks";
-import {ANALYSIS_CACHE_TTL_MS, CACHE_VERSION, cacheKey, cacheSchema, cacheScope, type CacheRecord} from "./analysis-cache-schema";
+import {ANALYSIS_CACHE_TTL_MS, makeCacheRecord, cacheKey, cacheSchema, cacheScope, type CacheRecord} from "./analysis-cache-schema";
 import {StorageError} from "./errors";
-import {reportSchema, scopeHash} from "./snapshot-schema";
+import {reportSchema} from "./snapshot-schema";
 
-export async function readAnalysisCache(input: unknown): Promise<
-  {status: "hit"; report: Report; expiresAt: string} | {status: "miss"}
+export async function readAnalysisCache(input: unknown, session?: ClientSession): Promise<
+  {status: "hit"; report: Report; expiresAt: string; snapshotCreatedAt: string} | {status: "miss"}
 > {
   const scope = cacheScope.safeParse(input);
   if (!scope.success) throw new StorageError("invalid_report");
@@ -18,21 +19,23 @@ export async function readAnalysisCache(input: unknown): Promise<
     const collection = (await getDatabase()).collection<CacheRecord>("analysisCache");
     const record = await collection.findOne({_id: key, $expr: {$and: [
       {$gt: ["$expiresAt", "$$NOW"]}, {$lte: ["$fetchedAt", "$$NOW"]},
-    ]}}, {maxTimeMS: dbMaxTimeMs});
+    ]}}, {maxTimeMS: dbMaxTimeMs, ...(session ? {session} : {})});
     if (!record) return {status: "miss"};
     const parsed = cacheSchema.safeParse(record);
     if (!parsed.success || parsed.data._id !== key) throw new StorageError("invalid_record");
     const cached = parsed.data;
     const now = Date.now();
+    if (!cached.snapshotCreatedAt) return {status: "miss"};
     if (cached.expiresAt.getTime() <= now || cached.fetchedAt.getTime() > now) return {status: "miss"};
-    return {status: "hit", report: cached.report, expiresAt: cached.expiresAt.toISOString()};
+    if (cached.snapshotCreatedAt.getTime() > now) throw new StorageError("invalid_record");
+    return {status: "hit", report: cached.report, expiresAt: cached.expiresAt.toISOString(), snapshotCreatedAt: cached.snapshotCreatedAt.toISOString()};
   } catch (error) {
     if (error instanceof StorageError) throw error;
     throw new StorageError("unavailable");
   }
 }
 
-export async function writeAnalysisCache(input: unknown, lock: AnalysisLock): Promise<void> {
+export async function writeAnalysisCache(input: unknown, lock: AnalysisLock, snapshotCreatedAt?: Date): Promise<void> {
   const report = reportSchema.safeParse(input);
   if (!report.success || report.data.status !== "complete") throw new StorageError("invalid_report");
   const value = report.data;
@@ -42,12 +45,7 @@ export async function writeAnalysisCache(input: unknown, lock: AnalysisLock): Pr
   const expiresAt = new Date(fetchedAt.getTime() + ANALYSIS_CACHE_TTL_MS);
   const now = Date.now();
   if (fetchedAt.getTime() > now || expiresAt.getTime() <= now) throw new StorageError("invalid_report");
-  const parsed = cacheSchema.safeParse({
-    _id: cacheKey({profileId: value.profile.id, repoIds: ids, rulesVersion: value.rulesVersion}),
-    cacheVersion: CACHE_VERSION, profileId: value.profile.id, selectedRepoIds: ids,
-    scopeHash: scopeHash(ids), rulesVersion: value.rulesVersion, fetchedAt, expiresAt, report: value,
-  });
-  if (!parsed.success) throw new StorageError("invalid_report");
+  const record = makeCacheRecord(value, snapshotCreatedAt);
   try {
     const database = await getDatabase();
     const collection = database.collection<CacheRecord>("analysisCache");
@@ -65,7 +63,7 @@ export async function writeAnalysisCache(input: unknown, lock: AnalysisLock): Pr
       const owned = await database.collection<LockRecord>("requestLocks").findOneAndUpdate(lockFilter(lock),
         {$set: {writeFence: randomUUID()}}, {session, returnDocument: "after", maxTimeMS: remaining()});
       if (!owned) throw new StorageError("lock_lost");
-      const result = await collection.replaceOne({_id: parsed.data._id}, parsed.data,
+      const result = await collection.replaceOne({_id: record._id}, record,
         {upsert: true, session, ignoreUndefined: true, maxTimeMS: remaining()});
       if (!result.acknowledged) throw new StorageError("unavailable");
       remaining();

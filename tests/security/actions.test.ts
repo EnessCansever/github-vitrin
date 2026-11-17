@@ -12,6 +12,7 @@ import {reportSchema} from "../../src/lib/db/snapshot-schema";
 import {report} from "../db/fixtures";
 import {input} from "../scoring/fixtures";
 
+vi.mock("../../src/lib/db/analysis-cache", () => ({readAnalysisCache: vi.fn(async () => ({status: "miss"}))}));
 vi.mock("../../src/lib/db/analysis-runs", () => ({failAnalysisRun: vi.fn(async () => {}), waitForAnalysis: vi.fn(async () => null)}));
 vi.mock("../../src/lib/db/analysis-capacity", () => ({
   acquireAnalysisCapacity: vi.fn(async () => ({acquired: true, permit: {
