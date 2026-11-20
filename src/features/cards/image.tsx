@@ -3,7 +3,7 @@ import "server-only";
 import {readFile} from "node:fs/promises";
 import {join} from "node:path";
 import {ImageResponse} from "next/og";
-import {cardFormats, type CardContent, type CardFormat} from "./types";
+import {cardFormats, type CardContent, type ProgressContent, type CardFormat} from "./types";
 
 const paper = "#f4eee2", blue = "#1845f5", lime = "#d4eb52";
 let fonts: Promise<{name: string; data: ArrayBuffer; weight: 400 | 500 | 800; style: "normal"}[]> | undefined;
@@ -209,10 +209,36 @@ function PostCard({data, texture}: {data: CardContent; texture: string}) {
   </div>;
 }
 
-export async function renderCard(data: CardContent, format: CardFormat): Promise<ArrayBuffer> {
+function ProgressCard({data, format, texture}: {data: ProgressContent; format: CardFormat; texture: string}) {
+  const wide = format === "landscape";
+  const story = format === "story";
+  const row = {display: "flex", justifyContent: "space-between", alignItems: "baseline"} as const;
+  return <div style={{...cardFormats[format], display: "flex", position: "relative", flexDirection: "column", justifyContent: "space-between",
+    padding: story ? "164px 64px 158px" : wide ? "32px 46px" : "62px 54px", background: "#012bc1", color: paper, fontFamily: "Body", fontWeight: 500}}>
+    <div style={row}><span style={{fontFamily: "Display", fontSize: wide ? 48 : 68, fontWeight: 800}}>{data.brand}</span>
+      <span style={{fontFamily: "Mono", fontSize: Math.min(36, 1100 / (data.username.length + 1)), fontWeight: 400}}>@{data.username}</span></div>
+    <div style={{display: "flex", flexDirection: wide ? "row" : "column", alignItems: wide ? "baseline" : "flex-start", justifyContent: "space-between"}}>
+      <span style={{fontSize: story ? 116 : wide ? 57 : 86, fontFamily: "Display", fontWeight: 800}}>{data.title}</span>
+      <span style={{fontSize: story ? 192 : wide ? 92 : 146, color: lime, fontFamily: "Display", fontWeight: 800}}>{data.delta}</span>
+    </div>
+    <div style={{display: "flex", flexDirection: story ? "column" : "row", gap: story ? 38 : 50, padding: "18px 0", borderTop: "1px solid", borderBottom: "1px solid"}}>
+      {data.measurements.map(item => <div key={item.label} style={{display: "flex", flexDirection: "column", flex: story ? "none" : 1}}>
+        <span style={{fontSize: wide ? 25 : 36}}>{item.label}</span>
+        <span style={{fontSize: story ? 134 : wide ? 64 : 92, fontFamily: "Display", fontWeight: 800}}>{item.score}</span>
+        <span style={{fontSize: story ? 36 : wide ? 24 : 28, fontFamily: "Mono", fontWeight: 400}}>{item.date}</span>
+      </div>)}
+    </div>
+    <div style={row}>{data.categories.map(category => <span key={category.label} style={{fontSize: wide ? 30 : 39}}>{category.label} {category.delta}</span>)}</div>
+    <span style={{fontSize: wide ? 29 : 39}}>{data.signals}</span>
+    <div style={{...row, borderTop: "1px solid", paddingTop: 14, fontSize: story ? 30 : wide ? 23 : 26}}><span>{data.scope}</span><span>{data.signature}</span></div>
+    {PrintTexture({src: texture, format})}
+  </div>;
+}
+
+export async function renderCard(data: CardContent | ProgressContent, format: CardFormat): Promise<ArrayBuffer> {
   // Satori discovers embedded images from the expanded element tree.
   const texture = await loadTexture();
-  const content = ({story: StoryCard, post: PostCard, landscape: LandscapeCard}[format])({data, texture});
+  const content = "measurements" in data ? ProgressCard({data, format, texture}) : ({story: StoryCard, post: PostCard, landscape: LandscapeCard}[format])({data, texture});
   const image = new ImageResponse(content, {
     ...cardFormats[format], fonts: await loadFonts(),
   });

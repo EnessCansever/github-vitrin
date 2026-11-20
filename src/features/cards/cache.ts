@@ -5,13 +5,13 @@ import {Binary} from "mongodb";
 import {dbMaxTimeMs, dbWriteConcern, getDatabase} from "../../lib/db/client";
 import {StorageError} from "../../lib/db/errors";
 import {renderCard} from "./image";
-import type {CardContent, CardFormat} from "./types";
+import type {CardContent, ProgressContent, CardFormat} from "./types";
 
-const templateVersion = 1;
 type ImageRecord = {_id: string; expiresAt: Date; png: Binary};
 
-export async function cachedCard(source: "snapshot" | "share", id: string, expiry: string,
-  locale: "tr" | "en", format: CardFormat, content: CardContent): Promise<ArrayBuffer> {
+export async function cachedCard(source: "snapshot" | "share" | "comparison", id: string | readonly [string, string], expiry: string,
+  locale: "tr" | "en", format: CardFormat, content: CardContent | ProgressContent): Promise<ArrayBuffer> {
+  const templateVersion = source === "comparison" && format === "story" ? 2 : 1;
   const key = createHash("sha256")
     .update(JSON.stringify([source, id, templateVersion, locale, format, content])).digest("hex");
   const expiresAt = new Date(expiry);

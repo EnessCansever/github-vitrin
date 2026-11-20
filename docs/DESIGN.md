@@ -232,3 +232,7 @@ Yönetim sayfasında kalıcı kapatma ve fiziksel silme ayrı açıklanır; pend
 Yeni görsel yön veya indirilebilir format yoktur: OG, onaylı1200×630 kobalt afişin aynı renderer/font/mühür/doku kompozisyonudur. Public DTO'nun gerçek kullanıcı adı, toplamı, profil tipi, kategorileri ve ilk görevi aynı veri eşlemesinden gelir. Tarih PNG'de mevcut UTC sözleşmesindedir; web raporu browser zone göstermeye devam eder. TR/EN dört tip,39 karakter kullanıcı,97 karakter repo,77,5/62,3/100 ve önerisiz complete sentetik tam PNG'lerde/390px galeride incelendi. Ana odak kimlik/tip/puan; destek metinleri küçük kaldığından fiziksel cihaz/gerçek sosyal platform görünümü ayrıca doğrulanmalıdır. Kullanıcı görsel kabulü açık.
 
 Gönderi kartı 1080×1350 tuvalde marka ve kullanıcı adını üst sıraya, başlık ve mührü iki ayrı alana yerleştirir. Puan, kategori şeridi ve ilk görev altta sıralanır. Tarih, imza ve kapsam alt bölümde kalır. Üç format aynı yerel fontları, baskı dokusunu ve kobalt/krem/lime paletini kullanır.
+
+Gelişim kartında kobalt zemin üstünde krem başlık, işaretli fark ve yönü belirten metin bulunur. Story iki ölçümü alt alta, gönderi yan yana yerleştirir. Yatay kartta yön ve fark aynı satırdadır. Tarihler UTC etiketi taşır. Kategori farklarının altında geçen ve gerileyen kontrol sayıları ayrı gösterilir.
+
+Gelişim Story şablonunda 1080×1920 tuvalin yan payı 64 px, üst payı 164 px ve alt payı 158 px. Başlık 116 px, toplam fark 192 px, ölçüm puanları 134 px ve hemen altlarındaki UTC tarihleri 36 px kullanır.

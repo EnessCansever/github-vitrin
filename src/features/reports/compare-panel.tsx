@@ -6,6 +6,7 @@ import {useReportTime} from "../../components/report-time";
 import type {Report} from "../analysis/report";
 import {loadComparison} from "./actions";
 import type {ComparisonResponse} from "./comparison";
+import {CardStudio} from "../cards/card-studio";
 import {ComparisonView} from "./comparison-view";
 import {HISTORY_KEY, parseReportLink, rememberReport, reportHistory, type HistoryEntry} from "./history";
 import {RetryNotice} from "../../components/retry-notice";
@@ -20,6 +21,7 @@ export function ComparePanel({id, report, expiresAt}: {id: string; report: Repor
   const [invalid, setInvalid] = useState(false);
   const [pending, setPending] = useState(false);
   const [response, setResponse] = useState<ComparisonResponse | null>(null);
+  const [previous, setPrevious] = useState<{id: string; token: string} | null>(null);
   const busy = useRef(false);
   const version = useRef(0);
   const result = useRef<HTMLDivElement>(null);
@@ -63,7 +65,7 @@ export function ComparePanel({id, report, expiresAt}: {id: string; report: Repor
     busy.current = true; setPending(true); setResponse(null); setInvalid(false);
     try {
       const value = await loadComparison({before: {id: before.id, token: before.readToken}, after: {id: after.id, token: after.readToken}});
-      if (current === version.current) {setResponse(value); result.current?.focus({preventScroll: true});}
+      if (current === version.current) {setResponse(value); setPrevious({id: before.id, token: before.readToken}); result.current?.focus({preventScroll: true});}
     } catch {
       if (current === version.current) setResponse({status: "unavailable"});
     } finally {
@@ -100,7 +102,10 @@ export function ComparePanel({id, report, expiresAt}: {id: string; report: Repor
     </form>
     <div ref={result} tabIndex={-1} aria-label={t("result")}>
       <p role="status" aria-live="polite">{pending ? t("pending") : response ? t(response.status === "success" ? "ready" : "failed") : ""}</p>
-      {response?.status === "success" ? <ComparisonView comparison={response.comparison} /> : response && <>
+      {response?.status === "success" ? <>
+        <ComparisonView comparison={response.comparison} />
+        {previous && response.comparison.status === "compared" && <CardStudio id={id} complete previous={previous} />}
+      </> : response && <>
         <p role="alert">{t(`errors.${response.status}`)}</p>
         <RetryNotice retryAt={response.status === "rateLimit" ? response.retryAt : undefined} />
       </>}

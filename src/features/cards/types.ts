@@ -29,4 +29,16 @@ export type CardResponse = {
   locale: "tr" | "en";
   width: number;
   height: number;
-} | {status: "error"; code: "invalid" | "missing" | "incomplete" | "unavailable" | "render" | "rateLimit" | "configuration"; retryAt?: string};
+} | {status: "error"; code: "invalid" | "incompatible" | "missing" | "incomplete" | "unavailable" | "render" | "rateLimit" | "configuration"; retryAt?: string};
+
+export type ProgressContent = {
+  username: string;
+  brand: string;
+  title: string;
+  delta: string;
+  measurements: {label: string; date: string; score: string}[];
+  categories: {label: string; delta: string}[];
+  signals: string;
+  scope: string;
+  signature: string;
+};

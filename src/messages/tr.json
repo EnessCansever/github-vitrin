@@ -513,6 +513,12 @@
     "refreshSaveFailed": "Yeni sonuç kaydedilemedi."
   },
   "Card": {
+    "progress": "Gelişim kartı",
+    "progressIntro": "İki analiz tarihi, vitrin puanları ve kontrol farklarını önizle.",
+    "gain": "Vitrin puanı arttı",
+    "loss": "Vitrin puanı azaldı",
+    "flat": "Vitrin puanı aynı",
+    "transitions": "İyileşen kontrol: {up} · Gerileyen kontrol: {down}",
     "title": "Paylaşım kartı",
     "close": "Önizlemeyi kapat",
     "intro": "Görsel kullanıcı adını, puanını ve ilk öncelikli önerini içerir. İndirmeden önce önizlemeyi kontrol et.",
@@ -527,6 +533,7 @@
     "retry": "Kartı yeniden hazırla",
     "incomplete": "Eksik analizde toplam puan hesaplanmadığından puanlı paylaşım kartı üretilemez. Önce yeni bir analizle verileri tamamla.",
     "errors": {
+      "incompatible": "Bu raporlar karşılaştırılamıyor.",
       "invalid": "Kart isteği geçersiz. Raporu yeniden açıp tekrar dene.",
       "missing": "Rapor bağlantısı geçersiz veya süresi dolmuş olabilir. Raporu yeniden aç.",
       "incomplete": "Bu rapor eksik; puanlı kart üretilemiyor.",

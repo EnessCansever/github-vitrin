@@ -80,3 +80,38 @@ it("reuses one authorized PNG and separates format and language", async () => {
   expect(await generateCard(input)).toEqual({status: "error", code: "unavailable"});
   expect(renderCard).toHaveBeenCalledTimes(3);
 });
+
+it("binds cached progress cards to both authorized snapshots, their earliest expiry, format and language", async () => {
+  const after = (await readSnapshot(id, token))!;
+  const previous = {id: "22222222-2222-4222-8222-222222222222", token: "b".repeat(64)};
+  const before = {...after, id: previous.id, expiresAt: new Date(Date.now() + 30_000).toISOString(),
+    report: {...after.report, checkedAt: "2026-10-27T10:00:00Z"}};
+  const alternate = "33333333-3333-4333-8333-333333333333";
+  vi.mocked(readSnapshot).mockImplementation(async (key, value) => {
+    if (key === id && value === token) return after;
+    if ((key === previous.id || key === alternate) && value === previous.token) return {...before, id: key};
+    return null;
+  });
+  const request = {...input, previous};
+  expect((await generateCard(request)).status).toBe("success");
+  expect((await generateCard(request)).status).toBe("success");
+  expect(entries.size).toBe(1);
+  expect([...entries.values()][0].expiresAt.toISOString()).toBe(before.expiresAt);
+  await generateCard({...request, previous: {...previous, id: alternate}});
+  await generateCard({...request, format: "post"});
+  vi.mocked(getLocale).mockResolvedValue("en");
+  await generateCard(request);
+  expect(entries.size).toBe(4);
+  expect(await generateCard({...request, previous: {...previous, token}})).toMatchObject({code: "missing"});
+  expect(await generateCard({...request, token: previous.token})).toMatchObject({code: "missing"});
+  const failed = async (code: string) => expect(await generateCard(request)).toMatchObject({status: "error", code});
+  before.report.checkedAt = after.report.checkedAt;
+  await failed("incompatible");
+  before.report = {...reportSchema.parse(report(2)), checkedAt: "2026-10-27T10:00:00Z"};
+  await failed("incompatible");
+  before.report = {...reportSchema.parse(report(1, true)), checkedAt: "2026-10-27T10:00:00Z"};
+  await failed("incomplete");
+  before.expiresAt = new Date(0).toISOString();
+  await failed("missing");
+  expect(renderCard).toHaveBeenCalledTimes(4);
+});

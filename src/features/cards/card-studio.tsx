@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useId, useRef, useState} from "react";
 import Image from "next/image";
 import {ImageDown} from "lucide-react";
 import {useLocale, useTranslations} from "next-intl";
@@ -9,7 +9,9 @@ import {generateCard} from "./actions";
 import {cardFormats, type CardFormat, type CardResponse} from "./types";
 import {RetryNotice} from "../../components/retry-notice";
 
-export function CardStudio({id, complete}: {id: string; complete: boolean}) {
+export function CardStudio({id, complete, previous}: {id: string; complete: boolean; previous?: {id: string; token: string}}) {
+  const panelId = useId();
+  const title = previous ? "progress" : "title";
   const t = useTranslations("Card");
   const locale = useLocale();
   const [open, setOpen] = useState(false);
@@ -19,7 +21,7 @@ export function CardStudio({id, complete}: {id: string; complete: boolean}) {
   const [requested, setRequested] = useState<string | null>(null);
   const request = useRef<{key: string; promise: Promise<CardResponse>} | null>(null);
   const heading = useRef<HTMLHeadingElement>(null);
-  const key = `${id}:${format}:${locale}:${attempt}`;
+  const key = `${previous?.id ?? ""}:${id}:${format}:${locale}:${attempt}`;
   const response = preview?.key === key ? preview.response : null;
   const pending = open && response === null;
 
@@ -30,32 +32,32 @@ export function CardStudio({id, complete}: {id: string; complete: boolean}) {
     const token = params.size === 1 ? params.get("token") ?? "" : "";
     const requestKey = `${key}:${token}`;
     if (!request.current || request.current.key !== requestKey) {
-      request.current = {key: requestKey, promise: generateCard({id, token, format}).catch(() => ({status: "error", code: "unavailable"}))};
+      request.current = {key: requestKey, promise: generateCard({id, token, format, previous}).catch(() => ({status: "error", code: "unavailable"}))};
     }
     void request.current.promise.then(result => {
       if (!active) return;
       setPreview({key, response: result.status === "success" && result.locale !== locale ? {status: "error", code: "render"} : result});
     });
     return () => {active = false;};
-  }, [open, complete, id, format, locale, key]);
+  }, [open, complete, id, format, locale, key, previous]);
 
   useEffect(() => {if (open) heading.current?.focus({preventScroll: true});}, [open]);
 
   return (
     <div className="card-studio">
-      <button type="button" className={`button ${complete ? "button-secondary" : "button-disabled"}`} disabled={!complete || pending} aria-expanded={open} aria-controls="card-preview-panel"
+      <button type="button" className={`button ${complete ? "button-secondary" : "button-disabled"}`} disabled={!complete || pending} aria-expanded={open} aria-controls={panelId}
         aria-describedby={!complete ? "card-incomplete" : undefined} onClick={() => setOpen(value => !value)}>
-        <ImageDown size={17} aria-hidden="true" />{t(open ? "close" : "title")}
+        <ImageDown size={17} aria-hidden="true" />{t(open ? "close" : title)}
       </button>
       {!complete && <p id="card-incomplete" className="small muted">{t("incomplete")}</p>}
       {open && (
-        <section id="card-preview-panel" aria-labelledby="card-preview-title" className="card-preview-panel" aria-busy={pending}>
-          <h2 ref={heading} id="card-preview-title" tabIndex={-1}>{t("title")}</h2>
-          <p className="small muted">{t("intro")}</p>
+        <section id={panelId} aria-labelledby={panelId + "-title"} className="card-preview-panel" aria-busy={pending}>
+          <h2 ref={heading} id={panelId + "-title"} tabIndex={-1}>{t(title)}</h2>
+          <p className="small muted">{t(previous ? "progressIntro" : "intro")}</p>
           <fieldset className="card-formats" disabled={pending}>
             <legend>{t("format")}</legend>
             {(Object.keys(cardFormats) as CardFormat[]).map(value => (
-              <label key={value}><input type="radio" name="card-format" value={value} checked={format === value} onChange={() => setFormat(value)} />{t(value)}</label>
+              <label key={value}><input type="radio" name={panelId + "-format"} value={value} checked={format === value} onChange={() => setFormat(value)} />{t(value)}</label>
             ))}
           </fieldset>
           <p role="status" className="small">{pending ? t("pending") : requested === key ? t("downloadRequested") : ""}</p>
@@ -66,7 +68,7 @@ export function CardStudio({id, complete}: {id: string; complete: boolean}) {
             <>
               <Image className={`card-preview-image card-preview-image--${response.format}`} src={`data:image/png;base64,${response.png}`} alt={t("previewAlt", {format: t(response.format)})}
                 width={response.width} height={response.height} unoptimized />
-              <a className="button button-primary" href={`data:image/png;base64,${response.png}`} download={`${site.name.toLowerCase()}-${response.format}-${response.locale}.png`}
+              <a className="button button-primary" href={`data:image/png;base64,${response.png}`} download={`${site.name.toLowerCase()}-${previous ? "progress-" : ""}${response.format}-${response.locale}.png`}
                 onClick={() => setRequested(key)}>{t("download")}</a>
             </>
           )}

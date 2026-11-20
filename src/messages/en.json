@@ -513,6 +513,12 @@
     "refreshSaveFailed": "The new result could not be saved."
   },
   "Card": {
+    "progress": "Progress card",
+    "progressIntro": "Preview both analysis dates, portfolio scores and check changes.",
+    "gain": "Portfolio score increased",
+    "loss": "Portfolio score decreased",
+    "flat": "Portfolio score unchanged",
+    "transitions": "Improved checks: {up} · Regressed checks: {down}",
     "title": "Share card",
     "close": "Close preview",
     "intro": "The image includes your username, score and first priority suggestion. Check the preview before downloading.",
@@ -527,6 +533,7 @@
     "retry": "Prepare the card again",
     "incomplete": "An incomplete analysis has no total score, so a scored share card cannot be generated. Start a new analysis to complete the data first.",
     "errors": {
+      "incompatible": "These reports cannot be compared.",
       "invalid": "The card request is invalid. Reopen the report and try again.",
       "missing": "The report link may be invalid or expired. Reopen the report.",
       "incomplete": "This report is incomplete; a scored card cannot be generated.",

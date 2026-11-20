@@ -4,11 +4,21 @@ Son güncelleme: 20 Kasım 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
+**A5.5 paketi commit için hazır. Kullanıcı revize TR/EN gelişim Story galerisine görsel kabul verdi.** A5.4 commit kimliği yerel Git geçmişinde `f5c90d4` olarak doğrulandı. Commit/push ve başarılı GitHub Actions sonucu kullanıcı bildirimidir.
+
+Uyumlu özel karşılaştırmanın altında gelişim kartı açılır. İki erişim her üretim isteğinde ayrı okunur. Kartta önceki ve sonraki UTC analiz zamanları, puanlar, işaretli toplam ve kategori farkları ile iyileşen ve gerileyen kontrol sayıları bulunur. Karşılaştırma ve kart aynı compareReports sonucunu kullanır. Önbellek her iki raporun en erken bitişiyle sınırlıdır.
+
+45 dosyada 648 test, lint, typecheck ve varsayılan production build geçti. Sentetik verilerde üç biçim × iki dil için gerçek PNG üretildi. İlk Story'deki tarih/puan örtüşmesi giderildi ve son galeri açılarak incelendi. Görseller /tmp/repovitrin-progress-20261120 altında. Yeni karşılaştırma erişimi ve cache testi sentetik DB ile çalıştı. A5.4'ün Atlas kanıtı önceki kartlara aittir. Gelişim kartının gerçek Atlas üzerinde doğrulanması, tarayıcıdan manuel PNG indirme, fiziksel cihaz kontrolü ve A5.5 uzak CI sonucu açık.
+
+Story revizyonunda başlık, lime fark ve iki tarihli puan büyütüldü. Alt pay 245 px yerine 158 px, yan pay 64 px. Yalnız gelişim Story şablonu v2 oldu. Altı sentetik TR/EN artış, düşüş ve sıfır fark PNG’si tam 1080×1920 ve kart başına 390 px galeride incelendi. Çakışma veya kırpılma gözlenmedi. İnceleme klasörü `/tmp/repovitrin-progress-story-rtMip1`. Bu revizyonda 31 kart testi, lint, typecheck ve diff kontrolü geçti. Kullanıcı son TR/EN Story galerisini inceledi. Uzun kullanıcı adının ve footer metninin küçük görünmesi bilinen görsel sınırlamadır. 20 Kasım 2026 tarihinde birleşik paket için varsayılan npm run build son Story revizyonuyla geçti (Turbopack, çıkış kodu 0).
+
+## A5.4 kapanış kaydı
+
 **A5.4 — gönderi PNG ve görsel önbelleği yerelde uygulandı.** A5.3 `d3787cb` ve CI #23 başarısının kaynağı kullanıcının GitHub Actions ekran görüntüsüdür. Başlangıçta yerel main bu commit'te temizdi.
 
 Sekiz sentetik gönderi kartında iki dil ve dört profil tipi incelendi. Uzun adlar, ondalıklı puan ve önerisiz 100 puan örnekleri /tmp/repovitrin-post-20261120 altında. Üç formatta gerçek PNG boyutu ve deterministik baytlar, özel action çıktısı, kota, cache isabeti ve erişim reddi test edildi. Dolu önbellekle kapalı/silinmiş/expired public istekler reddedildi. 44 dosyada 644 test, lint, typecheck ve varsayılan build geçti. Bu 644 testin DB kontrolleri sentetik koleksiyonla yapıldı. Ardından ayrı bir smoke kontrolü geliştirme Atlas veritabanında geçti. Özel TR gönderi ve public EN yatay görselin ilk isteği render etti, tekrar istek aynı PNG baytlarını ek render olmadan döndürdü. Kaynak bitiş zamanları ve expiresAt TTL indeksi doğrulandı. Dolu cache ile yanlış özel token reddedildi. Public paylaşım kapatıldığında, silindiğinde ve kaynak süresi geçmişe alındığında görsel isteği 404 döndü. Test kendi 1 snapshot, 2 paylaşım ve 3 görsel kimliğini izledi. Temizlik sonrası bu kimliklerle kalan kayıt sayısı sıfırdı. Gerçek renderer ve uygulama erişim katmanı kullanıldı. Testte istek kotası ve özel kart dili izole edildi.
 
-Kullanıcı gönderi kartı galerisine görsel kabul verdi. Manuel tarayıcı PNG indirmesi yayın öncesi uçtan uca kontrole ertelendi. Fiziksel cihaz, gerçek sosyal platform, Vercel/CDN ve bu paketin uzak CI sonucu açık. Gelişim kartı, gizlilik/metodoloji, session ve yayın güvenliği, minimatch takibi, kalıcı E2E/erişilebilirlik ve yayın smoke kontrolleri TASKS'ta açık.
+Kullanıcı gönderi kartı galerisine görsel kabul verdi. Manuel tarayıcı PNG indirmesi yayın öncesi uçtan uca kontrole ertelendi. Fiziksel cihaz, gerçek sosyal platform ve Vercel/CDN kontrolleri açık. gizlilik/metodoloji, session ve yayın güvenliği, minimatch takibi, kalıcı E2E/erişilebilirlik ve yayın smoke kontrolleri TASKS'ta açık.
 
 ## A5.3 — otomatik public bağlantı önizlemesi, 18 Kasım 2026
 
