@@ -1,10 +1,14 @@
 # Güncel durum
 
-Son güncelleme: 18 Kasım 2026 (Europe/Istanbul).
+Son güncelleme: 20 Kasım 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A5.3 — public bağlantı önizlemesine kullanıcı görsel kabulü verildi; paket commit/push ve uzak CI sonucu bekleniyor.** A5.2, 2dd4ead089baeef5b8af65085a9e5b11621dc5ac commit'iyle gönderildi; temiz başlangıç doğrulandı. CI #22 completed/success, 18 Kasım'da kimlik doğrulamasız GitHub public API üzerinden bağımsız salt okunur sorguyla doğrulandı: [çalışma 44179304819](https://github.com/EnessCansever/github-vitrin/actions/runs/44179304819). Bu, yeni A5.3 paketinin CI sonucu değildir. A5/A6 bütünü ve minimatch yayın öncesi takibi açık.
+**A5.4 — gönderi PNG ve görsel önbelleği yerelde uygulandı.** A5.3 `d3787cb` ve CI #23 başarısının kaynağı kullanıcının GitHub Actions ekran görüntüsüdür. Başlangıçta yerel main bu commit'te temizdi.
+
+Sekiz sentetik gönderi kartında iki dil ve dört profil tipi incelendi. Uzun adlar, ondalıklı puan ve önerisiz 100 puan örnekleri /tmp/repovitrin-post-20261120 altında. Üç formatta gerçek PNG boyutu ve deterministik baytlar, özel action çıktısı, kota, cache isabeti ve erişim reddi test edildi. Dolu önbellekle kapalı/silinmiş/expired public istekler reddedildi. 44 dosyada 644 test, lint, typecheck ve varsayılan build geçti. Bu 644 testin DB kontrolleri sentetik koleksiyonla yapıldı. Ardından ayrı bir smoke kontrolü geliştirme Atlas veritabanında geçti. Özel TR gönderi ve public EN yatay görselin ilk isteği render etti, tekrar istek aynı PNG baytlarını ek render olmadan döndürdü. Kaynak bitiş zamanları ve expiresAt TTL indeksi doğrulandı. Dolu cache ile yanlış özel token reddedildi. Public paylaşım kapatıldığında, silindiğinde ve kaynak süresi geçmişe alındığında görsel isteği 404 döndü. Test kendi 1 snapshot, 2 paylaşım ve 3 görsel kimliğini izledi. Temizlik sonrası bu kimliklerle kalan kayıt sayısı sıfırdı. Gerçek renderer ve uygulama erişim katmanı kullanıldı. Testte istek kotası ve özel kart dili izole edildi.
+
+Kullanıcı gönderi kartı galerisine görsel kabul verdi. Manuel tarayıcı PNG indirmesi yayın öncesi uçtan uca kontrole ertelendi. Fiziksel cihaz, gerçek sosyal platform, Vercel/CDN ve bu paketin uzak CI sonucu açık. Gelişim kartı, gizlilik/metodoloji, session ve yayın güvenliği, minimatch takibi, kalıcı E2E/erişilebilirlik ve yayın smoke kontrolleri TASKS'ta açık.
 
 ## A5.3 — otomatik public bağlantı önizlemesi, 18 Kasım 2026
 

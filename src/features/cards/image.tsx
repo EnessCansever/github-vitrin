@@ -174,10 +174,45 @@ function LandscapeCard({data, texture}: {data: CardContent; texture: string}) {
   );
 }
 
+function PostCard({data, texture}: {data: CardContent; texture: string}) {
+  const lines = data.title;
+  const widest = Math.max(...lines.map(line => [...line].reduce((sum, ch) => sum + (titleAdvance[ch] ?? .55), 0)));
+  return <div style={{display: "flex", flexDirection: "column", justifyContent: "space-between", width: 1080, height: 1350, padding: 52, background: "#012bc1", color: paper, fontFamily: "Body", fontWeight: 500}}>
+    <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+      <span style={{fontFamily: "Display", fontWeight: 800, fontSize: 62}}>{data.brand}</span>
+      <span style={{fontFamily: "Mono", fontWeight: 400, fontSize: Math.min(37, 1100 / (data.username.length + 1))}}>@{data.username}</span>
+    </div>
+    <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
+      <div style={{display: "flex", flexDirection: "column", width: 765, fontFamily: "Display", fontWeight: 800, fontSize: Math.min(198, 750 / widest), lineHeight: 1}}>
+        {lines.map(line => <span key={line}>{line}</span>)}
+      </div>
+      <Stamp label={data.identity} size={188} />
+    </div>
+    <div style={{display: "flex", alignItems: "baseline", gap: 18}}>
+      <span style={{fontFamily: "Display", fontWeight: 800, fontSize: 200, lineHeight: 1}}>{data.score}</span>
+      <span style={{fontSize: 45}}>/100</span><span style={{fontSize: 34}}>{data.scoreLabel}</span>
+    </div>
+    <div style={{display: "flex", justifyContent: "space-between", padding: "18px 0", borderTop: "1px solid", borderBottom: "1px solid", fontSize: 30}}>
+      {data.categories.map(category => <span key={category.label}>{category.label} {category.points}</span>)}
+    </div>
+    <div style={{display: "flex", flexDirection: "column", gap: 8}}>
+      <span style={{fontSize: 26, color: lime}}>{data.firstStep}</span>
+      {data.task && <span style={{fontFamily: "Mono", fontWeight: 400, fontSize: 27, wordBreak: "break-all"}}>{data.task.target}</span>}
+      <span style={{fontSize: 38}}>{data.task?.text ?? data.noTask}</span>
+    </div>
+    <div style={{display: "flex", flexDirection: "column", borderTop: "1px solid", paddingTop: 16, gap: 8}}>
+      <span style={{fontSize: 38}}>{data.invitation}</span>
+      <span style={{fontSize: 26}}>{data.signature} {data.author}</span>
+      <div style={{display: "flex", justifyContent: "space-between", fontSize: 24}}><span>{data.date}</span><span>{data.scope}</span></div>
+    </div>
+    {PrintTexture({src: texture, format: "post"})}
+  </div>;
+}
+
 export async function renderCard(data: CardContent, format: CardFormat): Promise<ArrayBuffer> {
   // Satori discovers embedded images from the expanded element tree.
   const texture = await loadTexture();
-  const content = format === "story" ? StoryCard({data, texture}) : LandscapeCard({data, texture});
+  const content = ({story: StoryCard, post: PostCard, landscape: LandscapeCard}[format])({data, texture});
   const image = new ImageResponse(content, {
     ...cardFormats[format], fonts: await loadFonts(),
   });

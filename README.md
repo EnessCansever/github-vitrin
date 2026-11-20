@@ -1,6 +1,6 @@
 # RepoVitrin
 
-Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. Ana sayfa kullanıcı adı veya desteklenen GitHub profil URL'siyle gerçek public profili ve uygun repo adaylarını getirir; 1–3 proje seçilebilir. **Sunumu analiz et**, sunucuda puan ve kanıt üretip snapshot kaydeder; başarılı kayıt 30 günlük tokenlı rapor adresinde açılır. `/demo`, `/demo/select`, `/demo/states` kurmaca örnekler olarak ayrıdır. A4.2 görünümü kullanıcı tarafından kabul edildi; 257acff uzak CI başarısı kullanıcının ilettiği Codex public API doğrulaması olarak kayıtlıdır. Kayıtlı complete raporda iki formatlı PNG önizleme/indirme eklendi; A5.1 görsel kabulü bekleniyor.
+Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. Ana sayfa kullanıcı adı veya desteklenen GitHub profil URL'siyle gerçek public profili ve uygun repo adaylarını getirir; 1–3 proje seçilebilir. **Sunumu analiz et**, sunucuda puan ve kanıt üretip snapshot kaydeder; başarılı kayıt 30 günlük tokenlı rapor adresinde açılır. `/demo`, `/demo/select`, `/demo/states` kurmaca örnekler olarak ayrıdır. A4.2 görünümü kullanıcı tarafından kabul edildi; 257acff uzak CI başarısı kullanıcının ilettiği Codex public API doğrulaması olarak kayıtlıdır. Kayıtlı complete raporda Story, gönderi ve yatay PNG önizlenip indirilebilir.
 
 ## Gereksinimler ve kurulum
 
@@ -116,7 +116,7 @@ Fragment sunucuya URL olarak gitmez; tarayıcı JavaScript'i tokenı doğrulayan
 
 ## A5.1 paylaşım kartı
 
-Kayıtlı, süresi geçmemiş **complete** raporu açıp **Paylaşım kartı** eylemini kullanın. Story 1080×1920 veya yatay 1200×630 seçilir; rapor dilindeki aynı PNG önce önizlenir, ardından **PNG indir** ile indirme başlatılır. Görsel kullanıcı adını, sunum puanlarını ve ilk öneri/hedefini içerir. Incomplete raporda gerekçeli pasif durum vardır; /demo indirmesi eklenmedi.
+Kayıtlı, süresi geçmemiş **complete** raporu açıp **Paylaşım kartı** eylemini kullanın. Story 1080×1920, gönderi 1080×1350 veya yatay 1200×630 seçilir; rapor dilindeki aynı PNG önce önizlenir, ardından **PNG indir** ile indirme başlatılır. Görsel kullanıcı adını, sunum puanlarını ve ilk öneri/hedefini içerir. Incomplete raporda gerekçeli pasif durum vardır; /demo indirmesi eklenmedi.
 
 Mevcut next/og ve yerel lisanslı fontlar kullanılır; yeni bağımlılık/env gereksinimi yoktur. Üretim snapshot erişimini yeniden doğrular; GitHub'a gitmez, puan hesaplamaz, raporu değiştirmez veya 30 günlük süreyi uzatmaz. Görsel/dosya adında erişim tokenı, tam bağlantı veya QR yoktur. PNG indirme gerçek sosyal paylaşım ya da cihazda kaydetme garantisi değildir. Otomatik link/OG önizlemesi, üçüncü boyut, gelişim kartı ve sosyal paylaşım ayrı açık işlerdir. Dağıtık abuse koruması/yayın sınırı sürer.
 

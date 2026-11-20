@@ -1,3 +1,5 @@
+import {entries} from "../cards/image-store";
+vi.mock("../../src/lib/db/client", async () => (await import("../cards/image-store")).imageDatabase);
 import {beforeEach,expect,it,vi} from "vitest";
 import {publicOrigin} from "../../src/config/public-url";
 import {shareLocale,shareMetadata} from "../../src/features/shares/metadata";
@@ -16,10 +18,11 @@ vi.mock("../../src/lib/db/share-reports",()=>({readShare:vi.fn()}));
 vi.mock("../../src/features/cards/image",()=>({renderCard:vi.fn()}));
 vi.mock("../../src/lib/security/requests",()=>({limitRequest:vi.fn(),requestFailure:vi.fn()}));
 const id="a".repeat(48);
-function share():PublicShare{return {id,createdAt:"2026-11-18T12:00:00Z",expiresAt:"2027-02-16T12:00:00Z",summary:shareSummary(report(3))};}
+function share():PublicShare{return {id,createdAt:"2026-11-18T12:00:00Z",expiresAt:new Date(Date.now()+60_000).toISOString(),summary:shareSummary(report(3))};}
 beforeEach(()=>{
  vi.stubEnv("SITE_URL","https://preview.example.org");vi.stubEnv("NODE_ENV","production");
- vi.mocked(loadPublicShare).mockReset().mockResolvedValue({status:"success",share:share()});
+ entries.clear();
+  vi.mocked(loadPublicShare).mockReset().mockResolvedValue({status:"success",share:share()});
  vi.mocked(readShare).mockReset().mockResolvedValue(share());
  vi.mocked(renderCard).mockReset().mockResolvedValue(new Uint8Array([137,80,78,71]).buffer);
  vi.mocked(limitRequest).mockReset().mockResolvedValue(undefined);vi.mocked(requestFailure).mockReset().mockReturnValue(null);
@@ -39,6 +42,9 @@ it.each(["tr","en"] as const)("uses only the stored public copy for matching %s 
 });
 
 it.each(["closed","deleted","expired","missing"])("does not serve report metadata or PNG for %s access",async()=>{
+ expect((await shareImage(id,"en")).status).toBe(200);
+ expect(entries.size).toBe(1);
+ vi.clearAllMocks();
  vi.mocked(loadPublicShare).mockResolvedValue({status:"error",code:"missing"});
  const metadata=shareMetadata(null,"en");expect(JSON.stringify(metadata)).not.toContain("mira-sample");expect(metadata.openGraph).toMatchObject({images:[]});
  const response=await shareImage(id,"en");expect(response.status).toBe(404);expect(await response.json()).toEqual({code:"missing"});

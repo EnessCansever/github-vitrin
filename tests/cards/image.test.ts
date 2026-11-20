@@ -7,7 +7,7 @@ beforeEach(() => {
   vi.mocked(fetch).mockRejectedValue(new Error("Network disabled; use the renderer's local WASM fallback"));
 });
 
-it.each(["story", "landscape"] as const)("renders a real %s PNG at its exact export resolution using local fonts without network access", async format => {
+it.each(["story", "post", "landscape"] as const)("renders a real %s PNG at its exact export resolution using local fonts without network access", async format => {
   const content = cardContent(report(3), "tr");
   expect(content).not.toBeNull();
   const before = structuredClone(content);
@@ -15,6 +15,6 @@ it.each(["story", "landscape"] as const)("renders a real %s PNG at its exact exp
   expect(Buffer.from(await renderCard(content!, format))).toEqual(png);
   expect(content).toEqual(before);
   expect(png.subarray(0, 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
-  expect([png.readUInt32BE(16), png.readUInt32BE(20)]).toEqual(format === "story" ? [1080, 1920] : [1200, 630]);
+  expect([png.readUInt32BE(16), png.readUInt32BE(20)]).toEqual(format === "story" ? [1080, 1920] : format === "post" ? [1080, 1350] : [1200, 630]);
   for (const [url] of vi.mocked(fetch).mock.calls) expect(new URL(String(url)).protocol).toBe("data:");
 }, 15_000);

@@ -1,5 +1,6 @@
 export const cardFormats = {
   story: {width: 1080, height: 1920},
+  post: {width: 1080, height: 1350},
   landscape: {width: 1200, height: 630},
 } as const;
 

@@ -1,3 +1,5 @@
+import {entries} from "../cards/image-store";
+vi.mock("../../src/lib/db/client", async () => (await import("../cards/image-store")).imageDatabase);
 import {beforeEach, expect, it, vi} from "vitest";
 import {getRepos, analyze} from "../../src/features/analysis/actions";
 import {loadReport} from "../../src/features/reports/actions";
@@ -44,6 +46,7 @@ type Counter = {count: number; expiresAt: number};
 let counters: Map<string, Counter>;
 
 beforeEach(() => {
+  entries.clear();
   vi.useFakeTimers();
   vi.setSystemTime(new Date("2026-11-01T00:00:00Z"));
   vi.stubEnv("NODE_ENV", "development");
@@ -95,10 +98,10 @@ it("separates search, analysis, report and image budgets without double-counting
   expect(vi.mocked(consumeRateLimit).mock.calls.at(-1)?.[0]).toMatchObject(requestLimits.report);
 });
 
-it("shares Story/landscape quota and stops storage/render after the image budget is full", async () => {
-  for (let i = 0; i < 10; i++) expect(await generateCard({...access, format: i % 2 ? "story" : "landscape"})).toMatchObject({status: "success"});
+it("shares all three formats’ quota and stops storage/render after the image budget is full", async () => {
+  for (let i = 0; i < 10; i++) expect(await generateCard({...access, format: ["story", "landscape", "post"][i % 3]})).toMatchObject({status: "success"});
   expect(await generateCard({...access, format: "story"})).toEqual({status: "error", code: "rateLimit", retryAt: "2026-11-01T00:10:00.000Z"});
-  expect(renderCard).toHaveBeenCalledTimes(10);
+  expect(renderCard).toHaveBeenCalledTimes(3);
   expect(readSnapshot).toHaveBeenCalledTimes(10);
   expect(await loadReport(access)).toMatchObject({status: "success"});
 });

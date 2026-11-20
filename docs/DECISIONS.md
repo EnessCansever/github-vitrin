@@ -574,3 +574,7 @@ Kota sayıları değiştirilmez: page+metadata React request-cache ile tek share
 Cross-request PNG/metadata cache'i yok; force-dynamic/no-store/özel CDN no-store ve response öncesi share kontrolü revoke/expiry'ye uyar. ETag üzerinden eski304 verilmez. Sosyal platformun kendi önizleme cache'i kontrol edilemez; kullanıcı açıklaması bunu belirtir. Local production sentetik Vercel/IP header testi gerçek Vercel güveni/CDN veya sosyal platform doğrulaması değildir.
 
 Onaylı renderer aynen kullanılır; public/private veri eşlemesi paylaşılır, sahte Report/check üretilmez. İlk tam görüntü aktarımındaki bazı metinler kayıp gibi görünmüş, PNG yakın kırpım/piksel ve390px browser galerisi bunların varlığını doğrulamıştır; geçici layout denemeleri kalıcı koda alınmadı. image.tsx HEAD ile aynıdır, private kontrol PNG'leri byte-identical. Yeni bağımlılık/PNG boyutu/auth/cache/engine/adapter/snapshot değişikliği veya deploy yoktur. Kullanıcı görsel kabulü ve yeni CI açık; A5 bütünü kapanmaz.
+
+## D048 — Gönderi kartı ve PNG saklama (20 Kasım 2026)
+
+§2 ve §7 gönderi boyutunu ve görsel anahtarını tanımlar. Görsele özgü bağımsız TTL veya hata politikası belirtilmemiştir. Kaynağın özgün bitişi üst sınır seçildi. DB hatasında mevcut erişim ve kota yolundan güvenli hata döner. Üç format aynı PNG bütçesini tüketir. Ayrı public ve private anahtar alanları kullanılır.

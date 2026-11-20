@@ -1,3 +1,5 @@
+import {entries, images} from "../cards/image-store";
+vi.mock("../../src/lib/db/client", async () => (await import("../cards/image-store")).imageDatabase);
 import {beforeEach, expect, it, vi} from "vitest";
 import {getLocale} from "next-intl/server";
 import {generateCard} from "../../src/features/cards/actions";
@@ -16,9 +18,10 @@ const id = "11111111-1111-4111-8111-111111111111", token = "a".repeat(64);
 const input = {id, token, format: "story"};
 
 beforeEach(() => {
+  entries.clear();
   vi.mocked(getLocale).mockReset().mockResolvedValue("tr");
   vi.mocked(readSnapshot).mockReset().mockResolvedValue({id, snapshotVersion: 1, selectedRepoIds: [10], scopeHash: "f".repeat(64),
-    createdAt: "2026-10-29T12:00:00Z", expiresAt: "2026-11-28T12:00:00Z", report: reportSchema.parse(report())});
+    createdAt: "2026-10-29T12:00:00Z", expiresAt: new Date(Date.now() + 60_000).toISOString(), report: reportSchema.parse(report())});
   vi.mocked(renderCard).mockReset().mockResolvedValue(new Uint8Array([137, 80, 78, 71]).buffer);
 });
 
@@ -63,4 +66,17 @@ it("renders only the stored report in the server's locale, returning image bytes
 it("does not expose rendering diagnostics", async () => {
   vi.mocked(renderCard).mockRejectedValue(new Error("private rendering diagnostics"));
   expect(await generateCard(input)).toEqual({status: "error", code: "render"});
+});
+
+it("reuses one authorized PNG and separates format and language", async () => {
+  const first = await generateCard(input);
+  expect(await generateCard(input)).toEqual(first);
+  expect(renderCard).toHaveBeenCalledTimes(1);
+  expect(await generateCard({...input, format: "post"})).toMatchObject({width: 1080, height: 1350});
+  vi.mocked(getLocale).mockResolvedValue("en");
+  await generateCard(input);
+  expect(entries.size).toBe(3);
+  images.findOne.mockRejectedValueOnce(new Error("database unavailable"));
+  expect(await generateCard(input)).toEqual({status: "error", code: "unavailable"});
+  expect(renderCard).toHaveBeenCalledTimes(3);
 });
