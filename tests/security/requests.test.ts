@@ -6,19 +6,24 @@ import {consumeRateLimit} from "../../src/lib/db/rate-limits";
 import {StorageError} from "../../src/lib/db/errors";
 import {requestLimits} from "../../src/config/request-limits";
 
+import {jar} from "./cookie-jar";
+import {analysisSession, SessionRequired} from "../../src/lib/security/session";
+
 const request = vi.hoisted(() => ({headers: vi.fn(), values: new Map<string, string>()}));
-vi.mock("next/headers", () => ({headers: request.headers}));
+vi.mock("next/headers", () => ({headers: request.headers, cookies: async () => jar}));
 vi.mock("../../src/lib/db/rate-limits", () => ({consumeRateLimit: vi.fn()}));
 const signingSecret = "synthetic-test-key-with-at-least-32-bytes";
 const retryAt = "2026-11-01T00:10:00.000Z";
 
-beforeEach(() => {
+beforeEach(async () => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date("2026-11-01T00:00:00Z"));
   vi.stubEnv("NODE_ENV", "production");
   vi.stubEnv("VERCEL", "1");
   vi.stubEnv("VERCEL_ENV", "production");
   vi.stubEnv("SIGNING_SECRET", signingSecret);
+  jar.clear();
+  await analysisSession(signingSecret);
   request.values.clear();
   request.values.set("x-vercel-forwarded-for", "192.0.2.10");
   request.headers.mockReset().mockResolvedValue({get: (name: string) => request.values.get(name) ?? null});
@@ -28,12 +33,12 @@ beforeEach(() => {
 it("uses six separate approved budgets with opaque HMAC keys and no raw identity in storage", async () => {
   for (const operation of ["search", "analysis", "report", "shareRead", "shareMutation", "card"] as const) await limitRequest(operation);
   const calls = vi.mocked(consumeRateLimit).mock.calls.map(([input]) => input);
-  expect(calls).toEqual(Object.entries(requestLimits).map(([operation, policy]) => ({
+  expect(calls.filter((_, index) => index !== 2)).toEqual(Object.entries(requestLimits).map(([operation, policy]) => ({
     ...policy, key: createHmac("sha256", signingSecret).update(JSON.stringify([
       "request-v1", operation, Math.floor(Date.now() / policy.windowMs), "192.0.2.10",
     ])).digest("hex"),
   })));
-  expect(new Set(calls.map(value => (value as {key: string}).key)).size).toBe(6);
+  expect(new Set(calls.map(value => (value as {key: string}).key)).size).toBe(7);
   expect(JSON.stringify(calls)).not.toContain("192.0.2.10");
   expect(JSON.stringify(calls)).not.toContain(signingSecret);
 });
@@ -45,7 +50,7 @@ it("does not trust spoofed fallback headers or browser cookies", async () => {
   request.values.set("x-real-ip", "203.0.113.90");
   request.values.set("cookie", "session=attacker-controlled");
   await limitRequest("analysis");
-  expect(vi.mocked(consumeRateLimit).mock.calls[1][0]).toEqual(original);
+  expect(vi.mocked(consumeRateLimit).mock.calls[2][0]).toEqual(original);
 });
 
 it("canonicalizes IPv6 spellings before keying the budget", async () => {
@@ -112,7 +117,7 @@ it("rotates IP keys at aligned window boundaries, reports their true next availa
   await limitRequest("analysis");
   await limitAnalysis(analysisScope(7, [10]));
   expect(vi.mocked(consumeRateLimit).mock.calls[2][0]).not.toEqual(before);
-  expect(vi.mocked(consumeRateLimit).mock.calls[3][0]).toEqual(cooldown);
+  expect(vi.mocked(consumeRateLimit).mock.calls[4][0]).toEqual(cooldown);
 });
 
 it.each([
@@ -125,4 +130,34 @@ it.each([
   try { await limitRequest("search"); } catch (caught) { failure = requestFailure(caught); }
   expect(failure).toEqual({code});
   expect(JSON.stringify(failure)).not.toContain("sensitive");
+});
+
+it("requires a signed returning cookie before analysis and still charges the IP on rejection", async () => {
+  for (const cookie of ["", "invalid", "a".repeat(32) + "." + "0".repeat(64)]) {
+    jar.set("__Host-rv-session", cookie);
+    const count = vi.mocked(consumeRateLimit).mock.calls.length;
+    await expect(limitRequest("analysis")).rejects.toBeInstanceOf(SessionRequired);
+    expect(consumeRateLimit).toHaveBeenCalledTimes(count + 1);
+    await expect(limitRequest("analysis")).resolves.toBeUndefined();
+  }
+});
+
+it("keeps one atomic session budget across concurrent analyses from different IPs", async () => {
+  const counts = new Map<string, number>();
+  vi.mocked(consumeRateLimit).mockImplementation(async input => {
+    const {key, limit} = input as {key: string; limit: number};
+    const count = (counts.get(key) ?? 0) + 1;
+    counts.set(key, count);
+    return count <= limit ? {allowed:true, remaining:limit-count, retryAt:null, resetAt:retryAt}
+      : {allowed:false, remaining:0, retryAt, resetAt:retryAt};
+  });
+  let index = 0;
+  request.headers.mockImplementation(async () => {
+    const ip = "192.0.2." + ++index;
+    return {get: () => ip};
+  });
+  const results = await Promise.allSettled(Array.from({length:11}, () => limitRequest("analysis")));
+  expect(results.filter(value => value.status === "fulfilled")).toHaveLength(10);
+  expect(results.filter(value => value.status === "rejected").map(value => requestFailure(value.reason)))
+    .toEqual([{code:"rateLimit", retryAt}]);
 });

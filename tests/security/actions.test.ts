@@ -1,3 +1,6 @@
+import {analysisSession} from "../../src/lib/security/session";
+import {jar} from "./cookie-jar";
+vi.mock("next/headers", () => ({cookies: async () => jar}));
 import {entries} from "../cards/image-store";
 vi.mock("../../src/lib/db/client", async () => (await import("../cards/image-store")).imageDatabase);
 import {beforeEach, expect, it, vi} from "vitest";
@@ -45,12 +48,14 @@ const selected = {username: "mira-sample", profileId: 1, repos: [{id: 10, name: 
 type Counter = {count: number; expiresAt: number};
 let counters: Map<string, Counter>;
 
-beforeEach(() => {
+beforeEach(async () => {
   entries.clear();
   vi.useFakeTimers();
   vi.setSystemTime(new Date("2026-11-01T00:00:00Z"));
   vi.stubEnv("NODE_ENV", "development");
   vi.stubEnv("SIGNING_SECRET", "synthetic-test-key-with-at-least-32-bytes");
+  jar.clear();
+  await analysisSession("synthetic-test-key-with-at-least-32-bytes");
   counters = new Map();
   vi.mocked(consumeRateLimit).mockReset().mockImplementation(async value => {
     const {key, limit, windowMs} = value as {key: string; limit: number; windowMs: number};
@@ -135,7 +140,7 @@ it("charges invalid analysis requests and blocks GitHub and snapshot writes at t
   expect(await analyze(selected)).toEqual({status: "error", code: "rateLimit", retryAt: "2026-11-01T00:10:00.000Z"});
   expect(github.profile).not.toHaveBeenCalled();
   expect(createSnapshot).not.toHaveBeenCalled();
-  expect(consumeRateLimit).toHaveBeenCalledTimes(11);
+  expect(consumeRateLimit).toHaveBeenCalledTimes(21);
 });
 
 it("enforces cooldown after metadata validation and before README or snapshot work", async () => {

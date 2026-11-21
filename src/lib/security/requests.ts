@@ -2,6 +2,7 @@ import "server-only";
 
 import {createHmac} from "node:crypto";
 import {isIP} from "node:net";
+import {analysisSession, SessionRequired} from "./session";
 import {headers} from "next/headers";
 import {requestLimits, analysisRefresh} from "../../config/request-limits";
 import {consumeRateLimit} from "../db/rate-limits";
@@ -52,6 +53,15 @@ export async function limitRequest(operation: keyof typeof requestLimits): Promi
   const key = createHmac("sha256", signingSecret).update(JSON.stringify(["request-v1", operation, period, identity])).digest("hex");
   // IP keys rotate per policy window; the separate analysis cooldown does not rotate.
   await consume(key, policy, (period + 1) * policy.windowMs);
+  if (operation === "search" || operation === "report" || operation === "analysis") {
+    const session = await analysisSession(signingSecret);
+    if (operation === "analysis") {
+      if (!session) throw new SessionRequired();
+      const sessionKey = createHmac("sha256", signingSecret)
+        .update(JSON.stringify(["session-analysis-v1", period, session])).digest("hex");
+      await consume(sessionKey, policy, (period + 1) * policy.windowMs);
+    }
+  }
 }
 
 export async function limitAnalysis(scope: string): Promise<void> {

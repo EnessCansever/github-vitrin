@@ -95,3 +95,12 @@ it("does not write a snapshot when its global permit expired or was replaced", a
   expect(db.insert).not.toHaveBeenCalled();
   expect(db.abort).toHaveBeenCalledTimes(1);
 });
+
+it("bounds writes by the remaining analysis budget even with a valid lease", async () => {
+  const deadline = Date.now() + 250;
+  db.fence.mockImplementation(async () => {vi.advanceTimersByTime(250); return {_id: lock.key};});
+  await expect(createSnapshot(report(), lock, undefined, false, deadline)).rejects.toMatchObject({code:"lock_lost"});
+  expect(db.fence.mock.calls[0][2].maxTimeMS).toBe(250);
+  expect(db.insert).not.toHaveBeenCalled();
+  expect(db.abort).toHaveBeenCalledOnce();
+});

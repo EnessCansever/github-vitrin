@@ -10,7 +10,7 @@ export type Report = Omit<AnalysisResult, "checks"> & {
     evidence: Pick<Evidence, "sourceUrl" | "field" | "path" | "branch" | "sha" | "line" | "availability" | "detailKey">[];
   })[];
 };
-export type AnalysisError = SearchError | "selectionChanged" | "busy" | "capacity" | "analysisExpired";
+export type AnalysisError = SearchError | "selectionChanged" | "busy" | "capacity" | "analysisExpired" | "sessionRequired";
 export type SnapshotAccess = {id: string; readToken: string};
 export type AnalysisResponse = {
   status: "success";

@@ -10,6 +10,13 @@ import {StorageError} from "./errors";
 import {analysisScope, lockFilter, type AnalysisLock, type LockRecord} from "./analysis-locks";
 import {readToken, reportSchema, scopeHash, snapshotId, snapshotSchema, SNAPSHOT_TTL_MS, SNAPSHOT_VERSION, type SnapshotRecord} from "./snapshot-schema";
 
+function commandBudget(actionEnd: number, phaseEnd = Infinity) {
+  const now = Date.now();
+  if (now >= actionEnd) throw new StorageError("lock_lost");
+  if (now >= phaseEnd) throw new StorageError("unavailable");
+  return Math.min(dbMaxTimeMs, actionEnd - now, phaseEnd - now);
+}
+
 function tokenHash(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
@@ -29,7 +36,7 @@ function makeSnapshot(input: unknown, createdAt: Date) {
   return {record: parsed.data, access: {id: parsed.data._id, readToken: token}};
 }
 
-export async function createSnapshot(input: unknown, lock?: AnalysisLock, permit?: AnalysisPermit, shared = false) {
+export async function createSnapshot(input: unknown, lock?: AnalysisLock, permit?: AnalysisPermit, shared = false, actionEnd = Infinity) {
   const {record, access} = makeSnapshot(input, new Date());
   if ((permit && !lock) || (shared && (!lock || !permit))) throw new StorageError("invalid_lock");
   if (lock && (lockFilter(lock)._id !== analysisScope(record.report.profile.id, record.selectedRepoIds))) throw new StorageError("invalid_lock");
@@ -40,21 +47,17 @@ export async function createSnapshot(input: unknown, lock?: AnalysisLock, permit
   try {
     const database = await getDatabase();
     const collection = database.collection<SnapshotRecord>("analysisSnapshots");
-    await collection.createIndex({expiresAt: 1}, {name: "snapshot_expiry", expireAfterSeconds: 0}, {maxTimeMS: dbMaxTimeMs, writeConcern: dbWriteConcern});
+    await collection.createIndex({expiresAt: 1}, {name: "snapshot_expiry", expireAfterSeconds: 0}, {maxTimeMS: commandBudget(actionEnd), writeConcern: dbWriteConcern});
     if (run?.success) await database.collection<AnalysisRun>("analysisRuns").createIndex(
-      {expiresAt: 1}, {name: "analysis_run_expiry", expireAfterSeconds: 0}, {maxTimeMS: dbMaxTimeMs, writeConcern: dbWriteConcern});
+      {expiresAt: 1}, {name: "analysis_run_expiry", expireAfterSeconds: 0}, {maxTimeMS: commandBudget(actionEnd), writeConcern: dbWriteConcern});
     if (cached) await database.collection<CacheRecord>("analysisCache").createIndex(
-      {expiresAt: 1}, {name: "analysis_cache_expiry", expireAfterSeconds: 0}, {maxTimeMS: dbMaxTimeMs, writeConcern: dbWriteConcern});
+      {expiresAt: 1}, {name: "analysis_cache_expiry", expireAfterSeconds: 0}, {maxTimeMS: commandBudget(actionEnd), writeConcern: dbWriteConcern});
     if (lock) {
       const session = database.client.startSession();
       const deadline = Date.now() + 8_000;
-      function remaining() {
-        const value = deadline - Date.now();
-        if (value <= 0) throw new StorageError("unavailable");
-        return Math.min(value, dbMaxTimeMs);
-      }
+      const remaining = () => commandBudget(actionEnd, deadline);
       try {
-        session.startTransaction({writeConcern: dbWriteConcern, maxCommitTimeMS: dbMaxTimeMs});
+        session.startTransaction({writeConcern: dbWriteConcern, maxCommitTimeMS: remaining()});
         if (permit) await fenceAnalysisCapacity(database, session, permit, remaining());
         // A real write holds the lease document through snapshot commit, fencing out a newer owner.
         const owned = await database.collection<LockRecord>("requestLocks").findOneAndUpdate(lockFilter(lock),
@@ -80,7 +83,7 @@ export async function createSnapshot(input: unknown, lock?: AnalysisLock, permit
         await session.endSession();
       }
     } else {
-      const result = await collection.insertOne(record, {ignoreUndefined: true, maxTimeMS: dbMaxTimeMs, writeConcern: dbWriteConcern});
+      const result = await collection.insertOne(record, {ignoreUndefined: true, maxTimeMS: commandBudget(actionEnd), writeConcern: dbWriteConcern});
       if (!result.acknowledged) throw new StorageError("unavailable");
     }
     return access;
@@ -90,21 +93,17 @@ export async function createSnapshot(input: unknown, lock?: AnalysisLock, permit
   }
 }
 
-export async function createJoinedSnapshot(lock: AnalysisLock, rulesVersion: string) {
+export async function createJoinedSnapshot(lock: AnalysisLock, rulesVersion: string, actionEnd = Infinity) {
   const filter = runFilter(lock, rulesVersion);
   try {
     const database = await getDatabase();
     const snapshots = database.collection<SnapshotRecord>("analysisSnapshots");
-    await snapshots.createIndex({expiresAt: 1}, {name: "snapshot_expiry", expireAfterSeconds: 0}, {maxTimeMS: dbMaxTimeMs, writeConcern: dbWriteConcern});
+    await snapshots.createIndex({expiresAt: 1}, {name: "snapshot_expiry", expireAfterSeconds: 0}, {maxTimeMS: commandBudget(actionEnd), writeConcern: dbWriteConcern});
     const session = database.client.startSession();
     const deadline = Date.now() + 8_000;
-    function remaining() {
-      const time = deadline - Date.now();
-      if (time <= 0) throw new StorageError("unavailable");
-      return Math.min(time, dbMaxTimeMs);
-    }
+    const remaining = () => commandBudget(actionEnd, deadline);
     try {
-      session.startTransaction({writeConcern: dbWriteConcern, maxCommitTimeMS: dbMaxTimeMs});
+      session.startTransaction({writeConcern: dbWriteConcern, maxCommitTimeMS: remaining()});
       const source = await database.collection<AnalysisRun>("analysisRuns").findOne(filter, {session, maxTimeMS: remaining()});
       if (!source) throw new StorageError("lock_lost");
       const parsed = runSchema.safeParse(source);
@@ -131,21 +130,17 @@ export async function createJoinedSnapshot(lock: AnalysisLock, rulesVersion: str
   }
 }
 
-export async function createCachedSnapshot(scope: unknown) {
+export async function createCachedSnapshot(scope: unknown, actionEnd = Infinity) {
   try {
     const database = await getDatabase();
     const collection = database.collection<SnapshotRecord>("analysisSnapshots");
-    await collection.createIndex({expiresAt: 1}, {name: "snapshot_expiry", expireAfterSeconds: 0}, {maxTimeMS: dbMaxTimeMs, writeConcern: dbWriteConcern});
+    await collection.createIndex({expiresAt: 1}, {name: "snapshot_expiry", expireAfterSeconds: 0}, {maxTimeMS: commandBudget(actionEnd), writeConcern: dbWriteConcern});
     const session = database.client.startSession();
     const deadline = Date.now() + 8_000;
-    function remaining() {
-      const time = deadline - Date.now();
-      if (time <= 0) throw new StorageError("unavailable");
-      return Math.min(time, dbMaxTimeMs);
-    }
+    const remaining = () => commandBudget(actionEnd, deadline);
     try {
-      session.startTransaction({writeConcern: dbWriteConcern, maxCommitTimeMS: dbMaxTimeMs});
-      const cached = await readAnalysisCache(scope, session);
+      session.startTransaction({writeConcern: dbWriteConcern, maxCommitTimeMS: remaining()});
+      const cached = await readAnalysisCache(scope, session, remaining());
       if (cached.status !== "hit") throw new StorageError("lock_lost");
       const {record, access} = makeSnapshot({...cached.report, source: "cache"}, new Date(cached.snapshotCreatedAt));
       const result = await collection.insertOne(record, {session, ignoreUndefined: true, maxTimeMS: remaining()});

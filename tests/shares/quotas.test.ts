@@ -1,3 +1,5 @@
+import {jar} from "../security/cookie-jar";
+vi.mock("next/headers", () => ({cookies: async () => jar}));
 import {beforeEach,expect,it,vi} from "vitest";
 import {limitRequest,requestFailure} from "../../src/lib/security/requests";
 import {consumeRateLimit} from "../../src/lib/db/rate-limits";

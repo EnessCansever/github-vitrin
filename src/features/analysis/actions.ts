@@ -2,16 +2,18 @@
 
 import {readAnalysisCache} from "../../lib/db/analysis-cache";
 import {z} from "zod";
+import {analysisBudgetMs} from "../../config/request-limits";
 import {randomUUID} from "node:crypto";
 import {GitHubClient} from "../../lib/github/client";
 import {GitHubError} from "../../lib/github/errors";
 import {profileInput} from "../../lib/github/input";
 import {repoName, type Repository} from "../../lib/github/schemas";
 import {acquireAnalysisCapacity, ownsAnalysisCapacity, releaseAnalysisCapacity, type AnalysisPermit} from "../../lib/db/analysis-capacity";
-import {failAnalysisRun, waitForAnalysis} from "../../lib/db/analysis-runs";
+import {failAnalysisRun, waitForAnalysis, type RunError} from "../../lib/db/analysis-runs";
 import {createSnapshot, createJoinedSnapshot, createCachedSnapshot} from "../../lib/db/snapshots";
 import {StorageError} from "../../lib/db/errors";
 import {acquireAnalysisLock, analysisScope, ownsAnalysisLock, releaseAnalysisLock, type AnalysisLock} from "../../lib/db/analysis-locks";
+import {SessionRequired} from "../../lib/security/session";
 import {limitRequest, limitAnalysis, requestFailure} from "../../lib/security/requests";
 import {RULES_VERSION, scoreAnalysis} from "./scoring/engine";
 import type {AnalysisResponse, Report} from "./report";
@@ -71,22 +73,24 @@ const analysisInput = z.object({
 }).strict();
 
 export async function analyze(input: unknown): Promise<AnalysisResponse> {
+  const startedAt = Date.now();
+  const deadline = startedAt + analysisBudgetMs;
   try {
     await limitRequest("analysis");
   } catch (error) {
+    if (error instanceof SessionRequired) return {status: "error", code: "sessionRequired"};
     return {status: "error", ...(requestFailure(error) ?? {code: "unavailable" as const})};
   }
   const parsed = analysisInput.safeParse(input);
   if (!parsed.success || Buffer.byteLength(JSON.stringify(input), "utf8") > 2048) {
     return {status: "error", code: "invalid_input"};
   }
-  const startedAt = Date.now();
   let lock: AnalysisLock | undefined;
   let permit: AnalysisPermit | undefined;
   function checkDeadline() {
-    if (Date.now() - startedAt >= 20_000) throw new StorageError("lock_lost");
+    if (Date.now() >= deadline) throw new StorageError("lock_lost");
   }
-  async function failed(response: Extract<AnalysisResponse, {status: "error"}>) {
+  async function failed(response: RunError) {
     if (lock) {
       try {
         await failAnalysisRun(lock, RULES_VERSION, response);
@@ -100,7 +104,8 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
     return response;
   }
   try {
-    const client = new GitHubClient();
+    checkDeadline();
+    const client = new GitHubClient(deadline);
     const profile = await client.getProfile(parsed.data.username);
     if (profile.id !== parsed.data.profileId || profile.login.toLowerCase() !== parsed.data.username) return {status: "error", code: "selectionChanged"};
     const metadata: Repository[] = [];
@@ -112,7 +117,7 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
       const cached = await readAnalysisCache(cacheScope);
       checkDeadline();
       if (cached.status !== "hit") return null;
-      const saved = await createCachedSnapshot(cacheScope);
+      const saved = await createCachedSnapshot(cacheScope, deadline);
       return {status: "success", report: saved.report, snapshot: {status: "saved", id: saved.id, readToken: saved.readToken}};
     }
     if (!parsed.data.force) {
@@ -121,7 +126,7 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
     }
     const acquired = await acquireAnalysisLock(scope);
     if (!acquired.acquired) {
-      const run = await waitForAnalysis(acquired.lock, RULES_VERSION, startedAt + 20_000);
+      const run = await waitForAnalysis(acquired.lock, RULES_VERSION, deadline);
       checkDeadline();
       if (!run) {
         if (Date.parse(acquired.lock.expiresAt) <= Date.now() || !(await ownsAnalysisLock(acquired.lock))) throw new StorageError("lock_lost");
@@ -129,7 +134,7 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
       }
       if (run.outcome.status === "error") return run.outcome;
       try {
-        const saved = await createJoinedSnapshot(acquired.lock, RULES_VERSION);
+        const saved = await createJoinedSnapshot(acquired.lock, RULES_VERSION, deadline);
         return {status: "success", report: saved.report, snapshot: {status: "saved", id: saved.id, readToken: saved.readToken}};
       } catch (cause) {
         if (cause instanceof StorageError && cause.code === "lock_lost") throw cause;
@@ -137,6 +142,7 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
       }
     }
     lock = acquired.lock;
+    checkDeadline();
     if (!parsed.data.force) {
       const cached = await reuseCache();
       if (cached) return cached;
@@ -144,6 +150,7 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
     const capacity = await acquireAnalysisCapacity();
     if (!capacity.acquired) return await failed({status: "error", code: "capacity", retryAt: capacity.retryAt});
     permit = capacity.permit;
+    checkDeadline();
     await limitAnalysis(scope);
     checkDeadline();
     const repos = [];
@@ -164,7 +171,7 @@ export async function analyze(input: unknown): Promise<AnalysisResponse> {
     };
     try {
       checkDeadline();
-      const access = await createSnapshot(report, lock, permit, true);
+      const access = await createSnapshot(report, lock, permit, true, deadline);
       return {status: "success", report, snapshot: {status: "saved", ...access}};
     } catch (error) {
       if (error instanceof StorageError && error.code === "lock_lost") throw error;

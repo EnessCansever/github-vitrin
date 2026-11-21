@@ -2,7 +2,26 @@
 
 Son güncelleme: 21 Kasım 2026 (Europe/Istanbul).
 
-## Aktif aşama — A6 yerel güvenlik ve erişilebilirlik incelemesi
+## Aktif aşama — A6 anonim oturum, süre ve kalıcı E2E
+
+Son güvenlik ve erişilebilirlik paketi yerel Git geçmişinde `2d2eebf` olarak doğrulandı. Push ve yeşil uzak CI sonucu kullanıcı bildirimidir. Bu kayıt yeni değişikliklerin CI sonucu değildir.
+
+- Analiz girişinde IP ve imzalı tarayıcı oturumu ayrı atomik MongoDB sayaçlarından geçiyor. Aynı oturumla farklı IP'lerden eşzamanlı 11 çağrıda 10 kabul, bir limit yanıtı deterministik sayaç testiyle doğrulandı. Eksik veya değiştirilmiş imzada IP hakkı tüketilir, oturum yenilenir ve GitHub işi başlamaz. Sayaç atomikliği için önceki Atlas kanıtı korunur.
+- 20 saniyelik analiz bütçesi artık giriş kotasıyla başlar. GitHub transport, katılımcı beklemesi ve lider/cache/katılımcı snapshot yazımı aynı bitişi kullanır. Yavaş girişte GitHub çağrısının, yavaş fence kontrolünde transaction insert/commit'in başlamadığı test edildi. Cleanup dahil HTTP süresi ve PNG üretimi Preview'da ölçülecek.
+- Kalıcı Playwright akışı gerçek production sayfaları, Chrome, geçici MongoDB replica set ve kontrollü GitHub verileri kullanır. İki adaydan birini seçme, ilk analiz, sayfa yenileme, cache sonucu için ayrı bağlantı, aynı ölçüm karşılaştırmasının reddi, gerçek 60 s bekleme sonrası yenileme, +10 puan, 1080×1920 PNG dosyasının indirilip okunması ve public kopyanın ayrı tarayıcı bağlamında kapatma/silme sonrası reddi doğrulandı. Özel rapor erişilebilir kaldı. Linux/Docker ve CI işinin ilk uzak çalışması push sonrasında görülecek.
+
+### Gerçek GitHub örneklemi
+
+| Hesap / seçilmiş proje | Aynı README'deki kanıt | Motor sonucu |
+| --- | --- | --- |
+| sindresorhus / p-limit | Blob `0da4a8e580f4ad7b23bc545db491a264a5b58566`. Install başlığı 7, komut 10, Usage başlığı 13, import 16. | Kurulum ve kullanım geçti. Motor kanıtları kod bloklarının başladığı 9 ve 15. satırlara bağlı. Bu tek repo ile tam sonuç 50/100. |
+| lukeed / clsx | Blob `b1af2b3aec8baea2e30466ad8a1cb43c576c1a66`. Install başlığı 12, npm komutu 15, Usage başlığı 19, import 22. | Kurulum ve kullanım geçti, kanıt satırları 14 ve 21. Profil README sorgusu kısmi GraphQL yanıtı verdi. Bilinen proje bulguları korundu, toplam null. |
+
+Her iki projede GitHub repo açıklaması ile motorun description kontrolü de karşılaştırıldı. Bu örneklemde incelenen altı bulguda kural düzeltmesi gerekmedi. Canlı sonuçlar ölçüm anına aittir. E2E senaryosu bu hesaplara bağlı değildir.
+
+Son kaynakla 46 dosyada 654 Vitest, lint, typecheck, varsayılan production build, diff kontrolü ve bir Playwright senaryosu geçti. E2E koşusu 1,2 dk sürdü, indirilen Story 1409687 bayttı. Bu tek örneğin boyutu en büyük hosting yanıtını belirlemez. Sıradaki işletim kontrolü gerçek Vercel Preview üzerinde sıcak/soğuk lider, katılımcı, DB commit/cleanup ve PNG süreleri ile yanıt boyutu, güvenilir IP başlığı, cookie ve CDN davranışıdır. Gerçek plan/bölge, fiziksel cihaz, sosyal platform, iletişim ve yedek politikası açık.
+
+## Önceki dilim — A6 yerel güvenlik ve erişilebilirlik incelemesi
 
 Gizlilik ve metodoloji paketi ana dalda `c140c3e` olarak doğrulandı. Push ve yeşil GitHub Actions sonucu kullanıcı bildirimidir.
 

@@ -1,10 +1,11 @@
 import "server-only";
+import {analysisBudgetMs} from "../../config/request-limits";
 import {GitHubError, type RateLimit, type RateResource} from "./errors";
 
 const BODY_LIMIT = 1024 * 1024;
 
 export class GitHubTransport {
-  private readonly deadline = Date.now() + 20_000;
+  constructor(private readonly deadline = Date.now() + analysisBudgetMs) {}
   private requests = 0;
   private readonly limits: Record<RateResource, RateLimit> = {core: {}, graphql: {}};
   private readonly reports: Record<RateResource, RateLimit> = {core: {}, graphql: {}};

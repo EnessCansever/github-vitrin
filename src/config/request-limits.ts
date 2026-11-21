@@ -10,6 +10,7 @@ export const requestLimits = {
 } as const;
 
 export const analysisRefresh = {limit: 1, windowMs: 60_000} as const;
+export const analysisBudgetMs = 20_000;
 export const analysisLeaseMs = 45_000;
 
 export const analysisCapacityLimit = 5;

@@ -155,3 +155,11 @@ it("keeps a saved result if cleanup fails, emits only a safe diagnostic, and lea
   expect(serialized).not.toContain("sensitive");
   expect(serialized).not.toContain(state.locks.get(analysisScope(1, [10]))?.owner);
 });
+
+it("includes slow admission in the analysis deadline before opening GitHub", async () => {
+  const {limitRequest} = await import("../../src/lib/security/requests");
+  vi.mocked(limitRequest).mockImplementationOnce(async () => {vi.advanceTimersByTime(20_000);});
+  expect(await analyze(selection)).toEqual({status: "error", code:"analysisExpired"});
+  expect(github.profile).not.toHaveBeenCalled();
+  expect(acquireAnalysisLock).not.toHaveBeenCalled();
+});

@@ -52,7 +52,11 @@ const selectionSchema = z.array(z.object({
 })).min(1).max(3).refine(repos => new Set(repos.map(repo => repo.id)).size === repos.length);
 
 export class GitHubClient {
-  private readonly transport = new GitHubTransport();
+  private readonly transport: GitHubTransport;
+
+  constructor(deadline?: number) {
+    this.transport = new GitHubTransport(deadline);
+  }
 
   private async graph(query: string, login: string, expression?: string) {
     const result = parse(graphSchema, await this.transport.request("/graphql", {

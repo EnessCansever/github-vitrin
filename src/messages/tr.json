@@ -472,6 +472,10 @@
         "title": "Bu analiz zaten sürüyor",
         "description": "Aynı profil ve proje seçimi için bir analiz çalışıyor. Biraz sonra yeniden deneyebilirsin."
       },
+      "sessionRequired": {
+        "title": "Tarayıcı oturumu gerekli",
+        "description": "Çerezlere izin verip tekrar dene."
+      },
       "analysisExpired": {
         "title": "Analiz tamamlanamadı",
         "description": "Bu deneme zamanında tamamlanamadı. Proje seçimin korunuyor; yeniden deneyebilirsin."
@@ -724,7 +728,7 @@
       {
         "heading": "İstek sınırları",
         "paragraphs": [
-          "Doğrudan Vercel dağıtımı için yapılandırılan kota denetimi, sağlayıcının ilettiği IP adresini sunucuda işler. Ham IP yerine sunucu sırrı, işlem türü ve zaman penceresiyle üretilen HMAC anahtarı, sayaç ve bitiş bilgisi kota kaydına yazılır. Anahtar işlem ve dönemle değişir. Yerel geliştirmede ortak bir sayaç kimliği kullanılır."
+          "Doğrudan Vercel dağıtımı için yapılandırılan kota denetimi, sağlayıcının ilettiği IP adresini sunucuda işler. Ham IP yerine sunucu sırrı, işlem türü ve zaman penceresiyle üretilen HMAC anahtarı, sayaç ve bitiş bilgisi kota kaydına yazılır. Anahtar işlem ve dönemle değişir. Yerel geliştirmede ortak bir sayaç kimliği kullanılır. Analiz kotası için tarayıcı oturumu boyunca imzalı bir HttpOnly çerez de kullanılır. Oturum ve IP sayaçları ayrıdır."
         ]
       }
     ]

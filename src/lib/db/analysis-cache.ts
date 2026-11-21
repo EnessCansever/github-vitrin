@@ -9,7 +9,7 @@ import {ANALYSIS_CACHE_TTL_MS, makeCacheRecord, cacheKey, cacheSchema, cacheScop
 import {StorageError} from "./errors";
 import {reportSchema} from "./snapshot-schema";
 
-export async function readAnalysisCache(input: unknown, session?: ClientSession): Promise<
+export async function readAnalysisCache(input: unknown, session?: ClientSession, maxTimeMS = dbMaxTimeMs): Promise<
   {status: "hit"; report: Report; expiresAt: string; snapshotCreatedAt: string} | {status: "miss"}
 > {
   const scope = cacheScope.safeParse(input);
@@ -19,7 +19,7 @@ export async function readAnalysisCache(input: unknown, session?: ClientSession)
     const collection = (await getDatabase()).collection<CacheRecord>("analysisCache");
     const record = await collection.findOne({_id: key, $expr: {$and: [
       {$gt: ["$expiresAt", "$$NOW"]}, {$lte: ["$fetchedAt", "$$NOW"]},
-    ]}}, {maxTimeMS: dbMaxTimeMs, ...(session ? {session} : {})});
+    ]}}, {maxTimeMS, ...(session ? {session} : {})});
     if (!record) return {status: "miss"};
     const parsed = cacheSchema.safeParse(record);
     if (!parsed.success || parsed.data._id !== key) throw new StorageError("invalid_record");

@@ -578,3 +578,9 @@ Onaylı renderer aynen kullanılır; public/private veri eşlemesi paylaşılır
 ## D048 — Gönderi kartı ve PNG saklama (20 Kasım 2026)
 
 §2 ve §7 gönderi boyutunu ve görsel anahtarını tanımlar. Görsele özgü bağımsız TTL veya hata politikası belirtilmemiştir. Kaynağın özgün bitişi üst sınır seçildi. DB hatasında mevcut erişim ve kota yolundan güvenli hata döner. Üç format aynı PNG bütçesini tüketir. Ayrı public ve private anahtar alanları kullanılır.
+
+## D049 — Anonim analiz oturumu ve yayın kontrolleri
+
+21 Kasım 2026. Sözleşme §7'deki 10 analiz/10 dakika hem doğrulanmış oturum hem IP için ayrı sayaçlarla uygulanır. Arama, okuma, paylaşım ve PNG için ilave oturum kotası tanımlanmadı. Tarayıcı oturum çerezi için kalıcı bir yaşam süresi belirlenmedi. İmza doğrulaması oturumu bir hesaba veya rapora bağlamaz. Etkilenen yerler request limits, analiz action'ı, TR/EN gizlilik metni ve testlerdir.
+
+Sözleşmedeki 20 saniyelik analiz bütçesi girişten itibaren sayılır. GitHub, katılımcı beklemesi ve snapshot yazımına ortak son zaman iletilir. Vercel planı, özel maxDuration, bölge ve PNG için ayrı bir ürün zaman aşımı kararı verilmedi. Süre ve yanıt boyutu Preview'da ölçülecek. Kritik E2E production build üzerinde sentetik GitHub ve geçici gerçek MongoDB replica set kullanır.

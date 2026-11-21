@@ -472,6 +472,10 @@
         "title": "This analysis is already running",
         "description": "An analysis is running for this profile and project selection. Please try again shortly."
       },
+      "sessionRequired": {
+        "title": "Browser session required",
+        "description": "Allow cookies and try again."
+      },
       "analysisExpired": {
         "title": "The analysis could not finish",
         "description": "This attempt did not finish in time. Your project selection is preserved; you can try again."
@@ -724,7 +728,7 @@
       {
         "heading": "Request limits",
         "paragraphs": [
-          "For direct Vercel hosting, the quota check processes the IP address forwarded by the provider. The counter stores a keyed HMAC derived from the server secret, operation, time window and IP, along with count and expiry information. The raw IP is excluded from quota records. Keys change with the operation and window. Local development uses a shared identity."
+          "For direct Vercel hosting, the quota check processes the IP address forwarded by the provider. The counter stores a keyed HMAC derived from the server secret, operation, time window and IP, along with count and expiry information. The raw IP is excluded from quota records. Keys change with the operation and window. Local development uses a shared identity. A signed HttpOnly session cookie also limits analysis requests. The session and IP have separate counters."
         ]
       }
     ]
