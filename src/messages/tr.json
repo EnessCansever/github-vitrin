@@ -740,7 +740,7 @@
       {
         "heading": "100 puan nasıl hesaplanır?",
         "paragraphs": [
-          "Sana ait, herkese açık, arşivlenmemiş ve fork olmayan 1–3 proje seçersin. Projeler ve README kategorilerinde seçilen projelerin ortalaması alınır. Kategori puanları bir ondalığa yuvarlanır ve toplanır. Daha çok repo, yıldız, takipçi veya commit ek puan getirmez. Ağırlıklar ürün tercihidir."
+          "İncelenen profile ait, herkese açık, arşivlenmemiş ve fork olmayan 1–3 proje seçersin. Projeler ve README kategorilerinde seçilen projelerin ortalaması alınır. Kategori puanları bir ondalığa yuvarlanır ve toplanır. Daha çok repo, yıldız, takipçi veya commit ek puan getirmez. Ağırlıklar ürün tercihidir."
         ],
         "items": [
           "Profil · 20 puan. Biyografi 5, geçerli site adresi 5, boş olmayan profil README’si 10.",
@@ -752,7 +752,7 @@
         "heading": "README nasıl okunur?",
         "paragraphs": [
           "Kurulum için tanınan bir TR/EN bölüm başlığı ve o bölümde bir komut veya kod bloğu aranır. Amaç için açıklayıcı paragraf, kullanım için açıklama veya komut gerekir. Bilgi başka bir başlıkta yazılmışsa eşleşme kaçabilir.",
-          "Demo için proje sitesi alanı veya README’de demo olarak tanınan bir HTTP(S) bağlantısı yeterlidir. Site açılmaz, komut çalıştırılmaz. Bir Markdown görsel referansı, görselin yüklendiğini veya ekran görüntüsü olduğunu kanıtlamaz."
+          "Demo kontrolü, proje sitesi alanında geçerli bir HTTP(S) adresi veya README’de demo olarak tanınan bir HTTP(S) bağlantısı arar. Site açılmaz, komut çalıştırılmaz. Bir Markdown görsel referansı, görselin yüklendiğini veya ekran görüntüsü olduğunu kanıtlamaz."
         ]
       },
       {

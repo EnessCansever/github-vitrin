@@ -1,198 +1,66 @@
 # RepoVitrin
 
-Geliştirme aşamasındaki GitHub portfolyo sunumu değerlendirme projesi. Ana sayfa kullanıcı adı veya desteklenen GitHub profil URL'siyle gerçek public profili ve uygun repo adaylarını getirir; 1–3 proje seçilebilir. **Sunumu analiz et**, sunucuda puan ve kanıt üretip snapshot kaydeder; başarılı kayıt 30 günlük tokenlı rapor adresinde açılır. `/demo`, `/demo/select`, `/demo/states` kurmaca örnekler olarak ayrıdır. A4.2 görünümü kullanıcı tarafından kabul edildi; 257acff uzak CI başarısı kullanıcının ilettiği Codex public API doğrulaması olarak kayıtlıdır. Kayıtlı complete raporda Story, gönderi ve yatay PNG önizlenip indirilebilir.
+RepoVitrin, bir ziyaretçinin GitHub profilinden projeleri ne kadar kolay tanıyabileceğini, kurulum adımlarını bulup örneklerini deneyebileceğini değerlendirir. Puan **portföy sunumunu** ölçer. Kod kalitesi, geliştirici yetkinliği ve işe alınma olasılığı değerlendirmenin kapsamı dışındadır.
 
-## Gereksinimler ve kurulum
+[Canlı uygulama](https://github-vitrin.vercel.app) · [Örnek rapor](https://github-vitrin.vercel.app/demo) · [Metodoloji](https://github-vitrin.vercel.app/methodology) · [Gizlilik](https://github-vitrin.vercel.app/privacy)
 
-Node.js **22.13.0** ve npm **10.9.2** ile doğrulanır; `.nvmrc` yerel ve CI Node sürümünü belirler. Sistem Node kurulumunu otomatik değiştiren bir betik yoktur. nvm kullanıyorsanız `nvm use` ile mevcut sürümü seçebilirsiniz.
+## Profil aramasından rapora
+
+1. GitHub kullanıcı adını veya profil adresini gir. İncelenen hesaba ait, herkese açık, arşivlenmemiş ve fork olmayan 1–3 proje seç.
+2. Raporda **Profil (20), Projeler (30) ve README (50)** puanlarını, kontrol edilen kaynakları ve en fazla üç öncelikli öneriyi incele. Proje puanları seçimin ortalamasına dayanır. Bir kontrol için veri alınamazsa bilinen bulgular korunur, toplam puan ve profil tipi gösterilmez.
+3. Aynı profil, repo kümesi ve kural sürümü için tam analiz 15 dakika boyunca yeniden kullanılabilir. GitHub verileriyle yenilemek ayrı bir ölçüm üretir. İki uyumlu tam raporda puan ve kontrol değişimleri karşılaştırılabilir. Aynı önbellek sonucunu açmak ikinci ölçüm sayılmaz.
+
+Arayüz Türkçe ve İngilizcedir. Sabit örnek profille [proje seçimini](https://github-vitrin.vercel.app/demo/select) ve [yüklenme, hata ve eksik analiz ekranlarını](https://github-vitrin.vercel.app/demo/states) gerçek istek başlatmadan inceleyebilirsiniz.
+
+## Rapor erişimi ve paylaşım
+
+- **Özel rapor** 30 gün geçerlidir. Okuma anahtarını içeren tam bağlantıya sahip kişi raporu açabilir. Sayfayı yenilemek veya dil değiştirmek kayıtlı sonucu gösterir. Tarayıcı geçmişinde son 10 özel raporun erişim bilgileri tutulabilir.
+- **Herkese açık paylaşım** açık onayla oluşturulan, bağımsız 90 günlük salt okunur bir özettir. Özel rapor anahtarı ve cihaz geçmişi paylaşılmaz. Ayrı yönetim bağlantısıyla public erişim kalıcı olarak kapatılabilir veya public kopya silinebilir. Özel rapor kendi süresini korur.
+- **PNG kartları** tam rapordan veya uyumlu iki raporun karşılaştırmasından önizlenip indirilebilir. Story 1080×1920, gönderi 1080×1350, yatay 1200×630 pikseldir. Aktif, tam public paylaşımın ayrıca OG/Twitter bağlantı önizlemesi vardır. Paylaşımı kapatmak, önceden indirilen dosyaları veya sosyal platformların sakladığı önizlemeleri geri almaz.
+
+## Teknoloji ve mimari
+
+Next.js App Router, React, strict TypeScript ve next-intl arayüzü oluşturur. Sunucu GitHub REST/GraphQL üzerinden veriyi alır ve Zod ile doğrular. Saf puanlama motoru Markdown yapısını unified ve remark-parse ile inceler. Demo sitelerine istek göndermez ve README’deki komutları çalıştırmaz. MongoDB native driver raporları, süreli önbellekleri, kota sayaçlarını ve analiz kilitlerini yönetir. PNG’ler next/og ve yerel fontlarla üretilir.
+
+[Mimari ve işlem sınırları](docs/ARCHITECTURE.md) · [Puanlama kuralları ve tespit sınırları](docs/SCORING.md) · [Tasarım](docs/DESIGN.md) · [Font lisansları](src/app/fonts/README.md)
+
+## Yerel kurulum
+
+Node.js **22.13.0** ve npm **10.9.2** kullanılır. nvm ile proje sürümü `nvm use` komutuyla seçilebilir.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Ana sayfa: http://localhost:3000
+[Yerel ana sayfa](http://localhost:3000) ve [kurmaca demo](http://localhost:3000/demo) bu sunucuda açılır. Demo ve build için gizli değer gerekmez. Gerçek arama ve analiz için [.env.example](.env.example) içindeki adları Git tarafından yok sayılan `.env.local` dosyasında tanımlayın, ardından sunucuyu yeniden başlatın.
 
-Örnek sonuç: http://localhost:3000/demo
+| Sunucu değişkeni | Kullanımı |
+| --- | --- |
+| `GITHUB_TOKEN` | Yalnız herkese açık depoları okuyabilen, süreli fine-grained GitHub tokenı. |
+| `MONGODB_URI` | İşlemleri (transactions) destekleyen geliştirme replica seti veya Atlas bağlantısı. |
+| `MONGODB_DB` | Hedef veritabanı adı. Uygulama kullanıcısı yalnız bu veritabanında `readWrite` yetkisi gerektirir. |
+| `SIGNING_SECRET` | Kota anahtarları ve anonim oturum imzaları için en az 32 baytlık rastgele sır. Aynı ortamın sunucu süreçlerinde ortak kullanılır. |
+| `SITE_URL` | Public önizlemelerin mutlak adresleri için ortamın HTTPS origin’i. Yerel geliştirmede varsayılan `http://localhost:3000`. |
 
-Repo seçimi örneği: http://localhost:3000/demo/select
+Production ayrı Atlas projesindeki `repovitrin_prod` veritabanını kullanır. Vercel’de Production ve Preview için MongoDB bağlantısı ve veritabanı adı ayrı tanımlıdır. Yerel geliştirmede geliştirme veritabanını kullanın. Korunan işlemler geliştirmede ortak kota kimliği, dağıtımda doğrudan Vercel ingress bilgisi kullanır. [GitHub token kurulumu](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) · [Atlas veritabanı kullanıcıları](https://www.mongodb.com/docs/atlas/security-add-mongodb-users/)
 
-Durum örnekleri: http://localhost:3000/demo/states
-
-TR/EN aynı sayfada kalır ve dil cookie'de tutulur. Gerçek seçim aynı ana sayfada açılır; dil değişimi yeni GitHub isteği göndermez ve seçimleri korur. Yeni aramada eski profil/seçimler temizlenir; geç eski yanıt yeni aramayı ezmez. Sunucuda kimlik/kapsam yeniden doğrulanır, README verileri saf motora verilir ve rapor kaydedilir. Eksik analizde toplam/tip hesaplanmaz, bilinen kategoriler görünür. Kaydedilen rapor adresinde tam yenileme snapshot'ı okur; GitHub veya puanlama çalışmaz. Kaydedilemeyen sonuç ve henüz tamamlanmamış seçim yalnız mevcut sayfa oturumundadır. Tam sonuçlar 15 dakikalık analiz önbelleğinden yeniden kullanılabilir. Son 10 özel raporun erişimi cihaz geçmişine alınabilir. Demo ayrı kurmaca profile gider.
-
-Demo ekranları, testler ve build için secret gerekmez. `.env.example`, `GITHUB_TOKEN`, `MONGODB_URI`, `MONGODB_DB` ve `SIGNING_SECRET` isimlerini boş değerlerle belgeler. Korunan gerçek işlemler için MongoDB değişkenleri ve en az 32 byte güçlü rastgele `SIGNING_SECRET`, GitHub işlemleri için ayrıca GitHub tokenı gerekir; yalnız çağrı anında sunucuda okunur. Limit altyapısına erişilemiyorsa GitHub/rapor/PNG işlemi güvenli biçimde reddedilir. Analiz kabul edilip hesaplandıktan sonraki snapshot yazımı başarısız olursa hesaplanan sonuç ekranda korunur. Gerçek değerleri Git’e veya `NEXT_PUBLIC_` değişkenlerine eklemeyin.
-
-## Kontroller ve production çalıştırma
+## Doğrulama
 
 ```sh
 npm test
 npm run lint
 npm run typecheck
 npm run build
-npm start
 ```
 
-`typecheck`, temiz kurulumda önce `next typegen` ile Next.js tiplerini üretir, sonra TypeScript kontrolünü çalıştırır. `lint` ESLint CLI kullanır. `build` lint yerine geçmez. `npm test`, Vitest ile girdi, kapsam, sayfalama, README, hata ve bütçe davranışlarını sahte HTTP yanıtlarıyla doğrular; gerçek GitHub isteği veya token gerektirmez. Ayrıca saf puanlama, Markdown AST, unknown ve öneri davranışları ağsız test edilir. Gerçek analiz Server Action doğrulaması/DTO’su ve React sunucu render’ıyla complete/incomplete sonuç sunumu da test edilir. Kritik tarayıcı akışı ayrıca Playwright ile kontrol edilir.
+Vitest puanlama, erişim, kota ve saklama davranışlarını kontrollü verilerle sınar. Playwright için Bash, OpenSSL, yerel `mongod` veya çalışan Docker ve boş 3197/37917 portları gerekir. Build sonrasında:
 
-GitHub Actions, push ve pull request üzerinde `npm ci`, test, lint, typecheck, build ve Playwright E2E çalıştıracak şekilde tanımlıdır; uygulama secret'ı gerektirmez. Yerel kontrol sonuçları uzak CI sonucu değildir; güncel doğrulama durumu [STATUS](docs/STATUS.md) içindedir.
+```sh
+npx playwright install chromium
+npm run test:e2e
+```
 
-### Kalıcı tarayıcı kontrolü
+Kurulu Chrome ile `PLAYWRIGHT_CHANNEL=chrome npm run test:e2e` de kullanılabilir. E2E senaryosu geçici bir MongoDB replica seti ve kontrollü GitHub yanıtlarıyla arama, seçim, analiz, yenileme, karşılaştırma, PNG indirme ve ayrı anonim oturumdan paylaşım erişimini sınar. CI bu kontrolleri uygulama sırları olmadan çalıştırır.
 
-`npm ci`, `npx playwright install chromium`, `npm run build` ve ardından `npm run test:e2e` çalıştırın. Kurulu Chrome ile `PLAYWRIGHT_CHANNEL=chrome npm run test:e2e` kullanılabilir. Test Bash, OpenSSL ve yerel `mongod` veya çalışan Docker gerektirir. 3197 ve 37917 portları boş olmalıdır. Test kendine ait HTTPS sunucusunu ve geçici tek üyeli MongoDB replica setini başlatır. GitHub yanıtları test sunucusuna özeldir. Gerçek hesap, Atlas veya secret gerekmez. Gerçek 60 saniyelik yenileme sınırı nedeniyle senaryo bir dakikadan uzun sürer.
-
-### Vercel Preview kurulumu
-
-Next.js preset ve Node.js 22.x kullanın. Fluid Compute durumunu ve Functions bölümünde uygulanan **Maximum Duration** değerini kontrol edin. Resmî Fluid varsayılanı 300 saniyedir. Projeye daha kısa bir override atanmışsa soğuk analiz ve PNG ölçümleriyle değerlendirin. Atlas replica set erişimini ve seçilen function bölgesinden ağ izinlerini doğrulayın. Preview ve Production için ayrı sunucu değişkenleri tanımlayın: `MONGODB_URI`, `MONGODB_DB`, `GITHUB_TOKEN`, `SIGNING_SECRET` ve her ortamın gerçek HTTPS origin'i olarak `SITE_URL`. Aynı ortamın instance'ları aynı imzalama sırrını kullanmalı. Vercel sistem değişkenlerinin erişilebilirliğini ve doğrudan ingress tarafından verilen `x-vercel-forwarded-for` başlığını Preview üzerinde kontrol edin. Plana, bölgeye ve ücretli kapasiteye ilişkin karar açık. [Vercel süre ayarları](https://vercel.com/docs/functions/configuring-functions/duration) · [Function sınırları](https://vercel.com/docs/functions/limitations)
-
-## Yapı
-
-- `src/app`: App Router ana sayfa, demo, ortak layout ve merkezi CSS tasarım tokenları.
-- `src/components`: ortak marka, dil seçimi ve geliştirici imzası.
-- `src/i18n`, `src/messages`: next-intl istek/dil ayarları ve TR/EN metinleri.
-- `src/features/analysis/demo.ts`: sabit kurmaca örnek; puanlama motoru değildir.
-- `src/features/analysis/scoring`: sunucu analiz akışından çağrılan saf puanlama motoru; rulesVersion 1.0.0, Markdown AST ve kanıt/öneri çıktısı. Kurallar ve tespit sınırları [SCORING](docs/SCORING.md) içinde.
-- `src/lib/github`: server-only public adapter, Zod doğrulama, normalize edilmiş veri ve tipli hatalar; mevcut Server Action profil/aday erişimini kullanır.
-- `src/lib/db`: server-only MongoDB native driver havuzu, snapshot şeması ve create/read fonksiyonları; analyze sunucuda ürettiği raporu bu katmana verir.
-- `src/features/reports`, `src/app/reports/[id]`: tokenlı snapshot okuma action'ı, rapor adresi, kopyalama ve güvenli erişim durumları.
-- `src/features/analysis/{live-analysis,live-report,report}`: geçici analiz state’i, güvenli sonuç DTO’su ve sonuç sunumu.
-- `tests/github`, `tests/scoring`, `tests/analysis`, `tests/db`: ağ kullanmayan adapter/action/motor, sonuç render ve sahte DB ile snapshot/bağlantı davranış testleri. Sahte DB testleri gerçek MongoDB entegrasyon kanıtı değildir.
-- `src/config/site.ts`: çalışma markası ve geliştirici bağlantı bilgileri. Bilinmeyen Instagram adresi boştur.
-- `docs`: ürün, mimari, puanlama, tasarım ve aşama kayıtları.
-
-Tam paket sürümleri `package.json` ve `package-lock.json` içinde kilitlidir. Yalnız npm kullanılır. Çalışma kuralları [AGENTS.md](AGENTS.md), sıradaki işler [TASKS](docs/TASKS.md) içindedir.
-
-## GitHub bağlantısını hazırlama
-
-Gerçek profil/aday erişimi ana sayfadaki “Projelerimi getir” eylemiyle tek Server Action üzerinden tetiklenir; aynı iş için Route Handler veya debug endpointi yoktur. EnessCansever için mevcut adapter ile gerçek public bağlantı smoke kontrolü yapıldı; güvenli sonuçlar [STATUS](docs/STATUS.md) içinde.
-
-GitHub Settings → Developer settings → Personal access tokens → Fine-grained tokens altında süreli bir token oluşturun. Yalnız public veri için **Public repositories** erişimini seçin; ek hesap, yazma veya özel repo izinleri vermeyin. Fine-grained tokenlar public repolara okuma erişimi içerir. Classic tokenın `public_repo` kapsamı yerine bu dar erişimi tercih edin. [Resmi token oluşturma rehberi](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens), [GraphQL yetkilendirmesi](https://docs.github.com/en/graphql/guides/forming-calls-with-graphql) ve [public README erişimi](https://docs.github.com/en/rest/repos/contents#get-a-repository-readme).
-
-Tokenı kendiniz ignore edilen `.env.local` içindeki `GITHUB_TOKEN` değişkenine ekleyebilirsiniz; paylaşmayın. Adapter modülü import edilirken token okunmaz. Çağrı anında boş/biçimi bozuk token veya GitHub 401 yanıtı `configuration`, diğer yetki sorunları `auth` olur. Build ve deterministik testler bu değeri gerektirmez. Token, sunucuda public profil/aday ve seçili README erişimini sağlar. Analiz yalnız kullanıcının Sunumu analiz et veya yeniden veri al eylemiyle başlar; dil değişimi analiz çağırmaz.
-
-Bir sunucu işlemi için yeni bir `GitHubClient` oluşturulur; **global singleton olarak saklanmaz**. `getProfile`, `getPinned`, `getCandidates`, `getProfileReadme`, `getSelected` aynı 20 saniye / 40 istek bütçesini paylaşır. En fazla 100 uygun aday tutulur; bu sınırdaki `limited` bayrağı kesilmeyi ihtiyatlı biçimde bildirir. README en fazla 256 KiB, HTTP JSON gövdesi en fazla 1 MiB; içerik kesilmez.
-
-Profil README'si proje adaylarından bağımsızdır: aynı adlı public repoda, varsayılan dalın sabit commit'indeki **kök `README.md`** kontrol edilir. Hatasız GraphQL yanıtında aynı adlı public repo veya kök dosyanın bilinen yokluğu `missing`; auth/ağ/partial ve belirsiz yanıt `unknown` olur. REST 404 tek başına yokluk kanıtı değildir. Arşiv/fork proje filtresi profil README'sine uygulanmaz; private README içeriği istenmez. Boş dosya `found` ve boş metin olarak korunur. `found`, dosyanın okunabildiğini belirtir; boş olmama kontrolü veya GitHub profilinde gerçekten gösterilme iddiası değildir. GitHub'ın gösterim koşulları ayrıca içerik gerektirir; eski repolarda elle paylaşım koşulu da vardır. [Resmi profil README koşulları](https://docs.github.com/en/account-and-profile/how-tos/profile-customization/managing-your-profile-readme).
-
-REST/core ve GraphQL primary limitleri ayrı kaydedilir. Yalnız kısıtlanan kaynak durur; secondary veya kaynağı belirsiz limit iki API'yi de durdurur. Header yokluğu önceki bilinen primary bilgiyi silmez. Gerçek reset geçmişse eski bakiye engeli kaldırılır; reset bilinmiyorsa zaman uydurulmaz. GraphQL HTTP 200 rate-limit hataları da kayda işlenir. Pinned GraphQL primary limiti REST aday erişimini engellemez; secondary limiti başka API üzerinden aşmaya çalışan fallback yoktur. [GitHub API limit kaynakları](https://docs.github.com/en/rest/rate-limit/rate-limit), [secondary limitler](https://docs.github.com/en/graphql/overview/rate-limits-and-query-limits-for-the-graphql-api).
-
-EnessCansever üzerinde profil/pinned/adaylar/profil ve proje README erişimi gerçek adapter ile doğrulandı. Bu opt-in smoke kontrolü npm test/CI içinde çalışmaz; geçici çalıştırıcı kaldırıldı. Ana sayfa gerçek profil, seçim ve analize bağlıdır; başarılı kayıt tokenlı rapor adresinden açılır, kaydedilemeyen çıktı yalnız sayfa oturumunda kalır. Güncel kapsam ve kontrol sonuçları [STATUS](docs/STATUS.md) içinde.
-
-## A2.2 yerel akış ve yayın sınırı
-
-Ana sayfada kullanıcı adı veya desteklenen URL'yi girip Enter/“Projelerimi getir” ile gönderin. Alan hatası ve gerçek pending gösterilir; aynı pending işlem için çift gönderim engellenir. Profil güvenli monogramla gösterilir; uygun pinler, sonra son güncellenen adaylar üçe kadar ön seçilir. Pinned unknown bilgisi gizlenmez; 100 aday sınırı bildirilir. Hatalarda “Yeniden dene” gerçek işlemi tekrarlar. Kullanıcıya ham API/Error veya token bilgisi verilmez.
-
-Server Action girdisi en fazla 256 UTF-8 byte; Next Server Action body sınırı 8 KiB'dir. İşlem başına yeni client 20 saniye/40 istek sınırını korur ve kullanıcı seçim yaparken tutulmaz. Eski arama yanıtı istemcide atılır; başlamış sunucu isteğinin iptal edildiği garanti edilmez. Dağıtık IP işlem bütçeleri MongoDB rateLimits üzerinden uygulanır; session bütçesi, dağıtık işlem kilidi ve cache henüz yoktur. **Bu akış yalnız yerel geliştirme/inceleme içindir; public deployment'a hazır değildir ve yayın yapılmadı.**
-
-Kontroller: `npm test` gerçek GitHub/token gerektirmez. Gerçek form kontrolü açık opt-in yerel tarayıcı incelemesidir; CI otomatik canlı istek yapmaz. Güncel yerel/uzak sonuç ayrımı STATUS'tadır.
-
-## Developer ID görünümü
-
-Ana sayfa ve ortak demo kimlik kartı, docs/design/developer-id-concept.png yönünü izler. Kategoriler/puanlama değişmedi; gerçek sonuç ve demo ortak IdentityCard sunumunu kullanır. Eksik sonuçta normal tip/mühür ve sayısal toplam üretilmez. Barlow Condensed, Manrope ve IBM Plex Mono yerel next/font/local ile kullanılır; Türkçe glyph desteği kontrol edildi, SIL OFL lisansları [font dizininde](src/app/fonts/README.md) tutulur. Font servisi veya hareket bağımlılığı eklenmedi. CSS hareketleri reduced-motion tercihinde kaldırılır. Güncel görsel kurallar ve kullanıcı kabul durumu DESIGN/STATUS içindedir.
-
-
-## A3 gerçek analiz
-
-Ana sayfada profili getir, 1–3 proje seç, **Sunumu analiz et**. Ayrı analyze Server Action'ı yalnız username, profileId ve repo id/name kabul eder; metadata, puan, bulgu veya sürüm kabul etmez. Zod strict seçim doğrulaması, ham username/istek boyutu ve tekrar eden ID/ad kontrolü vardır. Analiz payload'ı 2 KiB, Next body sınırı 8 KiB'dir. Profil ID/login, seçilen repo ID/sahiplik/public/archive/fork kapsamı sunucuda tekrar doğrulanır. Her işlem yeni client kullanır; işlem içindeki çağrılar aynı 20 saniye/40 istek bütçesini paylaşır.
-
-Sonuç checkedAt UTC ve rulesVersion içerir. İstemciye yalnız profil ID/login, motorun puan/kategori/check/tip/görevleri ve güvenli GitHub kaynak alanları döner; tam README, alıntı metni, token, Error veya ham API yanıtı dönmez. İncomplete raporda null toplam/tip korunur; bilinen kontrol/kategoriler kaybolmaz. Kaynaklar yalnız GitHub üzerinde açılır; dış demo siteleri taranmaz. Görevlerin sırası/puan etkisi arayüzde yeniden hesaplanmaz. A3 kullanıcı görsel kabulü ve 5ad54fb uzak CI doğrulaması kullanıcı tarafından sağlandı. Dağıtık abuse/cache/paylaşım/yayın yoktur.
-
-## A4.1 snapshot katmanı ve sonraki yerel kurulum
-
-Yalnız sunucudan `createSnapshot(report)` ve `readSnapshot(id, readToken)` kullanılabilir. A4.2 analyze action'ı bunları kullanır; istemciden rapor/puan kabul edilmez. Demo/test/build MongoDB olmadan çalışır. Gerçek analiz kayıt başarısızlığında sonucu geçici olarak gösterir; başarılı kayıt ayrı tokenlı rapor adresine gider.
-
-Sonraki gerçek entegrasyon kontrolü için kullanıcı kendi MongoDB/Atlas geliştirme veritabanını hazırlayıp ignore edilen `.env.local` dosyasına `MONGODB_URI` ve `MONGODB_DB` değerlerini kendisi eklemelidir. URI `mongodb://` veya `mongodb+srv://`, ayrı DB adı 1–63 ASCII harf/rakam/tire/alt çizgi olmalıdır; varsayılan `test` veritabanı seçilmez. Örnekteki değerler bilinçli olarak boştur. Atlas'ta yalnız ilgili veritabanına `readWrite` yetkili bir database user ve yerel bağlantının IP access list izni yeterlidir; geniş yönetici rolü gerekmez. [Database user kurulumu](https://www.mongodb.com/docs/atlas/security-add-mongodb-users/), [readWrite yetkileri](https://www.mongodb.com/docs/manual/reference/built-in-roles/#readwrite), [IP access list](https://www.mongodb.com/docs/atlas/security/ip-access-list/). URI/parolayı paylaşmayın veya loglamayın; gerçek hesap/secret bu dilimde oluşturulmadı/istenmedi.
-
-Resmi `mongodb` **7.8.0** kullanılır; mevcut Node 22.13.0 desteklenir. [Driver uyumluluğu](https://www.mongodb.com/docs/drivers/compatibility/?driver-language=javascript&javascript-driver-framework=nodejs). Bağlantı import sırasında açılmaz. İlk çağrıda oluşturulan process havuzu sonraki çağrılarda/HMR'da yeniden kullanılır; her istekte kapatılmaz. Bağlantı başarısızsa havuz kaydı temizlenir, sonraki açık çağrı yeniden deneyebilir; kör retry yoktur. Env değişince sunucuyu yeniden başlatın. Eksik/bozuk ayar `configuration`; bağlantı/yetki/operasyon sorunu güvenli `unavailable` verir, URI veya ham DB hatası döndürülmez.
-
-`analysisSnapshots` kaydı immutable'dır: ayrı UUID kimliği, 256-bit rastgele okuma tokenının SHA-256 hash'i, snapshotVersion=1, repo seti/hash'i, createdAt/expiresAt ve mevcut rapor DTO'su. `rulesVersion=1.0.0` bağımsızdır; puanlar, null değerler, kanıt ve öneri sırası korunur, okurken motor çalıştırılmaz. TR/EN için kural/mesaj kimlikleri ve scope parametreleri saklanır; hazır çevrilmiş bulgu metni, token/ham README/API nesnesi saklanmaz. Salt kimlikle erişim yoktur; token yalnız oluşturma sonucunda bir kez verilir ve loglanmamalıdır.
-
-Yazımda `ignoreUndefined:true`, bulunmayan optional kanıt alanlarının driver tarafından null'a çevrilmesini önler; gerçek null puanlar aynen kalır. Ağsız testlerde gerçek BSON dönüşümü de kontrol edilir, ancak bu gerçek veritabanı bağlantısını doğrulamaz.
-
-Sözleşme §7'deki **30 gün TTL** uygulanır: expiresAt=createdAt+30 gün, ilk yazım öncesi idempotent `expiresAt` TTL indeksi kurulur; `_id` MongoDB'nin unique indeksidir. [TTL temizliği gecikebilir](https://www.mongodb.com/docs/manual/core/index-ttl/); okuma ayrıca süreyi kontrol eder. Başka silme politikası/indeks, cache, karşılaştırma veya public paylaşım eklenmedi. Complete ve incomplete kayıtlar ayrı durumlarıyla saklanabilir; incomplete toplam/tip null kalır ve karşılaştırılabilir tam analiz sayılmaz.
-
-29 Ekim 2026 A4.1 opt-in smoke kontrolünde repovitrin_dev Atlas bağlantısı/indeks, complete/incomplete BSON yaz/oku, yanlış token/bulunmayan kimlik ve expiry reddi doğrulandı; o turun üç kaydı temizlendi. A4.2 gerçek analiz → kayıt → rapor → yenileme/dil ve hata/retry kontrolleri [STATUS](docs/STATUS.md) içindedir. Deterministik testler hâlâ sahte driver/collection kullanır; normal test/CI gerçek DB veya secret gerektirmez.
-
-## A4.2 rapor adresleri ve gizlilik
-
-Başarılı analiz `/reports/[id]#token=…` adresine gider. Tam bağlantı 30 gün boyunca raporu okumaya yetkilidir; sayfa veri zamanı ve son geçerliliği gösterir. Tokenı/linkin tamamını loglara, issue'lara veya ekran görüntülerine koymayın. Yeni analiz mevcut snapshot'ı değiştirmez. Ayrı shareReports, kullanıcı dizini veya username ile rapor arama yoktur. İlk PNG indirme dilimi aşağıdadır; sosyal OG hâlâ yoktur.
-
-Fragment sunucuya URL olarak gitmez; tarayıcı JavaScript'i tokenı doğrulayan okuma action'ının gövdesine aktarır. Rapor sayfası genel noindex/no-referrer metadata ve private/no-store HTTP başlıkları taşır; rapor verisi/URL metadata'ya eklenmez. Tam yenileme ve dil değişimi mevcut snapshot'ı okur/korur, GitHub isteği veya yeni skor üretmez. JS kapalıyken bu fragment erişim akışı çalışmaz. [Fragment davranışı](https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Fragment).
-
-“Rapor bağlantısını kopyala” gerçek clipboard sonucunu bildirir; izin/API yoksa readonly alandan elle kopyalama mümkündür. Bağlantıya sahip kişilerin okuyabileceği açıklanır. Geçersiz/eksik/süresi dolmuş erişim ortak güvenli ekran; DB hatası ayrı yeniden deneme ekranıdır. Kayıt başarısızsa hesaplanmış sonuç kaybolmaz; yeniden analiz edip kaydetme yeni GitHub verilerini alır, client raporunu yüklemez. Bu sonuç tam yenilemede kaybolur. Gerçek raporları public deployment'a çıkarma yetkisi/hazırlığı yoktur; dağıtık abuse/cache/lock sonraki kapsamdır.
-
-
-## A5.1 paylaşım kartı
-
-Kayıtlı, süresi geçmemiş **complete** raporu açıp **Paylaşım kartı** eylemini kullanın. Story 1080×1920, gönderi 1080×1350 veya yatay 1200×630 seçilir; rapor dilindeki aynı PNG önce önizlenir, ardından **PNG indir** ile indirme başlatılır. Görsel kullanıcı adını, sunum puanlarını ve ilk öneri/hedefini içerir. Incomplete raporda gerekçeli pasif durum vardır; /demo indirmesi eklenmedi.
-
-Mevcut next/og ve yerel lisanslı fontlar kullanılır; yeni bağımlılık/env gereksinimi yoktur. Üretim snapshot erişimini yeniden doğrular; GitHub'a gitmez, puan hesaplamaz, raporu değiştirmez veya 30 günlük süreyi uzatmaz. Görsel/dosya adında erişim tokenı, tam bağlantı veya QR yoktur. PNG indirme gerçek sosyal paylaşım ya da cihazda kaydetme garantisi değildir. Otomatik link/OG önizlemesi, üçüncü boyut, gelişim kartı ve sosyal paylaşım ayrı açık işlerdir. Dağıtık abuse koruması/yayın sınırı sürer.
-
-## A4.3b — işlem sınırları ve çalışma ortamı
-
-1 Kasım 2026 kullanıcı kararına göre merkezi sunucu yapılandırması src/config/request-limits.ts içindedir: profil/repo adayları 20/10 dakika, analiz 10/10 dakika, kayıtlı rapor okuma 60/1 dakika, PNG 10/10 dakika. Story/yatay aynı PNG bütçesini kullanır. Bunlar ölçülmüş kapasite garantisi değildir. Her action girişte yalnız kendi bütçesinden bir hak tüketir; geçersiz girdi/yanlış token/başarısız işlem için hak iade edilmez. PNG'nin dahili snapshot okuması rapor kotası tüketmez. Analizde sunucuda doğrulanmış profil/repo kimlikleri için IP'den ayrı 1/60s bekleme ve sahipli çalışma kilidi uygulanır; ayrıntılar aşağıdadır.
-
-`SIGNING_SECRET` artık korunmuş action'lar için zorunludur; gerçek env dosyasına kendiniz ekleyin, paylaşmayın. Secret sunucuda HMAC-SHA256 anahtarıdır; IP/claim metni Mongo'ya yazılmaz/loglanmaz, yalnız opak key ve sayaç/expiry alanları saklanır. IP key'i işlem türü ve takvim hizalı 1/10 dakikalık dönem içerir, her dönemde değişir; kalıcı IP pseudonym'i snapshot/rapor/geçmişe taşınmaz. Bu sabit pencere kotasıdır, kayan pencere garantisi değildir. Mongo expiry'si daha geç olsa da önceki dönem key'i tekrar kullanılmaz; ret yanıtı gerçek yeni dönem başlangıcından geç bir bekleme uydurmaz. Profil/kapsamın 60s kontrolü döneme göre yenilenmez ve kendi ilk tüketiminden itibaren tam beklemeyi korur. TTL gecikmesi olabilir, kota kararını uygulama expiry kontrolü verir.
-
-Yerel `npm run dev` bütün istemciler için ayrı ortak geliştirme bütçesi kullanır ve IP header'larını okumaz. Üretim yolu kullanıcı tarafından **doğrudan Vercel** olarak seçildi. `VERCEL=1` ve `VERCEL_ENV=preview|production` sistem değişkenleri gerçekten Vercel tarafından sağlanmalı; yalnız tek geçerli IP içeren x-vercel-forwarded-for kabul edilir. Başka forwarded header/cookie/input fallback'i yoktur. Sistemin bunları otomatik sunması yayın ortamında doğrulanmalıdır; yerelde bayrakları elle verip proxy güvenini taklit etmek desteklenmez. Self-hosted production veya eksik secret/kimlik yapılandırması güvenli hata verir; bu nedenle yerel npm start altında gerçek action akışı dev moduyla aynı değildir. Build/import secretsız kalır.
-
-[Resmi Vercel header sözleşmesi](https://vercel.com/docs/headers/request-headers) ve [sistem env değişkenleri](https://vercel.com/docs/environment-variables/system-environment-variables) teknik dayanak olarak kontrol edildi. Proxy zinciri/Trusted Proxy/başka hosting aynı güven varsayımıyla desteklenmez. Doğrudan Vercel gerçek header/region/plan/env davranışı henüz yayında test edilmedi; bu tur deployment yoktur. Analiz girişinde IP bütçesine ek olarak imzalı tarayıcı oturumu için 10 analiz/10 dakika ayrı tüketilir. Kilit ve cache kuralları aşağıda açıklanır. Limitte gerçek DB retryAt, altyapı/configuration hatasında ayrı güvenli mesaj gösterilir.
-
-
-## A4.3c — analiz kilidi ve sürücü düzeltmesi
-
-Aynı doğrulanmış profil ve 1–3 repo kümesi (repo sırasından bağımsız) için MongoDB `requestLocks` atomik 45 saniyelik sahiplik verir. Kimlik doğrulamak için profil ve repo metadata ön kontrolü gerekir; kilit reddinde README, motor ve snapshot işlemleri başlamaz. Ayrı 60 saniyelik bekleme yalnız kilidi alan doğrulanmış kapsam için bir kez tüketilir; işlem hatası bu hakkı iade etmez. IP giriş kotası geçersiz denemeleri de kapsar. Süre hesabı Mongo saatine dayanır; TTL temizliği karar kaynağı değildir.
-
-Gerçek analiz kaydı, aktif kilit sahibine ait belgeyi gerçekten değiştiren işlem ve snapshot insert'ini aynı native transaction'da yapar. Yeni sahip aldıktan sonra eski işlem kayıt yazamaz veya yeni kilidi silemez. Atlas replica set transaction desteği gerekir. Kilit, donmuş süreci fiziksel olarak durdurmaz; işlem kontrol noktaları ve yazma çiti eski sonucun kaydını engeller. Native transaction kilidi commit/abort temizlenene kadar yeni sahipliği geciktirebilir; DB hatası meşgul diye sunulmaz. Session bütçesi, sonuç birleştirme ve cache henüz yoktur.
-
-**Sürücü güvenliği:** [MongoDB 7.8.0 resmi duyurusu](https://github.com/mongodb/node-mongodb-native/releases/tag/v7.8.0), 7.7.0'ı da etkileyen timeoutMS bağlantı havuzu desenkronizasyonunu (CVE-2026-119179) ve SRV hostname doğrulama sorununu açıklar. Önceki kod timeoutMS kullanıyordu; SRV riski SRV bağlantısı kullanılıyorsa geçerlidir. Gerçek URI incelenmedi, istismar veya veri sızıntısı doğrulandığı iddia edilmez. Yalnız mongodb paketi 7.8.0'a güncellendi.
-
-Ayrı davranış değişikliği: 7.8.0'da timeoutMS/timeoutMode artık sınır uygulamaz. Kod bunlara dayanmaz: selection/connect 2s, checkout 1s, socket 5s; DB komutları maxTimeMS 4s ve majority yazım beklemesi 4s kullanır. Driver otomatik read/write retry kapalıdır; yalnız bilinen duplicate-key yarışı sınırlı kurtarılır. Snapshot transaction aşamalarına giriş 8s yerel deadline ile denetlenir, commit üst sınırı 4s'tir. Bu aşama sınırları eski tek timeoutMS=8s toplam garantisi değildir; DNS/OS duraklaması ve belirsiz commit sonucu kesin süre/sonuç vaadine dönüştürülmez. Analiz işine kabul 20s kontrolü ve GitHub 20s/40 istek bütçesi korunur; bütün HTTP/DB/cleanup süresinin 20s olduğu henüz doğrulanmadı.
-
-Güncellemeden sonra çalışan Node/Next sürecini tamamen yeniden başlatın; HMR eski driver/havuzu tutabilir. Eski username tabanlı 60s anahtarından doğrulanmış kimlik namespace'ine geçişte eski süreçleri durdurup en az 60s bekleyin; karışık sürümle trafik sunmayın. Eski kayıtlar silinmez, kendi expiry/TTL düzeninde kalır. Yeni env veya secret gerekmez; gerçek Vercel/hosting ve failover kontrolleri hâlâ açıktır.
-
-
-## A4.4b — global analiz kapasitesi
-
-Merkezi `src/config/request-limits.ts` içindeki `analysisCapacityLimit=5`, aynı MongoDB havuz kaydını kullanan bütün süreçlerde ortak başlangıç korumasıdır; ölçülmüş kapasite garantisi değildir. Analiz IP kotası/strict girdi sonrasında, herhangi bir GitHub çağrısından önce owner'lı 45s permit alır. Kapasite doluysa açık TR/EN hata ve gerçek lease expiry'siyle manuel tekrar deneme vardır; otomatik kuyruk/poll yoktur. İş bitimi/hatası kapasiteyi bırakır, süreç kaybında süre dolumu toparlar. Eski permit snapshot yazamaz. Var olan scope kilidi ve ayrı 60s bekleme korunur.
-
-Bütün instance'larda aynı limit gerekir; etkin permit varken farklı ayar configuration verir. Değişimi kontrollü drain/yeniden başlatmayla yapın. Yeni secret/env/dependency yoktur. Cache veri katmanı henüz action'da kullanılmaz; sonuç birleştirme ve cache hit/miss/force-refresh entegrasyonu sonraki dilimdir. Gerçek Vercel/hosting kapasitesi ayrıca doğrulanmalı; bu dilim public deployment değildir.
-
-
-## A4.4c — eşzamanlı aynı analizi birleştirme
-
-Güncel analyze sırası A4.4b'den şu noktada farklıdır: her çağrının kendi giriş kotası ve GitHub kimlik/repo uygunluk metadata kontrolünden sonra mevcut scope kilidi lider seçer. Yalnız lider global permit ve 60s scope hakkını tüketir; README/puanlama işi tekrarlanmaz. Metadata ön kontrolü global permit dışında kaldığı için tüm GitHub çağrılarının global beşle sınırlı olduğu söylenmez.
-
-Katılanlar owner/scope/rulesVersion'a bağlı tokensız analysisRuns sonucunu max8s/9 kontrol ile bekler. Bu kayıt en fazla mevcut lease bitimine (45s) kadar yaşar; analysisCache değildir. Complete/incomplete/error politikası ve arıza ayrımı ARCHITECTURE A4.4c'dedir. Ayrı rapor tokenları üretilir; analiz zamanı ve snapshot bitişi yenilenmez. Yeni env/dependency yoktur; bütün süreçlerin aynı sürüm/DB/kurallarla çalışması gerekir. Normal cache/force-refresh arayüzü, hosting/failover ve yayın hâlâ açık.
-
-
-## A4.4d — cache, yenileme ve rapor kaynağı
-
-Normal analiz IP/kimlik/repo uygunluk doğrulamasından sonra 15dk complete cache kullanabilir. Hit README/motor/global permit/60s tüketmez; ayrı private erişimi orijinal analiz/snapshot süresiyle üretir. Miss/force mevcut lider/kilit/permit/60s yolundadır. Kayıtlı rapordaki “GitHub verileriyle yeniden analiz et” cache'i atlar, hata durumunda mevcut raporu/adresi korur. Kaynak ve UTC zaman raporda saklanır; reload/TR–EN yeni analiz başlatmaz. Eski raporlar kaynak bilgisi yok etiketiyle okunur; eski cache'te snapshot zaman anchor'ı yoksa yeniden kullanmak yerine gerçek analiz gerekir.
-
-Yeni env/dependency gerekmez. Server Function otomatik argüman logu read token gizliliği için kapalıdır; safe hata logları sürer. Çalışan Next sürecini yeniden başlatın. Yerel dev/build uyarısının Next patch incelemesi TASKS A6'da açıktır; bu tur package sürümü değiştirilmedi. Deployment yetkisi veya bütün A4 kapanışı yoktur.
-
-
-## Next.js güvenlik yaması — 17 Kasım 2026
-
-Runtime Next.js16.4.5 ve zorunlu env/SWC eşlikçileri kullanılır; önceki16.4.3 için açık Next patch maddesi D043 ile kapandı. Uygulama, React ve lint zinciri değiştirilmedi. Yeni bağımlılığın kullanılması için çalışan Node/Next süreçlerini yeniden başlatın. Audit'teki dev-only minimatch zinciri/ESLint destek değerlendirmesi ve diğer yayın kontrolleri hâlâ açıktır; bu yerel yama yayın yapıldığı veya tüm güvenliğin doğrulandığı anlamına gelmez.
-
-
-## A5.2 — ayrı public paylaşım bağlantısı
-
-Yerelde `npm run dev` ile kayıtlı özel raporu açın. “Herkese açık bağlantı oluştur” alanı public olacak minimum bilgileri açıklar; onay ve açık eylem ayrı90 günlük salt okunur `/share/[id]` kopyası üretir. Özel rapor tokenı, cihaz geçmişi ve ham README paylaşılmaz. GET/dil değişimi GitHub verisi çekmez/yeniden puanlamaz; otomatik sosyal OG ve yeni PNG formatı henüz yoktur.
-
-Public bağlantıyı paylaşın; **gizli yönetim bağlantısını ayrı kaydedin ve paylaşmayın**. Yönetim `/share/manage` sayfasında fragment yetkisiyle yapılır; linki tam saklamak gerekir. Cihazda da tutulur, fakat cihaz verisi/yönetim linki kaybında hesap kurtarma vaat edilmez. Yönetim bağlantısı özel30 günlük rapor bittikten sonra da90 günlük public kopyayı kalıcı kapatabilir veya fiziksel silebilir. Bu işlemler özel raporu değiştirmez; önceden indirilmiş kopyaları geri alamaz. Public sayfa noindex/no-referrer/no-store kullanır; listelenebilir profil dizini yoktur.
-
-Merkezi config'te özel rapor okuma, public okuma ve paylaşım mutasyonları ayrı IP60/1dk bütçeleridir. Create/close/delete tek mutation sayacını paylaşır; mevcut doğrudan Vercel/yerel geliştirme HMAC kimlik yaklaşımı sürer. Yeni dependency veya env gerekmez; yayın yetkisi verilmedi. Kontrol sonuçları ve sentetik veri/gerçek servis ayrımı STATUS'tadır.
-
-
-## A5.3 — otomatik public bağlantı önizlemesi
-
-Aktif complete `/share/[id]?lang=tr` veya `?lang=en`, o dilde SSR başlık/açıklama/Open Graph/Twitter metadata'sı ve1200×630 PNG sunar. Dilsiz eski link TR'dir; public dil seçimi URL'yi günceller. Görsel `/share/[id]/image/tr` veya `/image/en` yolundadır; oturum/private token istemez, yalnız public kopyayı okur. Kapatılmış/silinmiş/expired kopya kişisel preview/görsel sunmaz; incomplete için toplam/tip uydurulmaz ve scored image üretilmez. GET GitHub veya motor çağırmaz.
-
-**Yayın öncesi:** `SITE_URL` değerini gerçek canonical HTTPS origin olarak yapılandırın; path/query/hash/credential eklemeyin. Development boşsa http://localhost:3000; farklı local portta SITE_URL'yi o porta ayarlayın. `.env.local` değerlerini rapor/çıktıya eklemeyin. Domain/Instagram adresi bu projede henüz seçilmedi. Production'da bu ayar olmadan kişisel OG metadata'sı hazırlanmaz; build ise secret/URL gerektirmez.
-
-Page+metadata tek public okuma, ayrı PNG isteği bir public okuma ve mevcut render bütçesi kullanır. Uygulama/CDN yanıtları no-store'dur ve PNG teslimden önce share durumu tekrar okunur; otomatik sosyal platform post'u veya sosyal cache temizleme vaadi yoktur. Sosyal platformlar önceden aldıkları preview'yi kendi cache'lerinde tutabilir. Gerçek public domain/TLS/Vercel/CDN ve sosyal platform testleri yetkili yayın sonrasında yapılmalıdır. Yerel sentetik kanıtlar STATUS'tadır; yeni PNG formatı/görsel cache/deploy eklenmedi.
-
-İki uyumlu özel raporu karşılaştırdıktan sonra **Gelişim kartı** ile Story, gönderi veya yatay PNG önizlemesini açıp indirebilirsiniz. Her iki raporun da erişimi geçerli olmalıdır.
+Canlı Chrome kontrolünde üç PNG biçimi beklenen boyutlarda açıldı. İki ayrı paylaşımda kapatma ve silme sonrasında aynı anonim sayfa raporu göstermedi ve önceden yüklenen OG adresi 404 döndü. Fiziksel telefon, ekran okuyucu ve gerçek sosyal platform önizlemesi açık kontrollerdir. [Doğrulama kayıtları](docs/STATUS.md) · [Kalan yayın işleri](docs/TASKS.md)

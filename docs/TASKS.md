@@ -20,7 +20,6 @@ Güncel kanıtlar (ayrıntılar [STATUS](STATUS.md)):
 | 3 | Gerçek hosting sınırları | Plan/bölge, güvenilir ingress, oturum ve IP kotaları, farklı süreçlerde kilit/permit ve hata sonrası toparlanma. Sıcak/soğuk lider, katılımcı, DB commit/cleanup ve PNG süreleri ile yanıt boyutunu ölç. |
 | 4 | Gizlilik ve işletim bilgileri | İletişim kanalı, gerçek sağlayıcı bölgeleri, yedekleme ve saklama koşullarını netleştir. |
 | 5 | Cihaz, erişilebilirlik ve sosyal önizleme | Fiziksel telefonda kartları kaydet/aç, okunabilirlik ve paylaşım akışını dene. Fiziksel ekran okuyucuda odak ve yüklenme/hata duyurularını, gerçek sosyal platformda OG önizlemesini kontrol et. |
-| 6 | Yayın belgeleri | README’de güncel kurulum, mimari, puanlama gerekçesi, testler, ekranlar ve demo bilgilerini son ortamla karşılaştır. |
 
 A7’deki pilot kullanıcı geri bildirimi ve anonim toplu ölçümler dağıtım sonrası işlerdir.
 
@@ -501,7 +500,7 @@ Bu dilim A5'in bütünü değildir: 1080×1350, gelişim/önce-sonra kartı, oto
 
 - [ ] Yayın ortamında güvenlik, cihaz ve erişilebilirlik son kontrolleri. Yerel Playwright ve production build doğrulaması yukarıda.
 - [x] Sınırlı gerçek hesap doğruluk örneklemi ve bilinen tespit sınırları kaydedildi.
-- [ ] README: kurulum, mimari, scoring gerekçesi, testler, ekranlar, demo.
+- [x] README’de canlı uygulama ve demo ekranları, kurulum, mimari, puanlama kapsamı ve testlerin doğrulama sınırları mevcut sürümle karşılaştırıldı.
 - [x] İlk Production dağıtımı ve sınırlı canlı smoke kullanıcı bildirimiyle doğrulandı. Kalan yayın kabul kontrolleri üstte listelendi.
 
 ### A7 Dağıtım:

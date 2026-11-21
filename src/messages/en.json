@@ -752,7 +752,7 @@
         "heading": "How README checks work",
         "paragraphs": [
           "Installation needs a recognized English or Turkish section heading and a command or code block within that section. Purpose needs an explanatory paragraph. Usage needs an explanation or command. Information under a different heading can be missed.",
-          "A project website field or a recognized HTTP(S) demo link in the README can satisfy the demo check. Sites are not opened and commands are not run. A Markdown image reference does not establish that the image loads or that it is a screenshot."
+          "The demo check looks for a valid HTTP(S) URL in the project website field or a recognized HTTP(S) demo link in the README. Sites are not opened and commands are not run. A Markdown image reference does not establish that the image loads or that it is a screenshot."
         ]
       },
       {

@@ -2,6 +2,10 @@
 
 Son güncelleme: 21 Kasım 2026 (Europe/Istanbul).
 
+## Yayın belgeleri incelemesi
+
+README canlı uygulama, kurmaca ekranlar, yerel kurulum, veri erişimi, puanlama ve doğrulanmış kontroller etrafında düzenlendi. Metodolojide proje sahipliği ve demo bağlantısı koşulu motorla eşleştirildi. Gizlilik metinleri, uygulama yorumları ve test yönergelerinde değişiklik gerekmedi. Bu turda README bağlantıları ve komutları, ortam adları, TR/EN mesaj yapısı ve diff kontrol edildi. Puanlama testlerinin 90/90’ı geçti. Yeni bir canlı test yapılmadı.
+
 ## Production yayın kontrolü · de04873
 
 **Ortam bilgisi (kullanıcı bildirimi).** Production ayrı Atlas projesindeki `repovitrin-prod` cluster’ına taşındı. Kullanıcı yalnız `readWrite@repovitrin_prod` yetkili. Vercel’de MongoDB URI ve DB ayarları Production/Preview için ayrıldı. Kullanıcı yeni dağıtımda arama, analiz ve gizli sekmede public açılışı doğruladı. Kendisinin farklı kimlik/hostlarla yaptığı kapatma denemesi sonuçsuz olarak kayıtlı. Kullanıcı, önceki 6 saatlik `0.0.0.0/0` kaydını Atlas Production’da **Make permanent** ile kaydettiğini ve panelde **Active** durumunda, geri sayım olmadan gördüğünü doğruladı. Kalıcı ağ kuralı tüm IPv4 adreslerinden bağlantı denemesine izin verir.
