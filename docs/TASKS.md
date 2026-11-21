@@ -2,6 +2,27 @@
 
 Kaynak: [başlangıç sözleşmesi](../RepoVitrin-Codex-Proje-Sozlesmesi.md). `[x]` yalnız doğrulanan tamamlanmış işi, `[ ]` açık işi gösterir. Aşamalar kullanıcı geçiş mesajıyla ilerler.
 
+## Production yayın kontrolleri
+
+21 Kasım kullanıcı doğrulaması: `de04873`, CI #29 yeşil, Vercel Production Ready. Atlas erişim listesi genişletildikten sonra profil arama, fixora + jobfit-tr analizi, gönderi PNG’sini indirip açma ve gizli sekmede public sayfanın TR/EN geçişi geçti. Kullanıcının bu ilk denemesinde kapatma/silme belirsizdi. Aşağıdaki sıra güncel yayın kabulü içindir. Eski dilimlerin kayıtları tarihsel kanıt olarak korunur.
+
+Güncel kanıtlar (ayrıntılar [STATUS](STATUS.md)):
+
+- [x] Production Atlas projesi, cluster/DB, yalnız hedef DB’de readWrite ve Production/Preview MongoDB ayarlarının ayrılması kullanıcı bildirimiyle kaydedildi.
+- [x] Production alias üzerinden iki bağımsız paylaşımda Chrome clipboard origin’i, anonim ziyaret, TR/EN, 390 px taşma ve aktif OG okuması doğrulandı. Kapatılan birinci ve doğrudan silinen ikinci kopyada sonraki HTML ve metadata kullanıcı/görsel sunmadı. Aynı sıcak OG adresleri 404 döndü. Kullanıcının önceki belirsiz kapatma denemesi ayrı tutulur.
+- [x] Canlı özel rapordan üç PNG indirildi, dosyalar beklenen çözünürlükte çözüldü. Yerel Playwright gelişim kartında da üç biçimi ve ayrı kapatma/silme senaryolarını kapsıyor.
+
+| Öncelik | Açık iş | Kabul kanıtı |
+| --- | --- | --- |
+| 1 | Kalıcı Atlas ağ erişimi | Production’daki 6 saatlik geçici geniş kayıt sonrası dar liste ve kalıcı çıkış yolunda yeni function bağlantısını doğrula. Taşınma öncesi bağlantıların durumu ayrıca açık. |
+| 2 | Kalan canlı gizlilik kontrolleri | Gerçek süre dolumu, sağlayıcı loglarında hassas veri ve sosyal platformların kendi önizleme önbelleğini kontrol et. Canlı alias’da close/delete sonrası yeni istekler yukarıda doğrulandı. |
+| 3 | Gerçek hosting sınırları | Plan/bölge, güvenilir ingress, oturum ve IP kotaları, farklı süreçlerde kilit/permit ve hata sonrası toparlanma. Sıcak/soğuk lider, katılımcı, DB commit/cleanup ve PNG süreleri ile yanıt boyutunu ölç. |
+| 4 | Gizlilik ve işletim bilgileri | İletişim kanalı, gerçek sağlayıcı bölgeleri, yedekleme ve saklama koşullarını netleştir. |
+| 5 | Cihaz, erişilebilirlik ve sosyal önizleme | Fiziksel telefonda kartları kaydet/aç, okunabilirlik ve paylaşım akışını dene. Fiziksel ekran okuyucuda odak ve yüklenme/hata duyurularını, gerçek sosyal platformda OG önizlemesini kontrol et. |
+| 6 | Yayın belgeleri | README’de güncel kurulum, mimari, puanlama gerekçesi, testler, ekranlar ve demo bilgilerini son ortamla karşılaştır. |
+
+A7’deki pilot kullanıcı geri bildirimi ve anonim toplu ölçümler dağıtım sonrası işlerdir.
+
 ## İlk yayına kalan kapsam — 31 Ekim 2026
 
 A5.1 Story/yatay görünümleri kullanıcı tarafından kabul edildi. Yerel HEAD **0f3d6c5570e7a6bdade0d3b44ac253102ca4c4d9**, feat: add Developer ID share cards. **GitHub Actions CI #11 başarılı** bilgisi kullanıcı ekran görüntüsüne dayanan doğrulamadır; bu tur bağımsız uzak sorgu yapılmadı.
@@ -463,7 +484,7 @@ Bu dilim A5'in bütünü değildir: 1080×1350, gelişim/önce-sonra kartı, oto
 ### A6 Yayın kalitesi:
 
 - [x] `0b9fbc7` için bildirilen profil arama sorununda `unavailable` kod yolları ayrıldı; sınırlı sunucu tanısı ve güvenli günlük alanları regresyon testine alındı.
-- [ ] Üretim kök nedenini ilgili isteğin aşama/kategorisi ve Vercel/Atlas ayarlarıyla doğrula. Bu yerel tanı paketinin dağıtımı ve sonraki production smoke kullanıcıda.
+- [x] Kullanıcı üretimde DB sunucu seçimi hatasını, Atlas listesindeki yerel IP kısıtını ve liste değişikliği sonrası başarılı arama/analizi bildirdi. Kalıcı ağ kurulumu üstteki listede açık.
 
 - [x] Yerel Git: `2d2eebf` güvenlik/erişilebilirlik paketi. Push ve yeşil CI kullanıcı doğrulaması.
 - [x] İmzalı anonim oturum + IP analiz kotası, imza ve paralel giriş testleri; yeni oturum sayısal politikası yalnız analiz için §7'den alınır.
@@ -480,7 +501,7 @@ Bu dilim A5'in bütünü değildir: 1080×1350, gelişim/önce-sonra kartı, oto
 - [ ] Yayın ortamında güvenlik, cihaz ve erişilebilirlik son kontrolleri. Yerel Playwright ve production build doğrulaması yukarıda.
 - [x] Sınırlı gerçek hesap doğruluk örneklemi ve bilinen tespit sınırları kaydedildi.
 - [ ] README: kurulum, mimari, scoring gerekçesi, testler, ekranlar, demo.
-- [ ] Yayın yetkisi varsa deploy/smoke; yoksa deploy için somut hazır paket.
+- [x] İlk Production dağıtımı ve sınırlı canlı smoke kullanıcı bildirimiyle doğrulandı. Kalan yayın kabul kontrolleri üstte listelendi.
 
 ### A7 Dağıtım:
 
@@ -572,7 +593,8 @@ A5.3 görsel kabul kaydı turu: yalnız STATUS/TASKS güncellendi; belge diff ko
 - [x] Üç biçim için özel erişim, public aktiflik, süre ve sürüme bağlı MongoDB PNG önbelleği. Deterministik testler ve proje kontrolleri STATUS kaydında.
 - [x] Kullanıcı gönderi kartı galerisini görsel olarak kabul etti.
 - [x] Geliştirme Atlas veritabanında ilk üretim ve tekrar okumada ek render olmaması, kaynak bitişi, TTL indeksi, yanlış özel token ve kapalı/silinmiş/süresi dolmuş public paylaşımın reddi doğrulandı. Test kayıtları temizlendi.
-- [ ] Yayın öncesi uçtan uca kontrolde tarayıcıdan manuel PNG indir ve kaydedilen dosyayı açarak biçim ve boyutunu doğrula.
+- [x] Kullanıcı canlı rapordan gönderi PNG’sini indirip açtı ve düzgün görüntülendiğini bildirdi.
+- [x] Canlı özel rapordan indirilen gönderi PNG’si Chrome’da 1080×1350 olarak çözüldü. Fiziksel cihaz kontrolü açık.
 - [x] A5.4 f5c90d4 commit/push ve yeşil CI kullanıcı bildirimidir. Commit kimliği yerel Git geçmişinden doğrulandı.
 
 ## A5.5 — özel karşılaştırmadan gelişim kartı

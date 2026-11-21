@@ -39,33 +39,67 @@ test("private analysis, cache, refresh, comparison PNG and revocable public shar
   await button(tr.Comparison.compare).click();
   await expect(compare.locator(".comparison-delta")).toContainText("+10");
   await button(tr.Card.progress).click();
-  const downloadEvent = page.waitForEvent("download");
-  await page.getByRole("link",{name:tr.Card.download}).click();
-  const file = info.outputPath("progress.png");
-  await (await downloadEvent).saveAs(file);
-  const png = await readFile(file);
-  expect(png.subarray(0,8).toString("hex")).toBe("89504e470d0a1a0a");
-  expect([png.readUInt32BE(16),png.readUInt32BE(20)]).toEqual([1080,1920]);
+  for (const [format, width, height] of [
+    ["story", 1080, 1920], ["post", 1080, 1350], ["landscape", 1200, 630],
+  ] as const) {
+    await page.getByRole("radio", {name: tr.Card[format], exact:true}).check();
+    const downloadEvent = page.waitForEvent("download");
+    await page.getByRole("link", {name:tr.Card.download}).click();
+    const file = info.outputPath(format + ".png");
+    await (await downloadEvent).saveAs(file);
+    const png = await readFile(file);
+    expect(png.subarray(0,8).toString("hex")).toBe("89504e470d0a1a0a");
+    const size = await page.evaluate(async base64 => {
+      const img = new Image();
+      img.src = "data:image/png;base64," + base64;
+      await img.decode();
+      return [img.naturalWidth, img.naturalHeight];
+    }, png.toString("base64"));
+    expect(size).toEqual([width, height]);
+  }
 
-  await page.locator("#share-report > summary").click();
-  await page.getByLabel(tr.Sharing.consent).check();
-  await button(tr.Sharing.create).click();
-  const publicLink = page.getByRole("link",{name:tr.Sharing.openPublic});
-  await expect(publicLink).toBeVisible();
-  const anonymous = await browser.newContext({ignoreHTTPSErrors:true});
+  const refreshed = page.url();
+  const anonymous = await browser.newContext({ignoreHTTPSErrors:true, viewport:{width:390,height:844}});
   try {
     const visitor = await anonymous.newPage();
-    await visitor.goto(new URL((await publicLink.getAttribute("href"))!,page.url()).href);
-    await expect(visitor.locator(".share-repos")).toContainText("atlas");
-    await page.getByRole("link",{name:tr.Sharing.manage,exact:true}).click();
-    await button(tr.Sharing.close).click();
-    await expect(page.getByRole("status")).toContainText(tr.Sharing.closed);
-    await visitor.reload();
-    await expect(visitor.getByText(tr.Sharing.errors.missing)).toBeVisible();
-    await button(tr.Sharing.delete).click();
-    await expect(page.getByRole("status")).toContainText(tr.Sharing.deleted);
-    await visitor.reload();
-    await expect(visitor.getByText(tr.Sharing.errors.missing)).toBeVisible();
+    const ids = new Set<string>();
+    for (const [action, report] of [["close", refreshed], ["delete", fresh]] as const) {
+      await page.goto(report);
+      await page.locator("#share-report > summary").click();
+      await page.getByLabel(tr.Sharing.consent).check();
+      await button(tr.Sharing.create).click();
+      const link = page.getByRole("link",{name:tr.Sharing.openPublic});
+      await expect(link).toBeVisible();
+      const url = new URL((await link.getAttribute("href"))!,page.url());
+      expect(url.origin === new URL(report).origin && !ids.has(url.pathname)).toBe(true);
+      ids.add(url.pathname);
+      await visitor.goto(url.href);
+      await expect(visitor.locator(".share-repos")).toContainText("atlas");
+      for (const locale of ["en", "tr"]) {
+        await visitor.getByRole("button",{name:locale.toUpperCase(),exact:true}).click();
+        await expect(visitor.locator("main")).toHaveAttribute("lang",locale);
+        expect(await visitor.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      }
+      const meta = visitor.locator('meta[property="og:image"]');
+      await expect(meta).toHaveAttribute("content", /\/image\/tr$/);
+      const image = (await meta.getAttribute("content"))!;
+      expect(new URL(image).origin === url.origin).toBe(true);
+      const active = await visitor.request.get(image);
+      expect(active.status()).toBe(200);
+      expect(active.headers()["content-type"]).toBe("image/png");
+      expect(active.headers()["cache-control"]).toContain("no-store");
+      await page.getByRole("link",{name:tr.Sharing.manage,exact:true}).click();
+      await button(tr.Sharing[action]).click();
+      await expect(page.getByRole("status")).toContainText(tr.Sharing[action === "close" ? "closed" : "deleted"]);
+      const response = await visitor.goto(url.href);
+      await expect(visitor.getByText(tr.Sharing.errors.missing)).toBeVisible();
+      expect((await response!.text()).includes("fixture-dev")).toBe(false);
+      await expect(visitor.locator('meta[property="og:image"], meta[name="twitter:image"]')).toHaveCount(0);
+      const revoked = await visitor.request.get(image);
+      expect(revoked.status()).toBe(404);
+      expect(await revoked.json()).toEqual({code:"missing"});
+      expect(revoked.headers()["cache-control"]).toContain("no-store");
+    }
     await page.goto(fresh);
     await expect(page.locator(".report-meta")).toContainText(tr.Report.sources.fresh);
   } finally {await anonymous.close();}

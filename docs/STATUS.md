@@ -2,7 +2,45 @@
 
 Son güncelleme: 21 Kasım 2026 (Europe/Istanbul).
 
-## Aktif iş — Production profil aramasının tanısı
+## Production yayın kontrolü · de04873
+
+**Ortam bilgisi (kullanıcı bildirimi).** Production ayrı Atlas projesindeki `repovitrin-prod` cluster’ına taşındı. Kullanıcı yalnız `readWrite@repovitrin_prod` yetkili. Vercel’de MongoDB URI ve DB ayarları Production/Preview için ayrıldı. Kullanıcı yeni dağıtımda arama, analiz ve gizli sekmede public açılışı doğruladı. Kendisinin farklı kimlik/hostlarla yaptığı kapatma denemesi sonuçsuz olarak kayıtlı. Production projesindeki tüm IPv4 kaynaklarına izin veren kayıt **6 saatlik**. Kalıcı çıkış yolu ve dar erişim listesi hâlâ açık.
+
+**Canlı Chrome kontrolü (bu tur).** Sahip ve anonim ziyaretçi ayrı, temiz tarayıcı bağlamları kullandı. Tek normal analizle oluşturulan özel rapordan iki farklı public kopya üretildi. Her işlemde aynı kopyanın bağlantıları bellekte eşleştirildi.
+
+| Kontrol | Gözlenen sonuç |
+| --- | --- |
+| Profil → seçim → özel rapor | Production ana sayfasında gerçek profil araması ve yalnız fixora seçimiyle rapor açıldı. İlk otomasyon denemesi paylaşım oluşturmadan durmuştu. |
+| Kart indirme | Özel rapordan indirilen Story 1080×1920, gönderi 1080×1350, yatay 1200×630. Üç dosyanın PNG imzası kontrol edildi ve indirilen baytlar Chrome’da bu boyutlarda çözüldü. |
+| Public okuma | İki bağlantı da gerçek kopyala eyleminden alındı, origin `https://github-vitrin.vercel.app` idi. Anonim Chrome’da her ikisinde EN→TR ve 390×844 görünümde yatay taşma kontrolü geçti. Aktif TR metadata’sındaki aynı origin’li OG adresi 200 PNG ve no-store döndü. |
+| Kapatma | Birinci kopya kapatıldı. Aynı TR adresi yeniden istendiğinde erişilemiyor ekranı geldi, HTML’de profil kullanıcı adı ve OG/Twitter görsel etiketleri yoktu. Önceden yüklenen **aynı OG adresi** tekrar istendiğinde 404, missing ve no-store döndü. Sonra bu test kopyası yönetim ekranından silindi. |
+| Silme | İkinci kopya aktifken doğrudan silindi. Aynı anonim HTML, metadata ve sıcak OG adresi kontrolleri aynı sonuçları verdi. İki silmede uygulama onayı alındı. Fiziksel Atlas kayıtları incelenmedi. |
+
+Bu smoke yalnız kendi oluşturduğu paylaşımları yönetti. Özel test raporu normal 30 günlük saklama süresine tabi. Kotalar canlıda doldurulmadı. Uzun deployment adresi verilmediği için Vercel giriş yönlendirmesi yeniden denenmedi. Kopyalama geçerli sayfanın origin’ini kullanır. Korumalı deployment’ın Vercel giriş ekranı ile uygulamanın paylaşım erişilemiyor ekranı ayrı sonuçlardır. [Vercel Authentication](https://vercel.com/docs/deployment-protection/methods-to-protect-deployments/vercel-authentication)
+
+**Otomatik regresyon.** Yerel production build, geçici MongoDB replica set ve kontrollü GitHub verisiyle kalıcı Playwright senaryosu iki bağımsız paylaşımı, mobil dil geçişini, sıcak OG reddini ve üç biçimde gelişim PNG’sinin indirilip tarayıcıda çözülmesini kapsıyor. Dil geçişi testinde sunucunun kendi geçici TLS sertifikasına güvenmediği görüldü. Test sertifikasına loopback adı/IP’si eklendi ve yalnız test sunucusuna güven kökü olarak verildi. Uygulama kodunda düzeltme gerekmedi. 661 Vitest (kota ve erişim dahil), genişletilen Playwright senaryosu (1,2 dk), lint, typecheck, varsayılan production build ve diff kontrolü geçti. İlk build sandbox içinde derleme aşamasında ilerlemeyince durduruldu. Aynı komut izinli ortamda tamamlandı.
+
+## Önceki durum — Production doğrulaması ve ortam ayrımı — 21 Kasım 2026
+
+Yerel Git geçmişinde `de04873` tanı değişikliğidir. CI #29'un yeşil olduğu, Vercel Production durumunun Ready olduğu ve aşağıdaki canlı sonuçlar kullanıcı tarafından bildirildi. Bu incelemede panellere veya canlı verilere erişilmedi.
+
+| Canlı kontrol | Kullanıcının gözlemi |
+| --- | --- |
+| Atlas bağlantısı | `db_connect / server_selection` hatası sırasında erişim listesinde yalnız yerel IP vardı. `0.0.0.0/0` eklendikten sonra profil arama ve `fixora` + `jobfit-tr` analizi çalıştı. Bu sıra önceki ağ tanısını destekliyor. |
+| Gönderi kartı | Canlı rapordan gönderi PNG’si indirildi, açıldı ve düzgün görüntülendi. Cihaz türü ve dosyanın piksel ölçümü bildirilmedi. |
+| Public paylaşım | Gizli sekmede açıldı ve TR/EN geçişi çalıştı. Canlı kapatma ve silme ayrı ayrı doğrulanmayı bekliyor. Önceki yerel kontroller kendi kapsamlarında geçerli. |
+| Ortam | Atlas projesi **RepoVitrin Dev**. Görünen kullanıcının yetkisi yalnız `repovitrin_dev` için `readWrite`. Ağ kaydının açıklaması “Vercel geçici bağlantı testi”. Otomatik bitiş, kullanılan planlar ve Production env hedefi panelden ayrıca teyit edilecek. |
+
+### Önceki kurulum planı · veri ayrımı uygulandı, kalıcı ağ erişimi açık
+
+1. **Geçici erişimin durumunu belirle.** Dev projesinde Database & Network Access → IP Access List altında kaydın kalan süresine bak. Açıklama alanı süre ayarlamaz. Bitiş varsa bağlantının tekrar kesilebileceği zamanı, yoksa geniş erişimi sonlandıracak geçişi kaydet. Bu kural Atlas projesine tüm IPv4 kaynaklarından bağlantı denemesine izin verir. DB kimlik doğrulaması ve veritabanıyla sınırlı rol yürürlüktedir. [Atlas erişim listesi](https://www.mongodb.com/docs/atlas/security/ip-access-list/)
+2. **Veriyi ve yetkiyi ayır.** Önerilen hedef ayrı bir Atlas Production projesi, kendi cluster’ı, `repovitrin_prod` ve yalnız bu DB için `readWrite` sahibi ayrı uygulama kullanıcısıdır. Yerel geliştirme ve Preview dev kaynaklarını kullanır. Atlas normalde proje başına bir Free cluster’a izin verir. Hesap ve bölge uygunsa ikinci projede M0 seçilebilir. Tek cluster’da iki DB ve iki kullanıcı daha az kurulum ister, ancak proje erişim listesi, kapasite ve arıza alanı ortak kalır. Free depolama sınırı indekslerle birlikte 0,5 GB olduğundan PNG önbelleğini de hesaba kat. Yedekleme seçeneğini, bedelini ve saklama süresini seçilen cluster’da doğrula. [Atlas Free sınırları](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/) · [Atlas yedekleme seçenekleri](https://www.mongodb.com/docs/atlas/backup-restore-cluster/)
+3. **Kalıcı ağ yolunu bütçeye göre seç.** Doğrudan Vercel Hobby çıkışı dinamiktir ve Atlas’a eklenebilecek sabit bir adres aralığı yayımlanmaz. Tek istekte görülen IP’yi veya sitenin DNS adresini listeye eklemek kalıcı çözüm sağlamaz. Ücretsiz planlarda kalıp tüm IPv4 kaynaklarına izin vermek ağ kısıtını açık bırakır. Bu risk için açık işletim kararı gerekir. Dar liste isteniyorsa Vercel Pro/Enterprise Static IPs seçeneğinde function bölgelerinin tüm atanmış çıkış adreslerini Production Atlas listesine ekle. Pro’da eklenti proje başına 100 USD/ay ve bölgesel veri aktarım ücretidir. IP havuzu paylaşılır ve Preview/Production aynı Vercel projesindeyse ikisini de kapsar. Ortama özel DB kimlikleri yine gereklidir. [Vercel Static IPs ve fiyatlandırma](https://vercel.com/docs/networking/static-ips)
+4. **Mevcut bağlantıları koruyarak geç.** Önce mevcut canlı rapor/paylaşımların korunup korunmayacağını ve test kayıtlarından nasıl ayrılacağını belirle. Boş DB’ye geçiş eski bağlantıları keser. Taşınacak kayıt varsa geçiş sırasında yazmaları koordine et. Kimlikleri, erişim hash’lerini, özgün süre sonlarını ve kapatma/silme durumlarını koru. Vercel’de Production kapsamına hedef `MONGODB_URI` ve `MONGODB_DB` tanımlanmalı, Development/Preview kapsamları ayrı kontrol edilmeli. Değerler rapora girmez. Yetkili geçişte yalnız dar liste etkin olan hedefte yeni function bağlantısıyla arama, analiz, eski özel/public bağlantılar ve yönetim işlemlerini doğrula. Dev projesindeki geçici geniş kuralın kaldırılmasını ve iki ortamın yalnız kendi verisine yazdığını ayrıca kontrol et. Geri dönüşte geçişten sonraki yazma ve silmeleri koru.
+
+Öncelikli kabul listesi [TASKS](TASKS.md#production-yayın-kontrolleri) içinde. Bu belge turunda yalnız Git ve belge diff’i kontrol edildi.
+
+## Önceki inceleme — Production profil aramasının tanısı
 
 Kullanıcı `0b9fbc7` dağıtımında profil aramasının yaklaşık 2,2 saniyede HTTP 200 ile sonuçlandığını ve “Sunucu hizmetine erişilemedi” açıklamasını bildirdi. Yerel ana dal bu commit ile eşleşiyordu. Ekrandaki açıklama `Search.errors.unavailable` mesajıdır. `getRepos` bunu GitHub çağrısından önce kabul aşamasında döndürebilir. Action'ın taşıma düzeyinde 200 olması dönen iş sonucunu göstermez.
 
@@ -21,7 +59,7 @@ Yerel tanı değişikliği yalnız başarısız profil kabulünde `profile_searc
 | signing_secret, platform veya trusted_ip / configuration | SIGNING_SECRET en az 32 bayt, Vercel sistem değişkenleri ve doğrudan güvenilir ingress. |
 | session / unavailable | Mongo sayaç kabulünden sonra Next Server Action çerez erişimi/yazımı. |
 
-Yerelde 47 dosyada 661 Vitest testi, lint, typecheck, varsayılan production build ve diff kontrolü geçti. Production kök nedeni açık. Yeni tanı ancak bu değişikliği içeren deployment'taki hata ile ilişkilendirilebilir. Üretim isteği veya Atlas paneli bu tur tarafımızdan incelenmedi.
+Yerelde 47 dosyada 661 Vitest testi, lint, typecheck, varsayılan production build ve diff kontrolü geçti. Bu ilk incelemede production kök nedeni açıktı. Yeni tanı ancak bu değişikliği içeren deployment'taki hata ile ilişkilendirilebilir. Üretim isteği veya Atlas paneli bu tur tarafımızdan incelenmedi.
 
 ## Önceki dilim — A6 anonim oturum, süre ve kalıcı E2E
 

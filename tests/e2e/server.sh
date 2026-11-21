@@ -19,7 +19,7 @@ if command -v mongod >/dev/null; then
 else
   container=$(docker run --detach --rm -p 127.0.0.1:37917:37917 mongo:8.0 --port 37917 --replSet rv-e2e --bind_ip_all)
 fi
-openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj '/CN=localhost' -keyout "$work/key" -out "$work/cert" 2>/dev/null
-NODE_ENV=production node tests/e2e/server.mjs "$work" &
+openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj '/CN=localhost' -addext 'subjectAltName=IP:127.0.0.1,DNS:localhost' -keyout "$work/key" -out "$work/cert" 2>/dev/null
+NODE_EXTRA_CA_CERTS="$work/cert" NODE_ENV=production node tests/e2e/server.mjs "$work" &
 app=$!
 wait "$app"
