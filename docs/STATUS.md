@@ -4,7 +4,7 @@ Son güncelleme: 21 Kasım 2026 (Europe/Istanbul).
 
 ## Production yayın kontrolü · de04873
 
-**Ortam bilgisi (kullanıcı bildirimi).** Production ayrı Atlas projesindeki `repovitrin-prod` cluster’ına taşındı. Kullanıcı yalnız `readWrite@repovitrin_prod` yetkili. Vercel’de MongoDB URI ve DB ayarları Production/Preview için ayrıldı. Kullanıcı yeni dağıtımda arama, analiz ve gizli sekmede public açılışı doğruladı. Kendisinin farklı kimlik/hostlarla yaptığı kapatma denemesi sonuçsuz olarak kayıtlı. Production projesindeki tüm IPv4 kaynaklarına izin veren kayıt **6 saatlik**. Kalıcı çıkış yolu ve dar erişim listesi hâlâ açık.
+**Ortam bilgisi (kullanıcı bildirimi).** Production ayrı Atlas projesindeki `repovitrin-prod` cluster’ına taşındı. Kullanıcı yalnız `readWrite@repovitrin_prod` yetkili. Vercel’de MongoDB URI ve DB ayarları Production/Preview için ayrıldı. Kullanıcı yeni dağıtımda arama, analiz ve gizli sekmede public açılışı doğruladı. Kendisinin farklı kimlik/hostlarla yaptığı kapatma denemesi sonuçsuz olarak kayıtlı. Kullanıcı, önceki 6 saatlik `0.0.0.0/0` kaydını Atlas Production’da **Make permanent** ile kaydettiğini ve panelde **Active** durumunda, geri sayım olmadan gördüğünü doğruladı. Kalıcı ağ kuralı tüm IPv4 adreslerinden bağlantı denemesine izin verir.
 
 **Canlı Chrome kontrolü (bu tur).** Sahip ve anonim ziyaretçi ayrı, temiz tarayıcı bağlamları kullandı. Tek normal analizle oluşturulan özel rapordan iki farklı public kopya üretildi. Her işlemde aynı kopyanın bağlantıları bellekte eşleştirildi.
 
@@ -31,7 +31,7 @@ Yerel Git geçmişinde `de04873` tanı değişikliğidir. CI #29'un yeşil oldu�
 | Public paylaşım | Gizli sekmede açıldı ve TR/EN geçişi çalıştı. Canlı kapatma ve silme ayrı ayrı doğrulanmayı bekliyor. Önceki yerel kontroller kendi kapsamlarında geçerli. |
 | Ortam | Atlas projesi **RepoVitrin Dev**. Görünen kullanıcının yetkisi yalnız `repovitrin_dev` için `readWrite`. Ağ kaydının açıklaması “Vercel geçici bağlantı testi”. Otomatik bitiş, kullanılan planlar ve Production env hedefi panelden ayrıca teyit edilecek. |
 
-### Önceki kurulum planı · veri ayrımı uygulandı, kalıcı ağ erişimi açık
+### Önceki kurulum planı
 
 1. **Geçici erişimin durumunu belirle.** Dev projesinde Database & Network Access → IP Access List altında kaydın kalan süresine bak. Açıklama alanı süre ayarlamaz. Bitiş varsa bağlantının tekrar kesilebileceği zamanı, yoksa geniş erişimi sonlandıracak geçişi kaydet. Bu kural Atlas projesine tüm IPv4 kaynaklarından bağlantı denemesine izin verir. DB kimlik doğrulaması ve veritabanıyla sınırlı rol yürürlüktedir. [Atlas erişim listesi](https://www.mongodb.com/docs/atlas/security/ip-access-list/)
 2. **Veriyi ve yetkiyi ayır.** Önerilen hedef ayrı bir Atlas Production projesi, kendi cluster’ı, `repovitrin_prod` ve yalnız bu DB için `readWrite` sahibi ayrı uygulama kullanıcısıdır. Yerel geliştirme ve Preview dev kaynaklarını kullanır. Atlas normalde proje başına bir Free cluster’a izin verir. Hesap ve bölge uygunsa ikinci projede M0 seçilebilir. Tek cluster’da iki DB ve iki kullanıcı daha az kurulum ister, ancak proje erişim listesi, kapasite ve arıza alanı ortak kalır. Free depolama sınırı indekslerle birlikte 0,5 GB olduğundan PNG önbelleğini de hesaba kat. Yedekleme seçeneğini, bedelini ve saklama süresini seçilen cluster’da doğrula. [Atlas Free sınırları](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/) · [Atlas yedekleme seçenekleri](https://www.mongodb.com/docs/atlas/backup-restore-cluster/)

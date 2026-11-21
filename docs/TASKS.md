@@ -9,12 +9,13 @@ Kaynak: [başlangıç sözleşmesi](../RepoVitrin-Codex-Proje-Sozlesmesi.md). `[
 Güncel kanıtlar (ayrıntılar [STATUS](STATUS.md)):
 
 - [x] Production Atlas projesi, cluster/DB, yalnız hedef DB’de readWrite ve Production/Preview MongoDB ayarlarının ayrılması kullanıcı bildirimiyle kaydedildi.
+- [x] Kullanıcı Atlas Production’da `0.0.0.0/0` kaydını **Make permanent** ile kalıcı yaptı ve **Active** durumunu geri sayım olmadan gördü. Ağ erişimi tüm IPv4 adreslerine açık. DB kullanıcısının yetkisi yalnız `readWrite@repovitrin_prod`.
 - [x] Production alias üzerinden iki bağımsız paylaşımda Chrome clipboard origin’i, anonim ziyaret, TR/EN, 390 px taşma ve aktif OG okuması doğrulandı. Kapatılan birinci ve doğrudan silinen ikinci kopyada sonraki HTML ve metadata kullanıcı/görsel sunmadı. Aynı sıcak OG adresleri 404 döndü. Kullanıcının önceki belirsiz kapatma denemesi ayrı tutulur.
 - [x] Canlı özel rapordan üç PNG indirildi, dosyalar beklenen çözünürlükte çözüldü. Yerel Playwright gelişim kartında da üç biçimi ve ayrı kapatma/silme senaryolarını kapsıyor.
 
 | Öncelik | Açık iş | Kabul kanıtı |
 | --- | --- | --- |
-| 1 | Kalıcı Atlas ağ erişimi | Production’daki 6 saatlik geçici geniş kayıt sonrası dar liste ve kalıcı çıkış yolunda yeni function bağlantısını doğrula. Taşınma öncesi bağlantıların durumu ayrıca açık. |
+| 1 | Atlas ağ erişiminin daraltılması ve bağlantı kontrolü | Dar IP listesi ve bu listeyle yeni function bağlantısı açık kontrol olarak kalır. Taşınma öncesi rapor bağlantılarının durumu ayrıca açık. |
 | 2 | Kalan canlı gizlilik kontrolleri | Gerçek süre dolumu, sağlayıcı loglarında hassas veri ve sosyal platformların kendi önizleme önbelleğini kontrol et. Canlı alias’da close/delete sonrası yeni istekler yukarıda doğrulandı. |
 | 3 | Gerçek hosting sınırları | Plan/bölge, güvenilir ingress, oturum ve IP kotaları, farklı süreçlerde kilit/permit ve hata sonrası toparlanma. Sıcak/soğuk lider, katılımcı, DB commit/cleanup ve PNG süreleri ile yanıt boyutunu ölç. |
 | 4 | Gizlilik ve işletim bilgileri | İletişim kanalı, gerçek sağlayıcı bölgeleri, yedekleme ve saklama koşullarını netleştir. |
