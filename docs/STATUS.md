@@ -1,10 +1,18 @@
 # Güncel durum
 
-Son güncelleme: 20 Kasım 2026 (Europe/Istanbul).
+Son güncelleme: 21 Kasım 2026 (Europe/Istanbul).
 
 ## Aktif aşama
 
-**A5.5 paketi commit için hazır. Kullanıcı revize TR/EN gelişim Story galerisine görsel kabul verdi.** A5.4 commit kimliği yerel Git geçmişinde `f5c90d4` olarak doğrulandı. Commit/push ve başarılı GitHub Actions sonucu kullanıcı bildirimidir.
+**İlk yayın planı sıra 9 — TR/EN gizlilik ve metodoloji sayfaları yerel incelemeye hazır.** A5.5 `b5bdccf` ve CI #25 başarısı kullanıcının GitHub Actions ekran görüntüsüyle doğrulandı. Yerel Git başlangıcında main ve origin/main bu commit'teydi.
+
+Footer iki bilgi sayfasına bağlantı verir. Metodoloji puanlama motorunu, gizlilik metni snapshot, public kopya, PNG önbelleği, cihaz geçmişi ve HMAC kota sayaçlarının mevcut davranışını açıklar. İletişim adresi, sağlayıcı bölgesi ve yedek saklama/silme takvimi doğrulanmadı. Yayın hazırlığında netleştirilecek.
+
+648 test, lint, typecheck, varsayılan production build ve diff kontrolü geçti. Yerel production üzerinde Chrome 390×844 görünümünde footer bağlantıları Tab ile odaklandı ve Enter ile açıldı. Her iki sayfada dil düğmeleriyle EN/TR geçişi aynı rotada doğrulandı, yatay taşma gözlenmedi. İlk kontrolde dil geçişi tıklamayla doğrulandı. Takip kontrolünde yerel production üzerinde Chrome’un klavye giriş yoluyla her iki sayfada TR ve EN düğmelerine Tab ile ulaşıldı. Etkin düğmede görünür klavye odağı doğrulandı. Enter ve Space ayrı ayrı her iki yönde çalıştı (8/8). Her geçişte aynı rota, html dili, ana başlık, bölüm başlığı ve seçili dil düğmesinin aria-pressed durumu kontrol edildi. Uygulama düzeltmesi gerekmedi. Fiziksel cihaz ve ekran okuyucu kontrolü açık.
+
+## A5.5 kapanışı
+
+**A5.5 paketi b5bdccf ile gönderildi. Kullanıcı revize TR/EN gelişim Story galerisine görsel kabul verdi.** A5.4 commit kimliği yerel Git geçmişinde `f5c90d4` olarak doğrulandı. Commit/push ve başarılı GitHub Actions sonucu kullanıcı bildirimidir.
 
 Uyumlu özel karşılaştırmanın altında gelişim kartı açılır. İki erişim her üretim isteğinde ayrı okunur. Kartta önceki ve sonraki UTC analiz zamanları, puanlar, işaretli toplam ve kategori farkları ile iyileşen ve gerileyen kontrol sayıları bulunur. Karşılaştırma ve kart aynı compareReports sonucunu kullanır. Önbellek her iki raporun en erken bitişiyle sınırlıdır.
 

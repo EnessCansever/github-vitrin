@@ -15,7 +15,7 @@ AGENTS çalışma davranışını, PRODUCT kapsamı, ARCHITECTURE teknik yapıy�
 ## İş yapma ve doğrulama
 
 - Tek seferde küçük, doğrulanabilir bir dikey iş dilimi uygula. Kullanıcı mesajı olmadan sonraki aşamaya geçme.
-- Güncel dilim A5.5 kapsamında iki erişimi doğrulanmış özel rapordan gelişim kartı üretimidir. Sonraki dilim kullanıcı yetkisini bekler.
+- Güncel dilim ilk yayın planının 9. maddesindeki TR/EN gizlilik ve metodoloji sayfalarıdır. Sonraki dilim kullanıcı yetkisini bekler.
 - Stack, kapsam, puanlama ve tasarım kararlarını kendiliğinden değiştirme. Büyük kapsam/stack/puanlama/marka değişiklikleri Enes'in açık kararını gerektirir; rutin uygulama ayrıntıları için sürekli onay isteme. Geçmiş onayı yeniden sorma; yeni büyük kararı onaylanmış sayma.
 - Kullanıcının mevcut dosyalarını/değişikliklerini koru. İlgisiz refactor, silme, dependency ekleme veya tasarım değişikliği yapma.
 - Her tamamlanan işte **STATUS.md ve TASKS.md** güncelle; her anlamlı değişiklikte ilgili gereksinim belgelerini de güncelle. Kararları tarih, karar, gerekçe ve etkilenen dosyalarla DECISIONS.md'ye yaz.

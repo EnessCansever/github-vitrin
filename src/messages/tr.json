@@ -14,7 +14,10 @@
     "evidence": "Örnek kanıtı incele",
     "scope": "Analiz kapsamı",
     "rule": "Kural sürümü {version}",
-    "notQuality": "Bu puan yalnız portfolyo sunumunu ölçer; kod kalitesini, geliştirici seviyesini veya işe alınma ihtimalini değil."
+    "notQuality": "Bu puan yalnız portfolyo sunumunu ölçer; kod kalitesini, geliştirici seviyesini veya işe alınma ihtimalini değil.",
+    "privacy": "Gizlilik",
+    "methodology": "Metodoloji",
+    "siteInfo": "Site bilgileri"
   },
   "Home": {
     "eyebrow": "GITHUB PORTFOLYON · DEVELOPER ID",
@@ -681,5 +684,103 @@
     "unavailableDescription": "Bu bağlantının önizlemesi şu an sunulamıyor. Güncel durum için paylaşım sayfasını aç.",
     "incompleteTitle": "Eksik analiz | {brand}",
     "incompleteDescription": "Bu analizde bazı veriler eksik; toplam puan ve puanlı bağlantı önizlemesi oluşturulmadı."
+  },
+  "Privacy": {
+    "title": "Gizlilik",
+    "intro": "Bir profili aramak, özel raporu açmak ve herkese açık bir kopya paylaşmak farklı izler bırakır.",
+    "sections": [
+      {
+        "heading": "GitHub’dan alınan veriler",
+        "paragraphs": [
+          "Aramada herkese açık profil bilgileri, sabitlenmiş projeler ve uygun depoların bilgileri alınır. Analizde profil README’si ile seçtiğin depoların açıklaması, konu etiketleri, proje sitesi ve README dosyaları incelenir. Raporda profil ve depo kimlikleri, analiz zamanı, kural sürümü, puanlar, kontrol sonuçları, kaynak bağlantıları ve öneriler saklanır. Ham GitHub yanıtları ve README dosyalarının tamamı rapora kaydedilmez."
+        ]
+      },
+      {
+        "heading": "Özel rapor · 30 gün",
+        "paragraphs": [
+          "Özel bağlantıyı bilen kişi raporu açabilir. Okuma anahtarı bağlantının # bölümündedir ve sunucuda doğrulanır. Rapor kaydında anahtarın özeti tutulur. Raporun saklama süresi 30 gündür. Bağlantıyı açmak veya önbellekteki analizi kullanmak bu süreyi uzatmaz."
+        ]
+      },
+      {
+        "heading": "Herkese açık kopya · 90 gün",
+        "paragraphs": [
+          "Açık onayınla ayrı bir bağlantı oluşur. Bağlantıyı bilen herkes kullanıcı ve depo adlarını, analiz zamanını, kural sürümünü, analiz durumunu, mevcut puanları, profil tipini ve varsa ilk görevi görebilir. Özel rapor anahtarı ve cihaz geçmişi bu kopyaya girmez. Kopyanın 90 günlük süresi özel rapordan bağımsızdır.",
+          "Ayrı yönetim bağlantısını sakla. Özel raporun süresi dolsa bile bu bağlantıyla paylaşımı kalıcı olarak kapatabilir veya herkese açık kopyayı uygulama veritabanından silebilirsin. Her iki işlem de özel raporu kendi süresine bırakır."
+        ]
+      },
+      {
+        "heading": "Görseller ve silmenin sınırları",
+        "paragraphs": [
+          "PNG önbelleği kaynak raporun bitişine kadar tutulabilir. Gelişim kartında erken biten raporun tarihi geçerlidir. Her sunucu isteğinde erişim kontrol edilir. Kapatılan, silinen veya süresi dolan bir paylaşımın görseli tekrar sunulmaz. Süresi dolan kayıtların fiziksel temizliği daha sonra gerçekleşebilir.",
+          "Önceden indirilen dosyalar ve sosyal platformların kendi önizleme önbellekleri uygulamadan geri alınamaz. Uygulamadaki silme işlemi sağlayıcı yedeklerinin ne zaman temizleneceğini belirlemez."
+        ]
+      },
+      {
+        "heading": "Bu tarayıcıda kalanlar",
+        "paragraphs": [
+          "Bu tarayıcıda son 10 özel rapora kadar bağlantı bilgileri, okuma anahtarı, kullanıcı adı, analiz ve bitiş zamanı tutulabilir. Karşılaştırma alanındaki geçmişi temizleme işlemi bu listeyi kaldırır. Sunucudaki raporlar kendi sürelerine tabidir. Paylaşım yönetim bilgileri ayrıca bu cihazda saklanabilir. Dil seçimi bir yıl geçerli bir çerezle hatırlanır."
+        ]
+      },
+      {
+        "heading": "İstek sınırları",
+        "paragraphs": [
+          "Doğrudan Vercel dağıtımı için yapılandırılan kota denetimi, sağlayıcının ilettiği IP adresini sunucuda işler. Ham IP yerine sunucu sırrı, işlem türü ve zaman penceresiyle üretilen HMAC anahtarı, sayaç ve bitiş bilgisi kota kaydına yazılır. Anahtar işlem ve dönemle değişir. Yerel geliştirmede ortak bir sayaç kimliği kullanılır."
+        ]
+      }
+    ]
+  },
+  "Methodology": {
+    "title": "Metodoloji",
+    "intro": "Vitrin puanı, bir ziyaretçinin projelerini tanımak, kurmak ve denemek için bulabileceği bilgileri değerlendirir. Kod kalitesini, geliştiricilik seviyesini veya işe alınma olasılığını ölçmez.",
+    "sections": [
+      {
+        "heading": "100 puan nasıl hesaplanır?",
+        "paragraphs": [
+          "Sana ait, herkese açık, arşivlenmemiş ve fork olmayan 1–3 proje seçersin. Projeler ve README kategorilerinde seçilen projelerin ortalaması alınır. Kategori puanları bir ondalığa yuvarlanır ve toplanır. Daha çok repo, yıldız, takipçi veya commit ek puan getirmez. Ağırlıklar ürün tercihidir."
+        ],
+        "items": [
+          "Profil · 20 puan. Biyografi 5, geçerli site adresi 5, boş olmayan profil README’si 10.",
+          "Projeler · 30 puan. Açıklama 10, konu etiketi 5, demo bağlantısı 10, Markdown görsel referansı 5.",
+          "README · 50 puan. Boş olmayan dosya, proje amacı, kurulum ve kullanım ayrı ayrı 10 puan. Teknolojiler ve özellikler ayrı ayrı 5 puan."
+        ]
+      },
+      {
+        "heading": "README nasıl okunur?",
+        "paragraphs": [
+          "Kurulum için tanınan bir TR/EN bölüm başlığı ve o bölümde bir komut veya kod bloğu aranır. Amaç için açıklayıcı paragraf, kullanım için açıklama veya komut gerekir. Bilgi başka bir başlıkta yazılmışsa eşleşme kaçabilir.",
+          "Demo için proje sitesi alanı veya README’de demo olarak tanınan bir HTTP(S) bağlantısı yeterlidir. Site açılmaz, komut çalıştırılmaz. Bir Markdown görsel referansı, görselin yüklendiğini veya ekran görüntüsü olduğunu kanıtlamaz."
+        ]
+      },
+      {
+        "heading": "Eksik analiz",
+        "paragraphs": [
+          "Dosyanın bulunmadığı doğrulanırsa ilgili kontrol puan alamaz. Ağ ya da yetki hatasında veya README 256 KiB sınırını aştığında veri belirsiz kalır. Puanlanan bir kontrol belirsizse toplam ve profil tipi gösterilmez. Bilinen bulguları yine inceleyebilirsin."
+        ]
+      },
+      {
+        "heading": "Profil tipi nasıl seçilir?",
+        "paragraphs": [
+          "Tam analizde aşağıdaki ilk uygun tip gösterilir."
+        ],
+        "items": [
+          "Vitrini Hazır — En az 80 puan ve her projede demo ile kurulum kontrolleri geçmiş.",
+          "Demo Nerede? — Hiçbir projede tanınan demo bağlantısı bulunamamış.",
+          "Gizli Cevher — Her projede açıklama ve amaç kontrolleri geçmiş. Demo, kurulum veya profil kontrollerinden en az biri geçmemiş.",
+          "Vitrin Yapımda — Diğer tam analizler."
+        ]
+      },
+      {
+        "heading": "Önce hangi görev gelir?",
+        "paragraphs": [
+          "Geçmeyen kontrollerden en fazla üç öneri çıkar. Kazanılabilecek puanı en yüksek olan önce gelir. Repo kontrolünün etkisi seçilen repo sayısına bölünür. Eşitlikte sabit kontrol sırası, ardından hedef kimliği kullanılır. Belirsiz veriden görev çıkarılmaz."
+        ]
+      },
+      {
+        "heading": "Analiz ne kadar güncel?",
+        "paragraphs": [
+          "Aynı profil, repo kümesi ve kural sürümündeki tam analiz 15 dakika boyunca yeniden kullanılabilir. Okuma bu süreyi uzatmaz. Önbellek sonucu ilk analiz zamanını taşır ve karşılaştırmada yeni bir ölçüm sayılmaz."
+        ]
+      }
+    ]
   }
 }

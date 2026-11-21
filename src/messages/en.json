@@ -14,7 +14,10 @@
     "evidence": "Inspect sample evidence",
     "scope": "Analysis scope",
     "rule": "Rules version {version}",
-    "notQuality": "This score measures portfolio presentation, not code quality, developer skill or hiring prospects."
+    "notQuality": "This score measures portfolio presentation, not code quality, developer skill or hiring prospects.",
+    "privacy": "Privacy",
+    "methodology": "Methodology",
+    "siteInfo": "Site information"
   },
   "Home": {
     "eyebrow": "YOUR GITHUB PORTFOLIO · DEVELOPER ID",
@@ -681,5 +684,103 @@
     "unavailableDescription": "A preview is currently unavailable for this link. Open the share page to check its current status.",
     "incompleteTitle": "Incomplete analysis | {brand}",
     "incompleteDescription": "Some analysis data is missing; no total score or scored link preview was produced."
+  },
+  "Privacy": {
+    "title": "Privacy",
+    "intro": "Looking up a profile, opening a private report and sharing a public copy each use different data.",
+    "sections": [
+      {
+        "heading": "Data read from GitHub",
+        "paragraphs": [
+          "A lookup reads public profile information, pinned projects and eligible repository metadata. An analysis reads the profile README and the descriptions, topics, websites and README files of the repositories you select. Reports store profile and repository identifiers, analysis time, rule version, scores, check results, source links and recommendations. Raw API responses and full README files are excluded from the report."
+        ]
+      },
+      {
+        "heading": "Private report · 30 days",
+        "paragraphs": [
+          "Anyone with the full private link can open the report. Its read key is in the # fragment and is checked on the server. The stored report holds a hash of the key. Reports have a 30-day lifetime. Opening the link or reusing a cached analysis does not extend it."
+        ]
+      },
+      {
+        "heading": "Public copy · 90 days",
+        "paragraphs": [
+          "Sharing requires your explicit consent and creates a separate link. Anyone with it can see the username, repository names, analysis time, rule version, analysis status, available scores, profile type and first task when available. The copy excludes private access keys and device history. Its 90-day lifetime is independent of the private report.",
+          "Keep the separate management link. Even after the private report expires, it lets you permanently close the public link or delete the public copy from the application database. The private report keeps its own expiry."
+        ]
+      },
+      {
+        "heading": "Images and deletion",
+        "paragraphs": [
+          "Cached PNGs can remain until their source expires. Progress cards use the earlier of the two report expiry dates. The server checks access on every request. Once a share is closed, deleted or expired, its image can no longer be retrieved from the application. Physical cleanup of expired records can happen later.",
+          "Downloaded files and previews cached by social platforms cannot be recalled. Deleting a copy in the application does not determine when providers remove their backups."
+        ]
+      },
+      {
+        "heading": "On this browser",
+        "paragraphs": [
+          "This browser can keep access details for the last 10 private reports, including read keys, usernames, analysis times and expiry dates. Clearing history in the comparison panel removes this list. Server reports retain their original expiry. Share management details may also be saved separately on this device. A cookie remembers your language for one year."
+        ]
+      },
+      {
+        "heading": "Request limits",
+        "paragraphs": [
+          "For direct Vercel hosting, the quota check processes the IP address forwarded by the provider. The counter stores a keyed HMAC derived from the server secret, operation, time window and IP, along with count and expiry information. The raw IP is excluded from quota records. Keys change with the operation and window. Local development uses a shared identity."
+        ]
+      }
+    ]
+  },
+  "Methodology": {
+    "title": "Methodology",
+    "intro": "The portfolio score measures the information a visitor can find to understand, set up and try your projects. It does not measure code quality, developer skill or hiring prospects.",
+    "sections": [
+      {
+        "heading": "How the 100 points add up",
+        "paragraphs": [
+          "Select 1–3 public repositories owned by the profile, excluding forks and archived projects. Projects and README scores are averaged across your selection. Category scores are rounded to one decimal place and added together. Extra repositories, stars, followers and commits earn no bonus. The weights are product choices."
+        ],
+        "items": [
+          "Profile · 20 points. Bio 5, valid website address 5, non-empty profile README 10.",
+          "Projects · 30 points. Description 10, topic 5, demo link 10, Markdown image reference 5.",
+          "README · 50 points. A non-empty file, purpose, installation and usage earn up to 10 points each. Technologies and features earn up to 5 each."
+        ]
+      },
+      {
+        "heading": "How README checks work",
+        "paragraphs": [
+          "Installation needs a recognized English or Turkish section heading and a command or code block within that section. Purpose needs an explanatory paragraph. Usage needs an explanation or command. Information under a different heading can be missed.",
+          "A project website field or a recognized HTTP(S) demo link in the README can satisfy the demo check. Sites are not opened and commands are not run. A Markdown image reference does not establish that the image loads or that it is a screenshot."
+        ]
+      },
+      {
+        "heading": "Incomplete analyses",
+        "paragraphs": [
+          "When a file is confirmed missing, the affected checks earn no points. A network or permission failure, or a README exceeding 256 KiB, leaves the affected data unknown. If any scored check is unknown, the total and profile type are withheld. Known findings remain available."
+        ]
+      },
+      {
+        "heading": "How profile types are assigned",
+        "paragraphs": [
+          "A complete analysis receives the first matching type in this order."
+        ],
+        "items": [
+          "Showcase Ready — At least 80 points and every project passes both the demo and installation checks.",
+          "Where Is the Demo? — No selected project has a recognized demo link.",
+          "Hidden Gem — Every project passes the description and purpose checks, and at least one demo, installation or profile check fails.",
+          "Showcase in Progress — All other complete analyses."
+        ]
+      },
+      {
+        "heading": "Which task comes first?",
+        "paragraphs": [
+          "Up to three recommendations come from failed checks, ordered by the points that could be gained. Each repository check’s impact is divided by the number of selected repositories. Ties use a fixed check order, then the target identifier. Unknown data creates no task."
+        ]
+      },
+      {
+        "heading": "How fresh is an analysis?",
+        "paragraphs": [
+          "A complete analysis can be reused for 15 minutes for the same profile, set of repositories and rule version. Reading it does not extend the window. Cached results keep the original analysis time and count as the same measurement in comparisons."
+        ]
+      }
+    ]
   }
 }

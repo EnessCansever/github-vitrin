@@ -125,3 +125,5 @@ Uygulama/CDN cache'i no-store olarak kapalıdır. Kapatma/silme uygulamadaki son
 Kayıtlı complete raporda gönderi (1080×1350), Story ve yatay biçimleri aynı önizleme ve indirme akışında seçilir. Gönderi ilk analiz kartının içeriğini kullanır. Sunucu PNG baytlarını kaynağın mevcut bitiş zamanına kadar yeniden kullanabilir.
 
 Özel raporda geçerli bir önce–sonra karşılaştırması açıldığında kullanıcı gelişim kartını üç mevcut PNG biçiminde önizleyip indirebilir. Tarihler ve puanlar iki kayıtlı ölçümü gösterir. Artış ve düşüş işaretli farkla, aynı puan nötr başlıkla gösterilir. Kartta yalnız gerçek durum geçişlerinden hesaplanan kontrol sayıları bulunur.
+
+Footer üzerinden erişilen /methodology puanın hesabını, profil tiplerini, tespit ve öneri sınırlarını açıklar. /privacy veri kaynaklarını, saklama ve erişim sürelerini, yönetim bağlantısını, yerel geçmişi ve kota sayaçlarını açıklar. İki sayfa da mevcut TR/EN dil tercihini kullanır.
