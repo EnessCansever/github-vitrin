@@ -20,10 +20,17 @@ import type {AnalysisResponse, Report} from "./report";
 import type {SearchError, SearchResult} from "./selection";
 
 export async function getRepos(input: unknown): Promise<SearchResult> {
+  const start = Date.now();
+  let stage = "admission";
+  let category: string | undefined;
   try {
-    await limitRequest("search");
+    await limitRequest("search", (step, reason) => {stage = step; category = reason;});
   } catch (error) {
-    return {status: "error", ...(requestFailure(error) ?? {code: "unavailable" as const})};
+    const failure = requestFailure(error) ?? {code: "unavailable" as const};
+    if (failure.code !== "rateLimit") {
+      console.warn("profile_search_admission_failed", {stage, category: category ?? failure.code, correlationId: randomUUID(), durationMs: Date.now() - start});
+    }
+    return {status: "error", ...failure};
   }
   if (typeof input !== "string" || Buffer.byteLength(input, "utf8") > 256) {
     return {status: "error", code: "invalid_input"};

@@ -64,3 +64,11 @@ it.each([false, true])("clears a rejected connection and permits a later explici
   await getDatabase();
   expect(fake.connect).toHaveBeenCalledTimes(2);
 });
+
+it.each([
+  [Object.assign(new Error("private driver details"), {code:18}), "authentication"],
+  [Object.assign(new Error("private driver details"), {name:"MongoServerSelectionError"}), "server_selection"],
+])("keeps only a safe category when connecting fails", async (cause, diagnostic) => {
+  fake.connect.mockRejectedValueOnce(cause);
+  await expect(getDatabase()).rejects.toMatchObject({code:"unavailable", message:"unavailable", diagnostic});
+});

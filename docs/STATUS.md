@@ -2,7 +2,28 @@
 
 Son güncelleme: 21 Kasım 2026 (Europe/Istanbul).
 
-## Aktif aşama — A6 anonim oturum, süre ve kalıcı E2E
+## Aktif iş — Production profil aramasının tanısı
+
+Kullanıcı `0b9fbc7` dağıtımında profil aramasının yaklaşık 2,2 saniyede HTTP 200 ile sonuçlandığını ve “Sunucu hizmetine erişilemedi” açıklamasını bildirdi. Yerel ana dal bu commit ile eşleşiyordu. Ekrandaki açıklama `Search.errors.unavailable` mesajıdır. `getRepos` bunu GitHub çağrısından önce kabul aşamasında döndürebilir. Action'ın taşıma düzeyinde 200 olması dönen iş sonucunu göstermez.
+
+Özel origin denetimi paylaşım mutasyonlarındadır. Aramanın IP kaynağı veya gerekli env biçimi geçersizse normal dönüş `configuration`, IP hakkı tükenmişse `rateLimit` olur. Kota deposu bağlantı, indeks, yazma veya kayıt doğrulama hatası ve oturum çerezi işleminin beklenmeyen hatası `unavailable` üretebilir. Aramada oturum çerezi hazırlanır, ayrıca analiz oturumu hakkı tüketilmez. GitHub'ın bağlantı ve auth hataları ayrı kodlara eşlenir. MongoDB sunucu seçim sınırı 2 s olduğundan bu süre gözlemle uyumludur; üretimdeki nedeni kanıtlamaz.
+
+Yerel tanı değişikliği yalnız başarısız profil kabulünde `profile_search_admission_failed` olayını yazar. Olağan kota reddi ve başarılı istekler bu olayı üretmez. Alanlar sabit aşama, güvenli kategori, rastgele correlationId ve durationMs. DB bağlantı kategorileri yalnız izin verilen sabit kod/ad sınıflarından türetilir. İstemci hata sözleşmesi ve kotalar korunur.
+
+| Aşama / kategori | Üretimde kontrol edilecek nokta |
+| --- | --- |
+| db_connect / configuration | Aktif Production deployment kapsamındaki MONGODB_URI ve MONGODB_DB tanımları ve geçerli biçimleri. |
+| db_connect / server_selection, network veya timeout | Atlas cluster durumu, Vercel function bölgesinin gerçek çıkış yolu, Atlas IP Access List ve DNS/TLS erişimi. |
+| db_connect / authentication | Bağlantıdaki veritabanı kullanıcısı, parola kodlaması ve kimlik doğrulama veritabanı. |
+| quota_index veya quota_update / authorization | Atlas Database Access'te ilgili kullanıcının hedef DB'deki rateLimits koleksiyonuna gereken indeks ve yazma yetkileri. |
+| quota_index / index_conflict | rate_limit_expiry adının ve expiresAt TTL indeksinin mevcut tanımı. |
+| quota_result / invalid_record veya invalid_limit | rateLimits belgesinin beklenen biçimi ve pencere/limit uyumu. |
+| signing_secret, platform veya trusted_ip / configuration | SIGNING_SECRET en az 32 bayt, Vercel sistem değişkenleri ve doğrudan güvenilir ingress. |
+| session / unavailable | Mongo sayaç kabulünden sonra Next Server Action çerez erişimi/yazımı. |
+
+Yerelde 47 dosyada 661 Vitest testi, lint, typecheck, varsayılan production build ve diff kontrolü geçti. Production kök nedeni açık. Yeni tanı ancak bu değişikliği içeren deployment'taki hata ile ilişkilendirilebilir. Üretim isteği veya Atlas paneli bu tur tarafımızdan incelenmedi.
+
+## Önceki dilim — A6 anonim oturum, süre ve kalıcı E2E
 
 Son güvenlik ve erişilebilirlik paketi yerel Git geçmişinde `2d2eebf` olarak doğrulandı. Push ve yeşil uzak CI sonucu kullanıcı bildirimidir. Bu kayıt yeni değişikliklerin CI sonucu değildir.
 

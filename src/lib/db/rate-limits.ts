@@ -3,7 +3,7 @@ import "server-only";
 import {MongoServerError} from "mongodb";
 import {z} from "zod";
 import {getDatabase, dbMaxTimeMs, dbWriteConcern} from "./client";
-import {StorageError} from "./errors";
+import {mongoFailure, StorageError} from "./errors";
 
 const positiveInteger = z.number().int().min(1).max(Number.MAX_SAFE_INTEGER);
 const keySchema = z.string().regex(/^[a-f\d]{64}$/);
@@ -17,7 +17,9 @@ export type RateLimitResult =
   | {allowed: true; remaining: number; resetAt: string; retryAt: null}
   | {allowed: false; remaining: 0; resetAt: string; retryAt: string};
 
-export async function consumeRateLimit(input: unknown): Promise<RateLimitResult> {
+export type CounterStage = "db_connect" | "quota_index" | "quota_update" | "quota_result";
+
+export async function consumeRateLimit(input: unknown, onStage?: (stage: CounterStage) => void): Promise<RateLimitResult> {
   const parsed = inputSchema.safeParse(input);
   if (!parsed.success || !Number.isFinite(new Date(Date.now() + parsed.data.windowMs).getTime())) {
     throw new StorageError("invalid_limit");
@@ -37,8 +39,11 @@ export async function consumeRateLimit(input: unknown): Promise<RateLimitResult>
     {$set: {count: {$cond: ["$allowed", {$add: ["$count", 1]}, "$count"]}}},
   ];
   try {
+    onStage?.("db_connect");
     const collection = (await getDatabase()).collection<z.infer<typeof recordSchema>>("rateLimits");
+    onStage?.("quota_index");
     await collection.createIndex({expiresAt: 1}, {name: "rate_limit_expiry", expireAfterSeconds: 0}, {maxTimeMS: dbMaxTimeMs, writeConcern: dbWriteConcern});
+    onStage?.("quota_update");
     let record: z.infer<typeof recordSchema> | null;
     try {
       record = await collection.findOneAndUpdate({_id: key}, update, {upsert: true, returnDocument: "after", maxTimeMS: dbMaxTimeMs, writeConcern: dbWriteConcern});
@@ -47,6 +52,7 @@ export async function consumeRateLimit(input: unknown): Promise<RateLimitResult>
       // A competing upsert created the unique key; consume against that record once.
       record = await collection.findOneAndUpdate({_id: key}, update, {upsert: false, returnDocument: "after", maxTimeMS: dbMaxTimeMs, writeConcern: dbWriteConcern});
     }
+    onStage?.("quota_result");
     if (!record) throw new StorageError("unavailable");
     const result = recordSchema.safeParse(record);
     if (!result.success || result.data._id !== key) throw new StorageError("invalid_record");
@@ -59,6 +65,6 @@ export async function consumeRateLimit(input: unknown): Promise<RateLimitResult>
       : {allowed: false, remaining: 0, resetAt, retryAt: resetAt};
   } catch (error) {
     if (error instanceof StorageError) throw error;
-    throw new StorageError("unavailable");
+    throw new StorageError("unavailable", mongoFailure(error));
   }
 }

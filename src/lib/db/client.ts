@@ -1,7 +1,7 @@
 import "server-only";
 
 import {MongoClient, type Db} from "mongodb";
-import {StorageError} from "./errors";
+import {mongoFailure, StorageError} from "./errors";
 
 const state = globalThis as typeof globalThis & {repoVitrinDb?: Promise<Db>};
 export const dbMaxTimeMs = 4_000;
@@ -25,12 +25,12 @@ export function getDatabase(): Promise<Db> {
   } catch {
     throw new StorageError("configuration");
   }
-  state.repoVitrinDb = client.connect().then(() => client.db(name)).catch(async () => {
+  state.repoVitrinDb = client.connect().then(() => client.db(name)).catch(async error => {
     delete state.repoVitrinDb;
     try {
       await client.close();
     } finally {
-      throw new StorageError("unavailable");
+      throw new StorageError("unavailable", mongoFailure(error));
     }
   });
   return state.repoVitrinDb;

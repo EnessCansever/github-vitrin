@@ -462,6 +462,9 @@ Bu dilim A5'in bütünü değildir: 1080×1350, gelişim/önce-sonra kartı, oto
 
 ### A6 Yayın kalitesi:
 
+- [x] `0b9fbc7` için bildirilen profil arama sorununda `unavailable` kod yolları ayrıldı; sınırlı sunucu tanısı ve güvenli günlük alanları regresyon testine alındı.
+- [ ] Üretim kök nedenini ilgili isteğin aşama/kategorisi ve Vercel/Atlas ayarlarıyla doğrula. Bu yerel tanı paketinin dağıtımı ve sonraki production smoke kullanıcıda.
+
 - [x] Yerel Git: `2d2eebf` güvenlik/erişilebilirlik paketi. Push ve yeşil CI kullanıcı doğrulaması.
 - [x] İmzalı anonim oturum + IP analiz kotası, imza ve paralel giriş testleri; yeni oturum sayısal politikası yalnız analiz için §7'den alınır.
 - [x] GitHub/join/snapshot ortak analiz son zamanı, transaction sınırı ve Vercel Function süre incelemesi (D049).
