@@ -1807,7 +1807,7 @@ details[open] > .category-content {
   min-height: 32px;
 }
 
-.comparison-panel p, .comparison-result h4 {
+.comparison-panel p, .comparison-result h3 {
   margin-block: 12px;
 }
 

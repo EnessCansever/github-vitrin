@@ -42,7 +42,7 @@ function ManageControls({access}:{access:{id:string;token:string}}) {
     finally{if(current===version.current){busy.current=false;setPending(false);}}
   }
 
-  return <section aria-busy={pending}>
+  return <section>
     <p>{t("manageIntro")}</p><p className="small muted">{t("previewCacheNotice")}</p><p className="small muted">{t("manageLifetime")}</p>
     <div className="report-actions">
       <button type="button" className="button button-secondary" disabled={pending || result!==null} onClick={()=>void change("close")}>{t("close")}</button>

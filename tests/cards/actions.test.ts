@@ -115,3 +115,18 @@ it("binds cached progress cards to both authorized snapshots, their earliest exp
   await failed("missing");
   expect(renderCard).toHaveBeenCalledTimes(4);
 });
+
+it("withholds a finished PNG when the earlier report expires during generation", async () => {
+  vi.useFakeTimers();
+  const after = (await readSnapshot(id, token))!;
+  const previous = {id: "22222222-2222-4222-8222-222222222222", token: "b".repeat(64)};
+  const before = {...after, id: previous.id, expiresAt: new Date(Date.now() + 1_000).toISOString(),
+    report: {...after.report, checkedAt: "2026-10-27T10:00:00Z"}};
+  vi.mocked(readSnapshot).mockResolvedValueOnce(after).mockResolvedValueOnce(before);
+  vi.mocked(renderCard).mockImplementationOnce(async () => {
+    vi.advanceTimersByTime(1_000);
+    return new ArrayBuffer(4);
+  });
+  expect(await generateCard({...input, previous})).toEqual({status: "error", code: "missing"});
+  expect(renderCard).toHaveBeenCalledOnce();
+});

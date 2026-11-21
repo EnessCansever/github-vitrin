@@ -97,7 +97,7 @@ export function LiveAnalysis({selection, onProfile}: {selection: Selection; onPr
         </section>
       </div>
       {view === "analysis" && (
-        <div ref={region} className="live-analysis" aria-busy={pending}>
+        <div ref={region} className="live-analysis">
           <div className="report-actions">
             <button type="button" className="button button-secondary" onClick={back}><ArrowLeft size={16} aria-hidden="true" />{t("backSelection")}</button>
             <button type="button" className="button button-secondary" onClick={onProfile}>{t("backProfile")}</button>

@@ -2,7 +2,29 @@
 
 Son güncelleme: 21 Kasım 2026 (Europe/Istanbul).
 
-## Aktif aşama
+## Aktif aşama — A6 yerel güvenlik ve erişilebilirlik incelemesi
+
+Gizlilik ve metodoloji paketi ana dalda `c140c3e` olarak doğrulandı. Push ve yeşil GitHub Actions sonucu kullanıcı bildirimidir.
+
+| Bulgu ve dosya | Kullanıcıya etkisi ve düzeltme | Kontrol |
+| --- | --- | --- |
+| Ortak header, `components/site-header.tsx` ve `skip-link.tsx` | “İçeriğe geç” bağlantısının varsayılan `#main` geçişi özel rapor ve yönetim yetkisini taşıyan fragmenti değiştiriyordu. Artık adres korunurken ana içerik odaklanıyor. | Chrome'da her iki erişimli sayfada Enter, ana içerik odağı ve fragment koruması. Ayrıca secretsız regresyon testi. |
+| `reports/report-access.tsx` | Sonuç başlığı odaklanırken sayfa başına kaydırılıyordu. Kaydırma hedefi artık odaklanan başlık; mevcut sticky header payı uygulanır. | Kaynak incelemesi ve özel raporla mobil Chrome. |
+| `analysis/live-analysis.tsx`, `reports/report-access.tsx`, `cards/card-studio.tsx`, `shares/manager.tsx`, `shares/share-panel.tsx` | Yüklenme duyuruları üst öğedeki busy durumu yüzünden ertelenebiliyordu. Duyurular bu engelden çıkarıldı; paylaşım oluşturma da bekleme metnini canlı bölgeye yazar. Kapalı kart düğmesi DOM'da bulunmayan bir paneli işaretlemiyor. | ARIA ilişkilerinin kaynak incelemesi, açık kart ve yönetim ekranının Chrome erişilebilirlik ağacı. Sesli okuma sırası fiziksel ekran okuyucuda bekliyor. |
+| `reports/compare-panel.tsx`, `comparison-view.tsx`, `app/globals.css` | Sonuç başlığı seviye atlıyordu. Başlıklar h2→h3→h4, odak hedefi adlandırılmış grup oldu. Elle girilen bağlantının hata metni artık alana bağlı. | Açık karşılaştırmada ve gelişim kartında axe başlık sırası ve bölge adı kontrolleri yeniden geçti. |
+| `package-lock.json` | Geliştirme lint zincirindeki minimatch 10.2.6, glob işleme sırasında aşırı kaynak tüketimine ilişkin orta önem dereceli duyurunun aralığındaydı. typescript-eslint 8.72.1→8.73.0, ilgili minimatch 11.0.9. Diğer lint araçlarındaki 3.1.5 etkilenen aralığın dışında. | Resmî aralık ≥7.0.0 ve <11.0.1. Tam bağımlılık ağacında npm audit sonucu 0. [GitHub güvenlik duyurusu](https://github.com/advisories/GHSA-g3hv-75wg-m249) |
+
+**Erişim ve Atlas.** Geliştirme Atlas’ında sentetik, uyumlu iki özel snapshot ile gerçek gelişim Story PNG üretildi. İki üretim isteğinde renderer bir kez çağrıldı ve aynı PNG döndü. Her iki token ayrı ayrı yanlış verildiğinde erişim reddedildi. Görsel kaydının bitişi erken biten raporla aynıydı. O raporun süresi dolduğunda dolu cache üzerinden de sonuç `missing` oldu. Süre render sırasında dolarsa baytların verilmediği ayrıca deterministik testte doğrulandı. İzole action kontrolünde kota ve dil sabitlendi; tarayıcı ayrıca yerel production action'larını kullandı.
+
+Aktif public görselin HTTP isteği 200 döndü ve MongoDB kaydı oluştu. Aynı görsel public paylaşım kapatıldığında ve silindiğinde 404 ile yalnız güvenli hata kodunu verdi. Son turda yalnız bu kontrole ait iki snapshot, bir public kopya, iki görsel ve izole test kimliğinin kota kayıtları temizlendi. Snapshot ve görsel kimliklerinde kalan kayıt sayısı sıfırdı. Ara kontroller kendi kayıtlarını ayrı temizledi.
+
+Özel rapor, public sayfa ve yönetim sayfasının ilk HTML yanıtlarında (metadata dahil) üç sentetik erişim sırrı bulunmadı; yanıtlar no-store idi. Yerel production uygulama günlüğünde bu değerler yoktu. Yetkili kullanıcının kendi özel bağlantısını edinmesi ürün davranışıdır. Hatalı girdi/token, süre dolumu, soğuk/sıcak cache, public alan sınırı, kota, güvenilmeyen header ve paylaşım mutasyon origin kontrolü ilgili action/route testlerinde geçti. Gerçek hosting, sağlayıcı logları ve CDN ayrıca doğrulanacak.
+
+**Erişilebilirlik.** Yerel production Chrome'da 320 px ve reduced-motion açıkken dokuz görünüm incelendi: ana sayfa, ortak repo seçicinin demo ekranı, gizlilik, metodoloji, özel sonuç, açık karşılaştırma, açık gelişim kartı stüdyosu, aktif public paylaşım ve tokenlı yönetim. Her birinde bir h1, adlandırılmış etkileşimli kontroller, sıfır yatay taşma ve sıfır çalışan animasyon doğrulandı. axe-core 4.14.0 WCAG 2 A/AA, 2.1 AA ve best-practice taramasında son turda ihlal raporlamadı. Örnek Tab dizilerinde görünür odak ve sticky header altında tamamen kaybolma kontrol edildi. Gizlilik/metodoloji için önceki gerçek TR/EN Enter/Space kanıtı geçerlidir. Kontrast örnekleri: krem/kobalt 5,66:1, ikincil metin/mürekkep 9,34:1, kart ikincil metni/krem 6,50:1.
+
+650 test (46 dosya), lint, typecheck, varsayılan production build ve diff kontrolü geçti. Açık işlerin güncel listesi TASKS sıra 1, 9–14 ve A6 bölümündedir. Sıradaki yerel iş kritik tarayıcı akışlarını tekrarlanabilir E2E kontrollerine almak. Fiziksel ekran okuyucu, telefon/manuel PNG indirme, Vercel/CDN ve sosyal platform kontrolleri açık.
+
+## Önceki dilim — gizlilik ve metodoloji
 
 **İlk yayın planı sıra 9 — TR/EN gizlilik ve metodoloji sayfaları yerel incelemeye hazır.** A5.5 `b5bdccf` ve CI #25 başarısı kullanıcının GitHub Actions ekran görüntüsüyle doğrulandı. Yerel Git başlangıcında main ve origin/main bu commit'teydi.
 

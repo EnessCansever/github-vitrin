@@ -48,11 +48,11 @@ export function ReportAccess({id}: {id: string}) {
     if (!heading || heading === lastHeading.current) return;
     lastHeading.current = heading;
     heading.focus({preventScroll: true});
-    region.current?.closest("main")?.scrollIntoView({block: "start"});
+    heading.scrollIntoView({block: "start"});
   }, [response]);
 
   return (
-    <div ref={region} aria-busy={!response} className="stored-report">
+    <div ref={region} className="stored-report">
       <div className="report-actions"><Link href="/#github-profile" className="button button-secondary">{t("newAnalysis")}</Link></div>
       {!response && <StatePanel state="loading" title={t("loadingTitle")} description={t("loadingText")} />}
       {response?.status === "missing" && <StatePanel state="notFound" title={t("missingTitle")} description={t("missingText")} />}

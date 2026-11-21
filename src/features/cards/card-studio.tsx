@@ -45,13 +45,13 @@ export function CardStudio({id, complete, previous}: {id: string; complete: bool
 
   return (
     <div className="card-studio">
-      <button type="button" className={`button ${complete ? "button-secondary" : "button-disabled"}`} disabled={!complete || pending} aria-expanded={open} aria-controls={panelId}
+      <button type="button" className={`button ${complete ? "button-secondary" : "button-disabled"}`} disabled={!complete || pending} aria-expanded={open} aria-controls={open ? panelId : undefined}
         aria-describedby={!complete ? "card-incomplete" : undefined} onClick={() => setOpen(value => !value)}>
         <ImageDown size={17} aria-hidden="true" />{t(open ? "close" : title)}
       </button>
       {!complete && <p id="card-incomplete" className="small muted">{t("incomplete")}</p>}
       {open && (
-        <section id={panelId} aria-labelledby={panelId + "-title"} className="card-preview-panel" aria-busy={pending}>
+        <section id={panelId} aria-labelledby={panelId + "-title"} className="card-preview-panel">
           <h2 ref={heading} id={panelId + "-title"} tabIndex={-1}>{t(title)}</h2>
           <p className="small muted">{t(previous ? "progressIntro" : "intro")}</p>
           <fieldset className="card-formats" disabled={pending}>

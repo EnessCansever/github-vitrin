@@ -92,15 +92,15 @@ export function ComparePanel({id, report, expiresAt}: {id: string; report: Repor
       <p id="history-time-zone" className="small muted">{t("timeZone", {zone: timeZone})}</p>
       {!selected && <><label htmlFor="previous-link">{t("linkLabel")}</label>
         <input id="previous-link" type="text" value={link} onChange={event => {reset(); setLink(event.target.value);}} maxLength={2048}
-          autoComplete="off" spellCheck={false} aria-invalid={invalid} aria-describedby="comparison-link-note" />
+          autoComplete="off" spellCheck={false} aria-invalid={invalid} aria-describedby={invalid ? "comparison-link-note comparison-link-error" : "comparison-link-note"} />
         <p id="comparison-link-note" className="small muted">{t("linkHint")}</p></>}
-      {invalid && <p role="alert">{t("invalid")}</p>}
+      {invalid && <p id="comparison-link-error" role="alert">{t("invalid")}</p>}
       <div className="report-actions">
         <button type="submit" className="button button-primary" disabled={pending || (!selected && !link.trim())}>{t(pending ? "pending" : "compare")}</button>
         {history.length > 0 && <button type="button" className="text-link" onClick={clearHistory}>{t("clear")}</button>}
       </div>
     </form>
-    <div ref={result} tabIndex={-1} aria-label={t("result")}>
+    <div ref={result} role="group" tabIndex={-1} aria-label={t("title")}>
       <p role="status" aria-live="polite">{pending ? t("pending") : response ? t(response.status === "success" ? "ready" : "failed") : ""}</p>
       {response?.status === "success" ? <>
         <ComparisonView comparison={response.comparison} />

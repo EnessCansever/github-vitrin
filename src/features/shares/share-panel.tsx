@@ -73,7 +73,7 @@ export function SharePanel({id}:{id:string}) {
       <button type="button" className="text-link" onClick={()=>{setAccess(null);setConsent(false);setCopied(null);setManual("");}}>{t("newCopy")}</button>
     </>}
     {storageFailed && <p role="status">{t("storageFailed")}</p>}
-    <p role="status">{copied?t(copied==="public"?"copiedPublic":"copiedManagement"):""}</p>
+    <p role="status">{pending?t("creating"):copied?t(copied==="public"?"copiedPublic":"copiedManagement"):""}</p>
     {manual && <div className="manual-copy"><label htmlFor="share-copy-link">{t("manualCopy")}</label><input id="share-copy-link" readOnly value={manual} onFocus={event=>event.currentTarget.select()}/></div>}
     {failure && <><p role="alert">{t(`errors.${failure.code}`)}</p><RetryNotice retryAt={failure.retryAt}/></>}
   </details>;

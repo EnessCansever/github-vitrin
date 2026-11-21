@@ -1,3 +1,4 @@
+import {SkipLink} from "./skip-link";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import {Suspense} from "react";
@@ -10,7 +11,7 @@ export async function SiteHeader() {
 
   return (
     <>
-      <a className="skip-link" href="#main">{t("skip")}</a>
+      <SkipLink label={t("skip")} />
       <header className="site-header">
         <div className="site-header-inner shell">
           <Link href="/" className="brand" aria-label={`${site.name} · ${t("home")}`}>
