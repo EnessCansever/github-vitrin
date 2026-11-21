@@ -18,7 +18,7 @@ Güncel kanıtlar (ayrıntılar [STATUS](STATUS.md)):
 | 1 | Atlas ağ erişiminin daraltılması ve bağlantı kontrolü | Dar IP listesi ve bu listeyle yeni function bağlantısı açık kontrol olarak kalır. Taşınma öncesi rapor bağlantılarının durumu ayrıca açık. |
 | 2 | Kalan canlı gizlilik kontrolleri | Gerçek süre dolumu, sağlayıcı loglarında hassas veri ve sosyal platformların kendi önizleme önbelleğini kontrol et. Canlı alias’da close/delete sonrası yeni istekler yukarıda doğrulandı. |
 | 3 | Gerçek hosting sınırları | Plan/bölge, güvenilir ingress, oturum ve IP kotaları, farklı süreçlerde kilit/permit ve hata sonrası toparlanma. Sıcak/soğuk lider, katılımcı, DB commit/cleanup ve PNG süreleri ile yanıt boyutunu ölç. |
-| 4 | Gizlilik ve işletim bilgileri | İletişim kanalı, gerçek sağlayıcı bölgeleri, yedekleme ve saklama koşullarını netleştir. |
+| 4 | Gizlilik ve işletim bilgileri | Gerçek sağlayıcı bölgelerini, yedekleme ve saklama koşullarını netleştir. |
 | 5 | Cihaz, erişilebilirlik ve sosyal önizleme | Fiziksel telefonda kartları kaydet/aç, okunabilirlik ve paylaşım akışını dene. Fiziksel ekran okuyucuda odak ve yüklenme/hata duyurularını, gerçek sosyal platformda OG önizlemesini kontrol et. |
 
 A7’deki pilot kullanıcı geri bildirimi ve anonim toplu ölçümler dağıtım sonrası işlerdir.
@@ -612,4 +612,5 @@ A5.3 görsel kabul kaydı turu: yalnız STATUS/TASKS güncellendi; belge diff ko
 
 - [x] TR/EN gizlilik ve metodoloji, footer bağlantıları, mobil görünüm ve klavyeyle bağlantı erişimi. Kontrol sonuçları STATUS kaydında.
 - [x] Gizlilik ve metodoloji sayfalarında Chrome klavye kontrolü geçti. Tab ile görünür odak ve hem Enter hem Space ile aynı sayfada TR→EN ve EN→TR geçişi doğrulandı.
-- [ ] Yayın öncesinde iletişim kanalını, veri bölgelerini ve sağlayıcı yedekleme koşullarını netleştir. Gerçek cihaz, ekran okuyucu ve yayın kontrolleri açık.
+- [x] Geliştirici bağlantıları ve TR/EN gizlilik iletişim kanalı eklendi. Yerel Chrome klavye ve görünüm kontrolleri STATUS kaydında.
+- [ ] Yayın öncesinde veri bölgelerini ve sağlayıcı yedekleme koşullarını netleştir. Gerçek cihaz, ekran okuyucu ve yayın kontrolleri açık.

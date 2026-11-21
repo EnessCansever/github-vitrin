@@ -1873,3 +1873,5 @@ details[open] > .category-content {
 .info-page h2 { font-size: 1.35rem; font-weight: 750; }
 .info-page p, .info-page li { margin-top: .7rem; color: var(--color-muted); line-height: 1.65; }
 .info-page ol { list-style: decimal; padding-inline-start: 1.6rem; }
+
+.privacy-email { color: var(--color-link); text-decoration: underline; overflow-wrap: anywhere; }

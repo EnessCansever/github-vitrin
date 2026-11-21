@@ -17,6 +17,8 @@
     "notQuality": "This score measures portfolio presentation, not code quality, developer skill or hiring prospects.",
     "privacy": "Privacy",
     "methodology": "Methodology",
+    "email": "Email",
+    "developerLinks": "Developer links",
     "siteInfo": "Site information"
   },
   "Home": {
@@ -690,6 +692,8 @@
     "incompleteDescription": "Some analysis data is missing; no total score or scored link preview was produced."
   },
   "Privacy": {
+    "contactTitle": "Contact",
+    "contactText": "For questions about privacy and personal data, contact {name} at <email></email>.",
     "title": "Privacy",
     "intro": "Looking up a profile, opening a private report and sharing a public copy each use different data.",
     "sections": [

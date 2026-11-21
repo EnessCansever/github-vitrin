@@ -11,7 +11,15 @@ export async function SiteFooter() {
         <Link className="text-link" href="/privacy">{t("privacy")}</Link>
         <Link className="text-link" href="/methodology">{t("methodology")}</Link>
       </nav>
-      <p>{t("author", { name: site.author })}</p>
+      <div>
+        <p>{t("author", { name: site.author })}</p>
+        <nav aria-label={t("developerLinks")} className="footer-links">
+          {site.profiles.map(({name, url}) => (
+            <a key={name} className="text-link" href={url} target="_blank" rel="noopener noreferrer">{name}</a>
+          ))}
+          <a className="text-link" href={`mailto:${site.email}`}>{t("email")}</a>
+        </nav>
+      </div>
     </footer>
   );
 }

@@ -2,6 +2,12 @@
 
 Son güncelleme: 21 Kasım 2026 (Europe/Istanbul).
 
+## Geliştirici iletişimi
+
+Ortak footer’da geliştirici adı, Gizlilik ve Metodoloji bağlantıları korunarak GitHub, LinkedIn, Instagram ve e-posta bağlantıları eklendi. TR/EN gizlilik sayfasında kişisel veri soruları için Enes Cansever’in verdiği adres yer alıyor. Sağlayıcı bölgeleri ve yedek saklama koşulları hâlâ açık.
+
+Yerel Chrome’da 390×844 ve 1440×900 görünümde iki dilin bağlantı etiketleri, hedefleri, altı bağlantının Tab sırası ve görünür odağı doğrulandı. Mobilde alt satıra geçen footer yatay taşma oluşturmadı. Ana sayfa ile özel rapor ve public paylaşımın geçersiz kimlik ekranlarında ortak footer görüldü. Lint, typecheck ve belge/kod diff kontrolü geçti.
+
 ## Yayın belgeleri incelemesi
 
 README canlı uygulama, kurmaca ekranlar, yerel kurulum, veri erişimi, puanlama ve doğrulanmış kontroller etrafında düzenlendi. Metodolojide proje sahipliği ve demo bağlantısı koşulu motorla eşleştirildi. Gizlilik metinleri, uygulama yorumları ve test yönergelerinde değişiklik gerekmedi. Bu turda README bağlantıları ve komutları, ortam adları, TR/EN mesaj yapısı ve diff kontrol edildi. Puanlama testlerinin 90/90’ı geçti. Yeni bir canlı test yapılmadı.

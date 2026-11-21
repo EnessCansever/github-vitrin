@@ -1,4 +1,5 @@
 import {getTranslations} from "next-intl/server";
+import {site} from "@/config/site";
 
 export async function InfoPage({page}: {page: "Privacy" | "Methodology"}) {
   const t = await getTranslations(page);
@@ -11,5 +12,12 @@ export async function InfoPage({page}: {page: "Privacy" | "Methodology"}) {
       {section.paragraphs.map(text => <p key={text}>{text}</p>)}
       {section.items && <ol>{section.items.map(item => <li key={item}>{item}</li>)}</ol>}
     </section>)}
+    {page === "Privacy" && <section>
+      <h2>{t("contactTitle")}</h2>
+      <p>{t.rich("contactText", {
+        name: site.author,
+        email: () => <a className="privacy-email" href={`mailto:${site.email}`}>{site.email}</a>,
+      })}</p>
+    </section>}
   </main>;
 }

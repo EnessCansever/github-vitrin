@@ -17,6 +17,8 @@
     "notQuality": "Bu puan yalnız portfolyo sunumunu ölçer; kod kalitesini, geliştirici seviyesini veya işe alınma ihtimalini değil.",
     "privacy": "Gizlilik",
     "methodology": "Metodoloji",
+    "email": "E-posta",
+    "developerLinks": "Geliştirici bağlantıları",
     "siteInfo": "Site bilgileri"
   },
   "Home": {
@@ -690,6 +692,8 @@
     "incompleteDescription": "Bu analizde bazı veriler eksik; toplam puan ve puanlı bağlantı önizlemesi oluşturulmadı."
   },
   "Privacy": {
+    "contactTitle": "İletişim",
+    "contactText": "Gizlilik ve kişisel verilerle ilgili sorularınızı {name}’e <email></email> adresinden iletebilirsiniz.",
     "title": "Gizlilik",
     "intro": "Bir profili aramak, özel raporu açmak ve herkese açık bir kopya paylaşmak farklı izler bırakır.",
     "sections": [
